@@ -9,8 +9,8 @@ namespace UpdatePackages
     {
         private static void Main(string[] args)
         {
-            const string prefix = "FunFair.Ethereum.";
-            const string version = "0.2.7.358";
+            string prefix = args[0];
+            string version = args[1];
 
             IEnumerable<string> projects =
                 Directory.EnumerateFiles(@"D:\Work", "*.csproj", SearchOption.AllDirectories);
@@ -71,7 +71,8 @@ namespace UpdatePackages
 
         private static bool IsMatch(string package, string prefix)
         {
-            return package.StartsWith(prefix, StringComparison.OrdinalIgnoreCase);
+            return package.Equals(prefix, StringComparison.OrdinalIgnoreCase) ||
+                   package.StartsWith(prefix + ".", StringComparison.OrdinalIgnoreCase);
         }
     }
 }
