@@ -42,9 +42,22 @@ namespace UpdatePackages
 
                 IEnumerable<string> projects = Directory.EnumerateFiles(folder, searchPattern: "*.csproj", searchOption: SearchOption.AllDirectories);
 
+                int updates = 0;
+
                 foreach (string project in projects)
                 {
-                    UpdateProject(project, packages, fromNuget);
+                    updates += UpdateProject(project, packages, fromNuget);
+                }
+
+                Console.WriteLine();
+
+                if (updates > 0)
+                {
+                    Console.WriteLine($"Total Updates: {updates}");
+                }
+                else
+                {
+                    Console.WriteLine(value: "No updates made.");
                 }
 
                 return SUCCESS;
@@ -106,21 +119,21 @@ namespace UpdatePackages
             return new PackageVersion(pv[0], pv[1]);
         }
 
-        private static void UpdateProject(string project, Dictionary<string, string> packages, bool fromNuget)
+        private static int UpdateProject(string project, Dictionary<string, string> packages, bool fromNuget)
         {
             XmlDocument doc = TryLoadDocument(project);
 
             if (doc == null)
             {
-                return;
+                return 0;
             }
 
+            int changes = 0;
             XmlNodeList nodes = doc.SelectNodes(xpath: "/Project/ItemGroup/PackageReference");
 
             if (nodes.Count > 0)
             {
                 Console.WriteLine($"* {project}");
-                bool changed = false;
 
                 foreach (XmlElement node in nodes)
                 {
@@ -144,7 +157,7 @@ namespace UpdatePackages
                                 }
 
                                 node.SetAttribute(name: "Version", value: entry.Value);
-                                changed = true;
+                                changes++;
                             }
 
                             break;
@@ -152,12 +165,14 @@ namespace UpdatePackages
                     }
                 }
 
-                if (changed)
+                if (changes > 0)
                 {
                     Console.WriteLine($"  === UPDATED ===");
                     doc.Save(project);
                 }
             }
+
+            return changes;
         }
 
         private static XmlDocument TryLoadDocument(string project)
