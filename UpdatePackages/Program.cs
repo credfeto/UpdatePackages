@@ -145,10 +145,10 @@ namespace UpdatePackages
                         {
                             string installedVersion = node.GetAttribute(name: "Version");
                             bool upgrade = !StringComparer.InvariantCultureIgnoreCase.Equals(installedVersion, entry.Value);
-                            Console.WriteLine($"  >> {package} Installed: {installedVersion} Upgrade: {upgrade}");
 
                             if (upgrade)
                             {
+                                Console.WriteLine($"  >> {package} Installed: {installedVersion} Upgrade: True. New Version: {entry.Value}.");
                                 // Set the package Id to be that from nuget
                                 if (fromNuget && StringComparer.InvariantCultureIgnoreCase.Equals(package, entry.Key) &&
                                     !StringComparer.InvariantCultureIgnoreCase.Equals(package, entry.Key))
@@ -158,6 +158,10 @@ namespace UpdatePackages
 
                                 node.SetAttribute(name: "Version", value: entry.Value);
                                 changes++;
+                            }
+                            else
+                            {
+                                Console.WriteLine($"  >> {package} Installed: {installedVersion} Upgrade: False.");
                             }
 
                             break;
