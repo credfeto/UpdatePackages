@@ -172,7 +172,7 @@ namespace UpdatePackages
 
                 if (changes > 0)
                 {
-                    Console.WriteLine($"  === UPDATED ===");
+                    Console.WriteLine($"=========== UPDATED ===========");
                     doc.Save(project);
                 }
             }
