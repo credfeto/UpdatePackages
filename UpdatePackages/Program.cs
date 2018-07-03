@@ -133,6 +133,7 @@ namespace UpdatePackages
 
             if (nodes.Count > 0)
             {
+                Console.WriteLine();
                 Console.WriteLine($"* {project}");
 
                 foreach (XmlElement node in nodes)
