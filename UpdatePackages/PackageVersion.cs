@@ -16,37 +16,12 @@ namespace UpdatePackages
 
         public bool Equals(PackageVersion other)
         {
-            if (ReferenceEquals(objA: null, objB: other))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            return string.Equals(this.PackageId, other.PackageId, StringComparison.OrdinalIgnoreCase);
+            return !ReferenceEquals(objA: null, objB: other) && (ReferenceEquals(this, other) || string.Equals(this.PackageId, other.PackageId, StringComparison.OrdinalIgnoreCase));
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(objA: null, objB: obj))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            if (obj.GetType() != this.GetType())
-            {
-                return false;
-            }
-
-            return this.Equals((PackageVersion) obj);
+            return !ReferenceEquals(objA: null, objB: obj) && (ReferenceEquals(this, obj) || obj.GetType() == this.GetType() && this.Equals((PackageVersion) obj));
         }
 
         public override int GetHashCode()
