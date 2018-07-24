@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using Microsoft.Extensions.Configuration;
+using NuGet.Versioning;
 
 namespace UpdatePackages
 {
@@ -145,14 +146,14 @@ namespace UpdatePackages
                         if (IsMatch(package, entry.Key))
                         {
                             string installedVersion = node.GetAttribute(name: "Version");
-                            bool upgrade = !StringComparer.InvariantCultureIgnoreCase.Equals(installedVersion, entry.Value);
+                            bool upgrade = ShouldUpgrade(installedVersion, entry);
 
                             if (upgrade)
                             {
                                 Console.WriteLine($"  >> {package} Installed: {installedVersion} Upgrade: True. New Version: {entry.Value}.");
+
                                 // Set the package Id to be that from nuget
-                                if (fromNuget && StringComparer.InvariantCultureIgnoreCase.Equals(package, entry.Key) &&
-                                    !StringComparer.InvariantCultureIgnoreCase.Equals(package, entry.Key))
+                                if (fromNuget && StringComparer.InvariantCultureIgnoreCase.Equals(package, entry.Key) && !StringComparer.InvariantCultureIgnoreCase.Equals(package, entry.Key))
                                 {
                                     node.SetAttribute(name: "Include", value: entry.Key);
                                 }
@@ -178,6 +179,19 @@ namespace UpdatePackages
             }
 
             return changes;
+        }
+
+        private static bool ShouldUpgrade(string installedVersion, KeyValuePair<string, string> entry)
+        {
+            if (!StringComparer.InvariantCultureIgnoreCase.Equals(installedVersion, entry.Value))
+            {
+                NuGetVersion iv = new NuGetVersion(installedVersion);
+                NuGetVersion ev = new NuGetVersion(entry.Value);
+
+                return iv < ev;
+            }
+
+            return false;
         }
 
         private static XmlDocument TryLoadDocument(string project)
