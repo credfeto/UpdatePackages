@@ -1,0 +1,4 @@
+[ver:1,total:900]
+UpdatePackages/Program.cs:530,1534928400:200,1534964400:180,1535014800:30,1535040000:120,m
+UpdatePackages/UpdatePackages.csproj:350,1534928400:140,1535014800:210,r
+UpdatePackages/PackageVersion.cs:20,1534928400:20,r
