@@ -81,7 +81,7 @@ namespace UpdatePackages
             {
                 if (p == null)
                 {
-                    throw new Exception($"ERROR: Could not execute {psi.FileName} {psi.Arguments}");
+                    throw new NotSupportedException($"ERROR: Could not execute {psi.FileName} {psi.Arguments}");
                 }
 
                 StreamReader s = p.StandardOutput;
