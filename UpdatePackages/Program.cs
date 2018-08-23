@@ -41,7 +41,7 @@ namespace UpdatePackages
                     packages.Add(prefix, version);
                 }
 
-                IEnumerable<string> projects = Directory.EnumerateFiles(folder, searchPattern: "*.csproj", searchOption: SearchOption.AllDirectories);
+                IEnumerable<string> projects = Directory.EnumerateFiles(folder, searchPattern: "*.csproj", SearchOption.AllDirectories);
 
                 int updates = 0;
 
@@ -75,7 +75,7 @@ namespace UpdatePackages
         {
             Console.WriteLine(value: "Enumerating matching packages...");
 
-            ProcessStartInfo psi = new ProcessStartInfo(fileName: "nuget.exe", arguments: "list " + prefix) {RedirectStandardOutput = true, CreateNoWindow = true};
+            ProcessStartInfo psi = new ProcessStartInfo(fileName: "nuget.exe", "list " + prefix) {RedirectStandardOutput = true, CreateNoWindow = true};
 
             using (Process p = Process.Start(psi))
             {
@@ -92,7 +92,7 @@ namespace UpdatePackages
 
                     PackageVersion packageVersion = ExtractPackageVersion(line);
 
-                    if (packageVersion != null)
+                    if (packageVersion != null && !IsBannedPackage(packageVersion))
                     {
                         packages.TryAdd(packageVersion.PackageId, packageVersion.Version);
                     }
@@ -100,6 +100,13 @@ namespace UpdatePackages
 
                 p.WaitForExit();
             }
+        }
+
+        private static bool IsBannedPackage(PackageVersion packageVersion)
+        {
+            return packageVersion.Version.Contains(value: "+", StringComparison.Ordinal) ||
+                   StringComparer.InvariantCultureIgnoreCase.Equals(packageVersion.PackageId, y: "Microsoft.CodeAnalysis.FxCopAnalyzers") ||
+                   StringComparer.InvariantCultureIgnoreCase.Equals(packageVersion.PackageId, y: "Nuget.Version");
         }
 
         private static PackageVersion ExtractPackageVersion(string line)
@@ -155,10 +162,10 @@ namespace UpdatePackages
                                 // Set the package Id to be that from nuget
                                 if (fromNuget && StringComparer.InvariantCultureIgnoreCase.Equals(package, entry.Key) && !StringComparer.InvariantCultureIgnoreCase.Equals(package, entry.Key))
                                 {
-                                    node.SetAttribute(name: "Include", value: entry.Key);
+                                    node.SetAttribute(name: "Include", entry.Key);
                                 }
 
-                                node.SetAttribute(name: "Version", value: entry.Value);
+                                node.SetAttribute(name: "Version", entry.Value);
                                 changes++;
                             }
                             else
@@ -173,7 +180,7 @@ namespace UpdatePackages
 
                 if (changes > 0)
                 {
-                    Console.WriteLine($"=========== UPDATED ===========");
+                    Console.WriteLine(value: "=========== UPDATED ===========");
                     doc.Save(project);
                 }
             }
