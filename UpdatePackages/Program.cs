@@ -94,7 +94,7 @@ namespace UpdatePackages
 
                     if (packageVersion != null)
                     {
-                        packages.Add(packageVersion.PackageId, packageVersion.Version);
+                        packages.TryAdd(packageVersion.PackageId, packageVersion.Version);
                     }
                 }
 
