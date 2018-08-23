@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace UpdatePackages
 {
-    [DebuggerDisplay("{PackageId} {Version}")]
+    [DebuggerDisplay(value: "{PackageId} {Version}")]
     public sealed class PackageVersion : IEquatable<PackageVersion>
     {
         public PackageVersion(string packageId, string version)
@@ -18,12 +18,12 @@ namespace UpdatePackages
 
         public bool Equals(PackageVersion other)
         {
-            return !ReferenceEquals(objA: null, objB: other) && (ReferenceEquals(this, other) || string.Equals(this.PackageId, other.PackageId, StringComparison.OrdinalIgnoreCase));
+            return !ReferenceEquals(objA: null, other) && (ReferenceEquals(this, other) || string.Equals(this.PackageId, other.PackageId, StringComparison.OrdinalIgnoreCase));
         }
 
         public override bool Equals(object obj)
         {
-            return !ReferenceEquals(objA: null, objB: obj) && (ReferenceEquals(this, obj) || obj.GetType() == this.GetType() && this.Equals((PackageVersion) obj));
+            return !ReferenceEquals(objA: null, obj) && (ReferenceEquals(this, obj) || obj.GetType() == this.GetType() && this.Equals((PackageVersion) obj));
         }
 
         public override int GetHashCode()
