@@ -221,7 +221,7 @@ namespace UpdatePackages
 
         private static bool IsMatch(string package, string prefix)
         {
-            return package.Equals(prefix, StringComparison.OrdinalIgnoreCase) || package.StartsWith(prefix + ".", StringComparison.OrdinalIgnoreCase);
+            return package.Equals(prefix, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

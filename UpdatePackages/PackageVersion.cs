@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace UpdatePackages
 {
+    [DebuggerDisplay("{PackageId} {Version}")]
     public sealed class PackageVersion : IEquatable<PackageVersion>
     {
         public PackageVersion(string packageId, string version)
