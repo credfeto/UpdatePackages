@@ -55,13 +55,15 @@ namespace UpdatePackages
                 if (updates > 0)
                 {
                     Console.WriteLine($"Total Updates: {updates}");
+
+                    return SUCCESS;
                 }
                 else
                 {
                     Console.WriteLine(value: "No updates made.");
-                }
 
-                return updates == 0 ? SUCCESS : ERROR;
+                    return ERROR;
+                }
             }
             catch (Exception exception)
             {
