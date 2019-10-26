@@ -61,7 +61,7 @@ namespace UpdatePackages
                     Console.WriteLine(value: "No updates made.");
                 }
 
-                return SUCCESS;
+                return updates == 0 ? SUCCESS : ERROR;
             }
             catch (Exception exception)
             {
