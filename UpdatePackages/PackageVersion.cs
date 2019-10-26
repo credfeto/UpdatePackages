@@ -16,12 +16,12 @@ namespace UpdatePackages
 
         public string Version { get; }
 
-        public bool Equals(PackageVersion other)
+        public bool Equals(PackageVersion? other)
         {
             return !ReferenceEquals(objA: null, other) && (ReferenceEquals(this, other) || string.Equals(this.PackageId, other.PackageId, StringComparison.OrdinalIgnoreCase));
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return !ReferenceEquals(objA: null, obj) && (ReferenceEquals(this, obj) || obj.GetType() == this.GetType() && this.Equals((PackageVersion) obj));
         }
@@ -31,12 +31,12 @@ namespace UpdatePackages
             return StringComparer.OrdinalIgnoreCase.GetHashCode(this.PackageId);
         }
 
-        public static bool operator ==(PackageVersion left, PackageVersion right)
+        public static bool operator ==(PackageVersion? left, PackageVersion? right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(PackageVersion left, PackageVersion right)
+        public static bool operator !=(PackageVersion? left, PackageVersion? right)
         {
             return !Equals(left, right);
         }

@@ -1,8 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RuleSet Name="Custom Rulset" Description="Custom Rulset" ToolsVersion="15.0">
-  <Rules AnalyzerId="AsyncUsageAnalyzers" RuleNamespace="AsyncUsageAnalyzers">
-    <Rule Id="UseConfigureAwait" Action="Error" />
-  </Rules>
   <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
     <Rule Id="CA1001" Action="Hidden" />
     <Rule Id="CA1003" Action="Warning" />
@@ -13,6 +10,8 @@
     <Rule Id="CA1018" Action="Warning" />
     <Rule Id="CA1025" Action="Warning" />
     <Rule Id="CA1028" Action="Warning" />
+    <Rule Id="CA1030" Action="Hidden" />
+      <Rule Id="CA1031" Action="Hidden"/>
     <Rule Id="CA1033" Action="Hidden" />
     <Rule Id="CA1034" Action="Warning" />
     <Rule Id="CA1036" Action="Warning" />
@@ -35,10 +34,12 @@
     <Rule Id="CA1059" Action="Warning" />
     <Rule Id="CA1060" Action="Warning" />
     <Rule Id="CA1061" Action="Warning" />
+      <Rule Id="CA1062" Action="Hidden"/>
     <Rule Id="CA1063" Action="Warning" />
     <Rule Id="CA1064" Action="Warning" />
     <Rule Id="CA1065" Action="Warning" />
     <Rule Id="CA1301" Action="Warning" />
+      <Rule Id="CA1303" Action="Hidden"/>
     <Rule Id="CA1305" Action="Hidden" />
     <Rule Id="CA1306" Action="Warning" />
     <Rule Id="CA1307" Action="Hidden" />
@@ -51,16 +52,17 @@
     <Rule Id="CA1405" Action="Warning" />
     <Rule Id="CA1410" Action="Warning" />
     <Rule Id="CA1415" Action="Warning" />
-    <Rule Id="CA1501" Action="Warning" />
+      <Rule Id="CA1501" Action="Hidden"/>
     <Rule Id="CA1502" Action="Warning" />
     <Rule Id="CA1504" Action="Warning" />
     <Rule Id="CA1505" Action="Warning" />
-    <Rule Id="CA1506" Action="Warning" />
+    <Rule Id="CA1506" Action="Hidden" />
     <Rule Id="CA1600" Action="Warning" />
     <Rule Id="CA1601" Action="Warning" />
     <Rule Id="CA1700" Action="Warning" />
     <Rule Id="CA1707" Action="Hidden" />
     <Rule Id="CA1710" Action="Hidden" />
+      <Rule Id="CA1712" Action="Hidden"/>
     <Rule Id="CA1716" Action="Hidden" />
     <Rule Id="CA1717" Action="Hidden" />
     <Rule Id="CA1724" Action="Hidden" />
@@ -95,7 +97,7 @@
     <Rule Id="CA2003" Action="Warning" />
     <Rule Id="CA2004" Action="Warning" />
     <Rule Id="CA2006" Action="Warning" />
-    <Rule Id="CA2007" Action="Hidden" />
+      <Rule Id="CA2007" Action="None"/>
     <Rule Id="CA2008" Action="Hidden" />
     <Rule Id="CA2100" Action="Warning" />
     <Rule Id="CA2101" Action="Warning" />
@@ -162,4 +164,29 @@
     <Rule Id="SA1600" Action="None" />
     <Rule Id="SA1609" Action="Warning" />
   </Rules>
+    <Rules AnalyzerId="SonarAnalyzer.CSharp" RuleNamespace="SonarAnalyzer.CSharp">
+        <Rule Id="S125" Action="None"/> <!-- Commented out code -->
+        <Rule Id="S1075" Action="None"/>
+        <Rule Id="S1066" Action="None"/>
+        <Rule Id="S1118" Action="None"/>
+        <Rule Id="S1135" Action="Info"/> <!-- TODO' -->
+        <Rule Id="S1168" Action="None"/>
+        <Rule Id="S1450" Action="None"/>
+		<Rule Id="S1764" Action="None"/>
+        <Rule Id="S1854" Action="None"/>
+		<Rule Id="S2326" Action="None"/>
+        <Rule Id="S2344" Action="Error"/>
+        <Rule Id="S2365" Action="None"/>
+        <Rule Id="S2368" Action="None"/>
+        <Rule Id="S2699" Action="None"/>
+        <Rule Id="S3218" Action="None"/>
+        <Rule Id="S3442" Action="None"/>
+        <Rule Id="S3459" Action="None"/>
+        <Rule Id="S3925" Action="None"/>
+        <Rule Id="S3963" Action="None"/>
+        <Rule Id="S4035" Action="None"/>
+        <Rule Id="S4070" Action="None"/>
+        <Rule Id="S4275" Action="None"/>
+        <Rule Id="S4457" Action="None"/>
+    </Rules>
 </RuleSet>

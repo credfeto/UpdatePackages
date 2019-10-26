@@ -8,7 +8,7 @@ using NuGet.Versioning;
 
 namespace UpdatePackages
 {
-    internal class Program
+    internal static class Program
     {
         private const int SUCCESS = 0;
         private const int ERROR = 1;
@@ -88,9 +88,9 @@ namespace UpdatePackages
 
                 while (!s.EndOfStream)
                 {
-                    string line = p.StandardOutput.ReadLine();
+                    string? line = p.StandardOutput.ReadLine();
 
-                    PackageVersion packageVersion = ExtractPackageVersion(line);
+                    PackageVersion? packageVersion = ExtractPackageVersion(line);
 
                     if (packageVersion != null && !IsBannedPackage(packageVersion))
                     {
@@ -109,7 +109,7 @@ namespace UpdatePackages
                    StringComparer.InvariantCultureIgnoreCase.Equals(packageVersion.PackageId, y: "Nuget.Version");
         }
 
-        private static PackageVersion ExtractPackageVersion(string line)
+        private static PackageVersion? ExtractPackageVersion(string? line)
         {
             if (string.IsNullOrWhiteSpace(line))
             {
@@ -129,7 +129,7 @@ namespace UpdatePackages
 
         private static int UpdateProject(string project, Dictionary<string, string> packages, bool fromNuget)
         {
-            XmlDocument doc = TryLoadDocument(project);
+            XmlDocument? doc = TryLoadDocument(project);
 
             if (doc == null)
             {
@@ -144,8 +144,13 @@ namespace UpdatePackages
                 Console.WriteLine();
                 Console.WriteLine($"* {project}");
 
-                foreach (XmlElement node in nodes)
+                foreach (XmlElement? node in nodes)
                 {
+                    if (node == null)
+                    {
+                        continue;
+                    }
+
                     string package = node.GetAttribute(name: "Include");
 
                     foreach (KeyValuePair<string, string> entry in packages)
@@ -201,7 +206,7 @@ namespace UpdatePackages
             return false;
         }
 
-        private static XmlDocument TryLoadDocument(string project)
+        private static XmlDocument? TryLoadDocument(string project)
         {
             try
             {
