@@ -92,7 +92,7 @@ namespace UpdatePackages
 
                     PackageVersion? packageVersion = ExtractPackageVersion(line);
 
-                    if (packageVersion != null && !IsBannedPackage(packageVersion))
+                    if (packageVersion != null && Matches(prefix, packageVersion) && !IsBannedPackage(packageVersion))
                     {
                         packages.TryAdd(packageVersion.PackageId, packageVersion.Version);
                     }
@@ -102,10 +102,14 @@ namespace UpdatePackages
             }
         }
 
+        private static bool Matches(string prefix, PackageVersion packageVersion)
+        {
+            return IsMatch(packageVersion.PackageId, prefix);
+        }
+
         private static bool IsBannedPackage(PackageVersion packageVersion)
         {
-            return packageVersion.Version.Contains(value: "+", StringComparison.Ordinal) ||
-                   StringComparer.InvariantCultureIgnoreCase.Equals(packageVersion.PackageId, y: "Nuget.Version");
+            return packageVersion.Version.Contains(value: "+", StringComparison.Ordinal) || StringComparer.InvariantCultureIgnoreCase.Equals(packageVersion.PackageId, y: "Nuget.Version");
         }
 
         private static PackageVersion? ExtractPackageVersion(string? line)
