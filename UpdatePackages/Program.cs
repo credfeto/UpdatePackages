@@ -105,7 +105,6 @@ namespace UpdatePackages
         private static bool IsBannedPackage(PackageVersion packageVersion)
         {
             return packageVersion.Version.Contains(value: "+", StringComparison.Ordinal) ||
-                   StringComparer.InvariantCultureIgnoreCase.Equals(packageVersion.PackageId, y: "Microsoft.CodeAnalysis.FxCopAnalyzers") ||
                    StringComparer.InvariantCultureIgnoreCase.Equals(packageVersion.PackageId, y: "Nuget.Version");
         }
 
