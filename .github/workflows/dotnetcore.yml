@@ -20,4 +20,4 @@ jobs:
     - name: Pack tool 
       run: dotnet pack --configuration Release -o dist
     - name: publish
-      run: dotnet nuget push dist/*.nupkg -apikey ${{ secrets.GITHUB_TOKEN }} -source https://nuget.pkg.github.com/credfeto/index.json
+      run: dotnet nuget push dist/*.nupkg --apikey ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/credfeto/index.json
