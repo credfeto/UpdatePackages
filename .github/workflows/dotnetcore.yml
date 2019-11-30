@@ -20,12 +20,12 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
       with:
         dotnet-version: 3.0.100
+    - name: Setup Nuget
+      uses: warrenbuckley/Setup-Nuget@v1
     - name: Build with dotnet
       run: dotnet build --configuration Release /p:Version=1.0.0.${{ steps.buildnumber.outputs.build_number }} 
     - name: Publish tool 
       run: dotnet publish --configuration=release -o prepublish\lib --no-build --no-restore /p:Version=1.0.0.${{ steps.buildnumber.outputs.build_number }}
-    - name: install nuget
-      run: apt-get install nuget 
     - name: pack tool
       run: nuget pack prepublish\package.nuspec -tool -outputdirectory dist
     - name: publish
