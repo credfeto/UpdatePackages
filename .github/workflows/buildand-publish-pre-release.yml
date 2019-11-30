@@ -1,8 +1,9 @@
 name: .NET Core [Pre-Release]
 
-on: [push]
-    branches:
+on: [push]:
+    branches-ignore:
         - 'release/*'
+        - 'hotfix/*'
 
 jobs:
   build:
