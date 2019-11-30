@@ -22,7 +22,7 @@
     <PackageReference Include="NuGet.Protocol.Core.v3" Version="4.2.0" />
     <PackageReference Include="AsyncFixer" Version="1.1.6" PrivateAssets="All" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8" PrivateAssets="All" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="7.16.0.8981" PrivateAssets="All" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.0.0.9566" PrivateAssets="All" />
     <PackageReference Include="Roslynator.Analyzers" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="SourceLink.Create.CommandLine" Version="2.8.3" PrivateAssets="All" />
   </ItemGroup>
