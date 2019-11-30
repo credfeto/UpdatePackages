@@ -306,3 +306,4 @@ appsettings-test-local.json
 *.dcvr
 
 /.gtm/
+prepublish/lib
