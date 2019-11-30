@@ -1,10 +1,14 @@
 name: .NET Core [Pre-Release]
 
 on:
-  [push, pull_request]:
+  push:
     branches-ignore:
      - 'release/*'
      - 'hotfix/*'
+    pull_request:
+     - opened
+     - edited
+     - synchronize
 
 jobs:
   build:
