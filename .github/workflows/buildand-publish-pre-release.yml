@@ -17,10 +17,10 @@ jobs:
     - run: |
           git fetch --tags
           git branch --create-reflog master origin/master
-    - name: Install GitVersion
-      uses: gittools/actions/setup-gitversion@v0.3
-      with:
-        versionSpec: '5.1.x'
+#    - name: Install GitVersion
+#      uses: gittools/actions/setup-gitversion@v0.3
+#      with:
+#        versionSpec: '5.1.x'
 #    - name: Use GitVersion
 #      id: gitversion # step id used as reference for output values
 #      uses: gittools/actions/execute-gitversion@v0.3
