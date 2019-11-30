@@ -1,7 +1,7 @@
 name: .NET Core [Release]
 
 on:
-  [push]:
+  push:
      branches:
        - 'release/*'
        - 'hotfix/*'
