@@ -48,9 +48,13 @@ jobs:
     - name: Setup Nuget
       run: sudo apt-get install nuget
     - name: Build with dotnet
-      run: dotnet build --configuration Release /p:Version=${{ steps.gitversion.outputs.major }}.${{ steps.gitversion.outputs.minor }}.${{ steps.gitversion.outputs.patch }}.${{ steps.buildnumber.outputs.build_number }}${{ steps.gitversion.outputs.preReleaseTagWithDash }}
+      run: |
+             cd src
+             dotnet build --configuration Release /p:Version=${{ steps.gitversion.outputs.major }}.${{ steps.gitversion.outputs.minor }}.${{ steps.gitversion.outputs.patch }}.${{ steps.buildnumber.outputs.build_number }}${{ steps.gitversion.outputs.preReleaseTagWithDash }}
     - name: Publish tool
-      run: dotnet publish --configuration=release -o prepublish/lib --no-build --no-restore /p:Version=${{ steps.gitversion.outputs.major }}.${{ steps.gitversion.outputs.minor }}.${{ steps.gitversion.outputs.patch }}.${{ steps.buildnumber.outputs.build_number }}${{ steps.gitversion.outputs.preReleaseTagWithDash }}
+      run: |
+             cd src
+             dotnet publish --configuration=release -o ../prepublish/lib --no-build --no-restore /p:Version=${{ steps.gitversion.outputs.major }}.${{ steps.gitversion.outputs.minor }}.${{ steps.gitversion.outputs.patch }}.${{ steps.buildnumber.outputs.build_number }}${{ steps.gitversion.outputs.preReleaseTagWithDash }}
     - name: pack tool
       run: nuget pack prepublish/package.nuspec -tool -outputdirectory dist -version ${{ steps.gitversion.outputs.major }}.${{ steps.gitversion.outputs.minor }}.${{ steps.gitversion.outputs.patch }}.${{ steps.buildnumber.outputs.build_number }}${{ steps.gitversion.outputs.preReleaseTagWithDash }}
     - name: publish
