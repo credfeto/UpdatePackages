@@ -71,9 +71,11 @@ namespace UpdatePackages
 
                 int updates = 0;
 
+                Dictionary<string, string> updatesMade = new Dictionary<string, string>();
+
                 foreach (string project in projects)
                 {
-                    updates += UpdateProject(project, packages, fromNuget);
+                    updates += UpdateProject(project, packages, fromNuget, updatesMade);
                 }
 
                 Console.WriteLine();
@@ -81,6 +83,11 @@ namespace UpdatePackages
                 if (updates > 0)
                 {
                     Console.WriteLine($"Total Updates: {updates}");
+
+                    foreach (KeyValuePair<string, string> update in updatesMade)
+                    {
+                        Console.WriteLine($"echo ::set-env name={update.Key}::{update.Value}");
+                    }
 
                     return SUCCESS;
                 }
@@ -139,7 +146,7 @@ namespace UpdatePackages
             return packageVersion.Version.Contains(value: "+", StringComparison.Ordinal) || StringComparer.InvariantCultureIgnoreCase.Equals(packageVersion.PackageId, y: "Nuget.Version");
         }
 
-        private static int UpdateProject(string project, Dictionary<string, string> packages, bool fromNuget)
+        private static int UpdateProject(string project, Dictionary<string, string> packages, bool fromNuget, Dictionary<string, string> updatesMade)
         {
             XmlDocument? doc = TryLoadDocument(project);
 
@@ -184,6 +191,7 @@ namespace UpdatePackages
 
                                 node.SetAttribute(name: "Version", entry.Value);
                                 changes++;
+                                updatesMade.TryAdd(entry.Key, entry.Value);
                             }
                             else
                             {
