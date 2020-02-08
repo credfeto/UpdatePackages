@@ -2,6 +2,12 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdatePackages", "UpdatePackages\UpdatePackages.csproj", "{E2322FAD-2D45-4182-84C4-F53398C149C8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Config", "Config", "{30AF6B5C-FD89-4B87-AC02-59AAF150C123}"
+ProjectSection(SolutionItems) = preProject
+	global.json = global.json
+	CodeAnalysis.ruleset = CodeAnalysis.ruleset
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
