@@ -59,7 +59,7 @@ namespace UpdatePackages
 
                 if (string.IsNullOrWhiteSpace(version))
                 {
-                    await FindPackages(sources, prefix, packages, CancellationToken.None);
+                    await FindPackagesAsync(sources, prefix, packages, CancellationToken.None);
                     fromNuget = true;
                 }
                 else
@@ -104,13 +104,13 @@ namespace UpdatePackages
             }
         }
 
-        private static async Task FindPackages(List<PackageSource> sources, string prefix, Dictionary<string, string> packages, CancellationToken cancellationToken)
+        private static async Task FindPackagesAsync(List<PackageSource> sources, string prefix, Dictionary<string, string> packages, CancellationToken cancellationToken)
         {
             Console.WriteLine(value: "Enumerating matching packages...");
 
             ConcurrentDictionary<string, string> found = new ConcurrentDictionary<string, string>();
 
-            await Task.WhenAll(sources.Select(selector: source => LoadPackagesFromSource(source, prefix, found, cancellationToken)));
+            await Task.WhenAll(sources.Select(selector: source => LoadPackagesFromSourceAsync(source, prefix, found, cancellationToken)));
 
             foreach (KeyValuePair<string, string> item in found)
             {
@@ -118,7 +118,10 @@ namespace UpdatePackages
             }
         }
 
-        private static async Task LoadPackagesFromSource(PackageSource packageSource, string prefix, ConcurrentDictionary<string, string> concurrentDictionary, CancellationToken cancellationToken)
+        private static async Task LoadPackagesFromSourceAsync(PackageSource packageSource,
+                                                              string prefix,
+                                                              ConcurrentDictionary<string, string> concurrentDictionary,
+                                                              CancellationToken cancellationToken)
         {
             SourceRepository sourceRepository = new SourceRepository(packageSource, new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3()));
 
