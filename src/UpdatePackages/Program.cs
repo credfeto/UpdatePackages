@@ -106,33 +106,33 @@ namespace UpdatePackages
 
         private static async Task FindPackages(List<PackageSource> sources, string prefix, Dictionary<string, string> packages, CancellationToken cancellationToken)
         {
-            async Task LoadPackagesFromSource(PackageSource packageSource, ConcurrentDictionary<string, string> concurrentDictionary)
-            {
-                SourceRepository sourceRepository = new SourceRepository(packageSource, new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3()));
-
-                PackageSearchResource searcher = await sourceRepository.GetResourceAsync<PackageSearchResource>(cancellationToken);
-                IEnumerable<IPackageSearchMetadata> result = await searcher.SearchAsync(prefix, SearchFilter, log: NugetLogger, cancellationToken: cancellationToken, skip: 0, take: int.MaxValue);
-
-                foreach (IPackageSearchMetadata entry in result)
-                {
-                    PackageVersion packageVersion = new PackageVersion(entry.Identity.Id, entry.Identity.Version.ToString());
-
-                    if (Matches(prefix, packageVersion) && !IsBannedPackage(packageVersion))
-                    {
-                        concurrentDictionary.TryAdd(packageVersion.PackageId, packageVersion.Version);
-                    }
-                }
-            }
-
             Console.WriteLine(value: "Enumerating matching packages...");
 
             ConcurrentDictionary<string, string> found = new ConcurrentDictionary<string, string>();
 
-            await Task.WhenAll(sources.Select(selector: source => LoadPackagesFromSource(source, found)));
+            await Task.WhenAll(sources.Select(selector: source => LoadPackagesFromSource(source, prefix, found, cancellationToken)));
 
             foreach (KeyValuePair<string, string> item in found)
             {
                 packages.TryAdd(item.Key, item.Value);
+            }
+        }
+
+        private static async Task LoadPackagesFromSource(PackageSource packageSource, string prefix, ConcurrentDictionary<string, string> concurrentDictionary, CancellationToken cancellationToken)
+        {
+            SourceRepository sourceRepository = new SourceRepository(packageSource, new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3()));
+
+            PackageSearchResource searcher = await sourceRepository.GetResourceAsync<PackageSearchResource>(cancellationToken);
+            IEnumerable<IPackageSearchMetadata> result = await searcher.SearchAsync(prefix, SearchFilter, log: NugetLogger, cancellationToken: cancellationToken, skip: 0, take: int.MaxValue);
+
+            foreach (IPackageSearchMetadata entry in result)
+            {
+                PackageVersion packageVersion = new PackageVersion(entry.Identity.Id, entry.Identity.Version.ToString());
+
+                if (Matches(prefix, packageVersion) && !IsBannedPackage(packageVersion))
+                {
+                    concurrentDictionary.TryAdd(packageVersion.PackageId, packageVersion.Version);
+                }
             }
         }
 
