@@ -21,6 +21,8 @@ jobs:
       run: |
           git fetch --tags
           git branch --create-reflog master origin/master
+          echo REF: $GITHUB_REF
+          echo SHA: $GITHUB_SHA
     - name: Generate build number
       id: buildnumber
       uses: einaregilsson/build-number@v2
