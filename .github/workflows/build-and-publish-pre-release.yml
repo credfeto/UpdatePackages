@@ -38,7 +38,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        dotnet-version: 3.1.102
+        dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: Setup Nuget
       run: sudo apt-get install nuget
     - name: Install Build Version Tool
