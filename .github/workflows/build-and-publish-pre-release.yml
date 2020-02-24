@@ -40,7 +40,7 @@ jobs:
       run: nuget install FunFair.BuildVersion -ExcludeVersion -Source ${{ secrets.FUNFAIR_NUGET_FEED }}
     - name: Set Define Build Version
       env:
-        GITHUB_VERSION: ${{env.GITHUB_REF}}
+        GIT_BRANCH: ${{env.GITHUB_REF}}
       run: dotnet FunFair.BuildVersion/lib/BuildVersion.dll  ${{ steps.buildnumber.outputs.build_number }}
     - name: Build with dotnet
       run: |
