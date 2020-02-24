@@ -165,11 +165,13 @@
         <Rule Id="SA1609" Action="Warning"/>
     </Rules>
     <Rules AnalyzerId="SonarAnalyzer.CSharp" RuleNamespace="SonarAnalyzer.CSharp">
-        <Rule Id="S125" Action="None"/> <!-- Commented out code -->
+        <Rule Id="S125" Action="None"/>
+        <!-- Commented out code -->
         <Rule Id="S1075" Action="None"/>
         <Rule Id="S1066" Action="None"/>
         <Rule Id="S1118" Action="None"/>
-        <Rule Id="S1135" Action="Info"/> <!-- TODO' -->
+        <Rule Id="S1135" Action="Info"/>
+        <!-- TODO' -->
         <Rule Id="S1168" Action="None"/>
         <Rule Id="S1450" Action="None"/>
         <Rule Id="S1764" Action="None"/>
@@ -185,8 +187,20 @@
         <Rule Id="S3925" Action="None"/>
         <Rule Id="S3963" Action="None"/>
         <Rule Id="S4035" Action="None"/>
+        <Rule Id="S4136" Action="None"/>
         <Rule Id="S4070" Action="None"/>
         <Rule Id="S4275" Action="None"/>
         <Rule Id="S4457" Action="None"/>
+    </Rules>
+    <Rules AnalyzerId="FunFair.CodeAnalysis" RuleNamespace="FunFair.CodeAnalysis">
+        <Rule Id="FFS0001" Action="Error"/>
+        <Rule Id="FFS0002" Action="Error"/>
+        <Rule Id="FFS0003" Action="Error"/>
+        <Rule Id="FFS0004" Action="Error"/>
+        <Rule Id="FFS0005" Action="Error"/>
+        <Rule Id="FFS0006" Action="Error"/>
+        <Rule Id="FFS0007" Action="Error"/>
+        <!-- Use of non-whitelisted #pragma warning -->
+        <Rule Id="FFS0008" Action="Error"/>
     </Rules>
 </RuleSet>
