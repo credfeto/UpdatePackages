@@ -23,6 +23,7 @@ jobs:
           git branch --create-reflog master origin/master
           echo REF: $GITHUB_REF
           echo SHA: $GITHUB_SHA
+          echo ::set-env name=GIT_BRANCH::$GITHUB_REF
     - name: Generate build number
       id: buildnumber
       uses: einaregilsson/build-number@v2
