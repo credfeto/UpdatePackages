@@ -20,6 +20,10 @@ jobs:
           echo REF: $GITHUB_REF
           echo SHA: $GITHUB_SHA
           echo ::set-env name=GIT_BRANCH::$GITHUB_REF
+    - name: Determine .net core version
+      run: |
+          echo .NET Core Version: `sed -n 's|.*"version":\s*"\([^"]*\)".*|\1|p' src/global.json`
+          echo ::set-env name=DOTNET_VERSION::`sed -n 's|.*"version":\s*"\([^"]*\)".*|\1|p' src/global.json`
     - name: Generate build number
       id: buildnumber
       uses: einaregilsson/build-number@v2
@@ -30,13 +34,13 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        dotnet-version: 3.1.102
+        dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: Setup Nuget
       run: sudo apt-get install nuget
     - name: Install Build Version Tool
       run: nuget install FunFair.BuildVersion -ExcludeVersion -Source ${{ secrets.FUNFAIR_NUGET_FEED }}
     - name: Set Define Build Version
-      run: dotnet FunFair.BuildVersion/lib/BuildVersion.dll  ${{ steps.buildnumber.outputs.build_number }}
+      run: dotnet FunFair.BuildVersion/lib/BuildVersion.dll  ${{ steps.buildnumber.outputs.build_number }} 
     - name: Build with dotnet
       run: |
              cd src
