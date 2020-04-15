@@ -32,8 +32,12 @@ namespace UpdatePackages
             try
             {
                 IConfigurationRoot configuration = new ConfigurationBuilder()
-                    .AddCommandLine(args, new Dictionary<string, string> {{@"-prefix", @"prefix"}, {@"-version", @"version"}, {@"-folder", @"folder"}, {@"-source", @"source"}})
-                    .Build();
+                                                   .AddCommandLine(args,
+                                                                   new Dictionary<string, string>
+                                                                   {
+                                                                       {@"-prefix", @"prefix"}, {@"-version", @"version"}, {@"-folder", @"folder"}, {@"-source", @"source"}
+                                                                   })
+                                                   .Build();
 
                 Dictionary<string, string> packages = new Dictionary<string, string>();
 
@@ -48,7 +52,7 @@ namespace UpdatePackages
                 PackageSourceProvider packageSourceProvider = new PackageSourceProvider(Settings.LoadDefaultSettings(Environment.CurrentDirectory));
 
                 List<PackageSource> sources = packageSourceProvider.LoadPackageSources()
-                    .ToList();
+                                                                   .ToList();
 
                 if (!string.IsNullOrEmpty(source))
                 {
@@ -126,7 +130,8 @@ namespace UpdatePackages
             SourceRepository sourceRepository = new SourceRepository(packageSource, new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3()));
 
             PackageSearchResource searcher = await sourceRepository.GetResourceAsync<PackageSearchResource>(cancellationToken);
-            IEnumerable<IPackageSearchMetadata> result = await searcher.SearchAsync(prefix, SearchFilter, log: NugetLogger, cancellationToken: cancellationToken, skip: 0, take: int.MaxValue);
+            IEnumerable<IPackageSearchMetadata> result =
+                await searcher.SearchAsync(prefix, SearchFilter, log: NugetLogger, cancellationToken: cancellationToken, skip: 0, take: int.MaxValue);
 
             foreach (IPackageSearchMetadata entry in result)
             {
@@ -146,7 +151,8 @@ namespace UpdatePackages
 
         private static bool IsBannedPackage(PackageVersion packageVersion)
         {
-            return packageVersion.Version.Contains(value: "+", StringComparison.Ordinal) || StringComparer.InvariantCultureIgnoreCase.Equals(packageVersion.PackageId, y: "Nuget.Version");
+            return packageVersion.Version.Contains(value: "+", StringComparison.Ordinal) ||
+                   StringComparer.InvariantCultureIgnoreCase.Equals(packageVersion.PackageId, y: "Nuget.Version");
         }
 
         private static int UpdateProject(string project, Dictionary<string, string> packages, bool fromNuget, Dictionary<string, string> updatesMade)
@@ -187,7 +193,8 @@ namespace UpdatePackages
                                 Console.WriteLine($"  >> {package} Installed: {installedVersion} Upgrade: True. New Version: {entry.Value}.");
 
                                 // Set the package Id to be that from nuget
-                                if (fromNuget && StringComparer.InvariantCultureIgnoreCase.Equals(package, entry.Key) && !StringComparer.InvariantCultureIgnoreCase.Equals(package, entry.Key))
+                                if (fromNuget && StringComparer.InvariantCultureIgnoreCase.Equals(package, entry.Key) &&
+                                    !StringComparer.InvariantCultureIgnoreCase.Equals(package, entry.Key))
                                 {
                                     node.SetAttribute(name: "Include", entry.Key);
                                 }
