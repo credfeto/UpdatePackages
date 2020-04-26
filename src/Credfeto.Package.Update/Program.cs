@@ -13,7 +13,7 @@ using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
 
-namespace UpdatePackages
+namespace Credfeto.Package.Update
 {
     internal static class Program
     {

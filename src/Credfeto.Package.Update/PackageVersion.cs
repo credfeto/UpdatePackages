@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace UpdatePackages
+namespace Credfeto.Package.Update
 {
     [DebuggerDisplay(value: "{PackageId} {Version}")]
     public sealed class PackageVersion : IEquatable<PackageVersion>
