@@ -20,7 +20,7 @@
         <Company>Mark Ridgwell</Company>
         <Copyright>Mark Ridgwell</Copyright>
         <Product>Package Update Tool</Product>
-        <PackageLicenseUrl>https://raw.githubusercontent.com/credfeto/UpdatePackages/master/LICENSE</PackageLicenseUrl>
+        <PackageLicense>https://raw.githubusercontent.com/credfeto/UpdatePackages/master/LICENSE</PackageLicense>
         <NeutralLanguage>en-GB</NeutralLanguage>
     </PropertyGroup>
     <ItemGroup>
