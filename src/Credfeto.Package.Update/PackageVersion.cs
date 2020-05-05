@@ -18,12 +18,13 @@ namespace Credfeto.Package.Update
 
         public bool Equals(PackageVersion? other)
         {
-            return !ReferenceEquals(objA: null, other) && (ReferenceEquals(this, other) || string.Equals(this.PackageId, other.PackageId, StringComparison.OrdinalIgnoreCase));
+            return !ReferenceEquals(objA: null, objB: other) && (ReferenceEquals(this, objB: other) ||
+                                                                 string.Equals(a: this.PackageId, b: other.PackageId, comparisonType: StringComparison.OrdinalIgnoreCase));
         }
 
         public override bool Equals(object? obj)
         {
-            return !ReferenceEquals(objA: null, obj) && (ReferenceEquals(this, obj) || obj.GetType() == this.GetType() && this.Equals((PackageVersion) obj));
+            return !ReferenceEquals(objA: null, objB: obj) && (ReferenceEquals(this, objB: obj) || obj.GetType() == this.GetType() && this.Equals((PackageVersion) obj));
         }
 
         public override int GetHashCode()
@@ -33,12 +34,12 @@ namespace Credfeto.Package.Update
 
         public static bool operator ==(PackageVersion? left, PackageVersion? right)
         {
-            return Equals(left, right);
+            return Equals(objA: left, objB: right);
         }
 
         public static bool operator !=(PackageVersion? left, PackageVersion? right)
         {
-            return !Equals(left, right);
+            return !Equals(objA: left, objB: right);
         }
     }
 }
