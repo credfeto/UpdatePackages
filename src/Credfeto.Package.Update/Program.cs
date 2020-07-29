@@ -43,7 +43,18 @@ namespace Credfeto.Package.Update
 
                 string folder = configuration.GetValue<string>(key: @"Folder");
 
+                if (string.IsNullOrEmpty(folder))
+                {
+                    Console.WriteLine("ERROR: folder not specified");
+                    return ERROR;
+                }
+
                 string prefix = configuration.GetValue<string>(key: @"Prefix");
+                if (string.IsNullOrEmpty(prefix))
+                {
+                    Console.WriteLine("ERROR: prefix not specified");
+                    return ERROR;
+                }
 
                 string version = configuration.GetValue<string>(key: @"Version");
 
