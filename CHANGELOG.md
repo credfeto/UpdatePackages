@@ -9,6 +9,7 @@ Please ADD ALL Changes to the UNRELASED SECTION and not a specific release
 ### Added
 ### Fixed
 ### Changed
+- FF-1429 - Updated Microsoft.VisualStudio.Threading.Analyzers to 16.7.54
 ### Removed
 ### Deployment Changes
 
@@ -29,6 +30,7 @@ Releases that have at least been deployed to staging, BUT NOT necessarily releas
 - Converted to to be a dotnet tool
 
 ## [0.0.0] - Project created
+
 
 
 
