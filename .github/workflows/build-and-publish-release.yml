@@ -16,7 +16,6 @@ jobs:
     - name: Fetch tags and master
       run: |
           git fetch --tags
-          git branch --create-reflog master origin/master
           echo REF: $GITHUB_REF
           echo SHA: $GITHUB_SHA
           echo ::set-env name=GIT_BRANCH::$GITHUB_REF
@@ -33,12 +32,14 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
-    - name: Setup Nuget
-      run: sudo apt-get install nuget
+    - name: Enable dotnet tools
+      run: dotnet new tool-manifest
     - name: Install Build Version Tool
-      run: nuget install FunFair.BuildVersion -ExcludeVersion -Source ${{ secrets.FUNFAIR_NUGET_FEED }}
+      run: dotnet tool install --local FunFair.BuildVersion --add-source ${{ secrets.FUNFAIR_NUGET_FEED }}
+    - name: Install Multi-Push Tool
+      run: dotnet tool install --local Credfeto.Package.Push
     - name: Set Define Build Version
-      run: dotnet FunFair.BuildVersion/lib/BuildVersion.dll  ${{ steps.buildnumber.outputs.build_number }} 
+      run: dotnet buildversion  ${{ steps.buildnumber.outputs.build_number }} 
     - name: Build with dotnet
       run: |
         cd src
@@ -49,5 +50,4 @@ jobs:
         dotnet pack --configuration Release /p:Version=${{ env.BUILD_VERSION }} --no-restore --output ../dist
     - name: Publish
       run: |
-        cd dist
-        dotnet nuget push Credfeto.Package.Update.*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source ${{ secrets.NUGET_FEED }}
+        dotnet pushpackages -folder dist --api-key ${{ secrets.NUGET_API_KEY }} --source ${{ secrets.NUGET_FEED }}
