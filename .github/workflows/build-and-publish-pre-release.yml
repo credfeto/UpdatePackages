@@ -36,14 +36,12 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
+    - name: Enable dotnet tools
+      run: dotnet new tool-manifest
     - name: Install Build Version Tool
-      run: |
-        dotnet new tool-manifest
-        dotnet tool install --local FunFair.BuildVersion --add-source ${{ secrets.FUNFAIR_NUGET_FEED }}
+      run: dotnet tool install --local FunFair.BuildVersion --add-source ${{ secrets.FUNFAIR_NUGET_FEED }}
     - name: Install Multi-Push Tool
-      run: |
-        dotnet new tool-manifest
-        dotnet tool install --local Credfeto.Package.Push
+      run: dotnet tool install --local Credfeto.Package.Push
     - name: Set Define Build Version
       run: dotnet buildversion  ${{ steps.buildnumber.outputs.build_number }} 
     - name: Build with dotnet
