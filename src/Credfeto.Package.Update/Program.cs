@@ -29,6 +29,8 @@ namespace Credfeto.Package.Update
 
         private static async Task<int> Main(string[] args)
         {
+            Console.WriteLine($"{typeof(Program).Namespace} {ExecutableVersionInformation.ProgramVersion()}");
+
             try
             {
                 IConfigurationRoot configuration = new ConfigurationBuilder()
@@ -46,13 +48,16 @@ namespace Credfeto.Package.Update
                 if (string.IsNullOrEmpty(folder))
                 {
                     Console.WriteLine("ERROR: folder not specified");
+
                     return ERROR;
                 }
 
                 string prefix = configuration.GetValue<string>(key: @"Prefix");
+
                 if (string.IsNullOrEmpty(prefix))
                 {
                     Console.WriteLine("ERROR: prefix not specified");
+
                     return ERROR;
                 }
 
@@ -126,10 +131,7 @@ namespace Credfeto.Package.Update
             ConcurrentDictionary<string, string> found = new ConcurrentDictionary<string, string>();
 
             await Task.WhenAll(
-                sources.Select(selector: source => LoadPackagesFromSourceAsync(packageSource: source,
-                                                                               prefix: prefix,
-                                                                               concurrentDictionary: found,
-                                                                               cancellationToken: cancellationToken)));
+                sources.Select(selector: source => LoadPackagesFromSourceAsync(packageSource: source, prefix: prefix, concurrentDictionary: found, cancellationToken: cancellationToken)));
 
             foreach (KeyValuePair<string, string> item in found)
             {
