@@ -40,6 +40,10 @@ jobs:
       run: |
         dotnet new tool-manifest
         dotnet tool install --local FunFair.BuildVersion --add-source ${{ secrets.FUNFAIR_NUGET_FEED }}
+    - name: Install Multi-Push Tool
+      run: |
+        dotnet new tool-manifest
+        dotnet tool install --local Credfeto.Package.Push
     - name: Set Define Build Version
       run: dotnet buildversion  ${{ steps.buildnumber.outputs.build_number }} 
     - name: Build with dotnet
@@ -52,5 +56,4 @@ jobs:
         dotnet pack --configuration Release /p:Version=${{ env.BUILD_VERSION }} --no-restore --output ../dist
     - name: Publish
       run: |
-        cd dist
-        dotnet nuget push Credfeto.Package.Update.*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source ${{ secrets.NUGET_FEED }}
+        dotnet pushpackages -folder dist --api-key ${{ secrets.NUGET_API_KEY }} --source ${{ secrets.NUGET_FEED }}
