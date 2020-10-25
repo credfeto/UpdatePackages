@@ -189,26 +189,26 @@ namespace Credfeto.Package.Update
 
                     string package = node.GetAttribute(name: "Include");
 
-                    foreach (KeyValuePair<string, string> entry in packages)
+                    foreach ((string nugetPackageId, string nugetVersion) in packages)
                     {
-                        if (IsExactMatch(package: package, packageId: entry.Key))
+                        if (IsExactMatch(package: package, packageId: nugetPackageId))
                         {
                             string installedVersion = node.GetAttribute(name: "Version");
-                            bool upgrade = ShouldUpgrade(installedVersion: installedVersion, entry: entry);
+                            bool upgrade = ShouldUpgrade(installedVersion: installedVersion, nugetVersion: nugetVersion);
 
                             if (upgrade)
                             {
-                                Console.WriteLine($"  >> {package} Installed: {installedVersion} Upgrade: True. New Version: {entry.Value}.");
+                                Console.WriteLine($"  >> {package} Installed: {installedVersion} Upgrade: True. New Version: {nugetVersion}.");
 
                                 // Set the package Id to be that from nuget
-                                if (IsPackageIdCasedDifferently(package: package, actualName: entry.Key))
+                                if (IsPackageIdCasedDifferently(package: package, actualName: nugetPackageId))
                                 {
-                                    node.SetAttribute(name: "Include", value: entry.Key);
+                                    node.SetAttribute(name: "Include", value: nugetPackageId);
                                 }
 
-                                node.SetAttribute(name: "Version", value: entry.Value);
+                                node.SetAttribute(name: "Version", value: nugetVersion);
                                 changes++;
-                                updatesMade.TryAdd(key: entry.Key, value: entry.Value);
+                                updatesMade.TryAdd(key: nugetPackageId, value: nugetVersion);
                             }
                             else
                             {
@@ -235,12 +235,12 @@ namespace Credfeto.Package.Update
             return StringComparer.InvariantCultureIgnoreCase.Equals(x: package, y: actualName) && !StringComparer.InvariantCultureIgnoreCase.Equals(x: package, y: actualName);
         }
 
-        private static bool ShouldUpgrade(string installedVersion, KeyValuePair<string, string> entry)
+        private static bool ShouldUpgrade(string installedVersion, string nugetVersion)
         {
-            if (!StringComparer.InvariantCultureIgnoreCase.Equals(x: installedVersion, y: entry.Value))
+            if (!StringComparer.InvariantCultureIgnoreCase.Equals(x: installedVersion, y: nugetVersion))
             {
                 NuGetVersion iv = new NuGetVersion(installedVersion);
-                NuGetVersion ev = new NuGetVersion(entry.Value);
+                NuGetVersion ev = new NuGetVersion(nugetVersion);
 
                 return iv < ev;
             }
