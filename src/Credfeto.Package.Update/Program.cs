@@ -33,13 +33,7 @@ namespace Credfeto.Package.Update
 
             try
             {
-                IConfigurationRoot configuration = new ConfigurationBuilder()
-                                                   .AddCommandLine(args: args,
-                                                                   new Dictionary<string, string>
-                                                                   {
-                                                                       {@"-packageId", @"packageid"}, {@"-version", @"version"}, {@"-folder", @"folder"}, {@"-source", @"source"}
-                                                                   })
-                                                   .Build();
+                IConfigurationRoot configuration = LoadConfiguration(args);
 
                 Dictionary<string, string> packages = new Dictionary<string, string>();
 
@@ -61,7 +55,7 @@ namespace Credfeto.Package.Update
                     return ERROR;
                 }
 
-                string version = configuration.GetValue<string>(key: @"Version");
+                // string version = configuration.GetValue<string>(key: @"Version");
 
                 string source = configuration.GetValue<string>(key: @"source");
 
@@ -75,17 +69,7 @@ namespace Credfeto.Package.Update
                     sources.Add(new PackageSource(name: "Custom", source: source, isEnabled: true, isPersistable: true, isOfficial: true));
                 }
 
-                bool fromNuget = false;
-
-                if (string.IsNullOrWhiteSpace(version))
-                {
-                    await FindPackagesAsync(sources: sources, packageId: packageId, packages: packages, cancellationToken: CancellationToken.None);
-                    fromNuget = true;
-                }
-                else
-                {
-                    packages.Add(key: packageId, value: version);
-                }
+                await FindPackagesAsync(sources: sources, packageId: packageId, packages: packages, cancellationToken: CancellationToken.None);
 
                 IEnumerable<string> projects = Directory.EnumerateFiles(path: folder, searchPattern: "*.csproj", searchOption: SearchOption.AllDirectories);
 
@@ -95,7 +79,7 @@ namespace Credfeto.Package.Update
 
                 foreach (string project in projects)
                 {
-                    updates += UpdateProject(project: project, packages: packages, fromNuget: fromNuget, updatesMade: updatesMade);
+                    updates += UpdateProject(project: project, packages: packages, updatesMade: updatesMade);
                 }
 
                 Console.WriteLine();
@@ -122,6 +106,12 @@ namespace Credfeto.Package.Update
 
                 return ERROR;
             }
+        }
+
+        private static IConfigurationRoot LoadConfiguration(string[] args)
+        {
+            return new ConfigurationBuilder().AddCommandLine(args: args, new Dictionary<string, string> {{@"-packageId", @"packageid"}, {@"-folder", @"folder"}, {@"-source", @"source"}})
+                                             .Build();
         }
 
         private static async Task FindPackagesAsync(List<PackageSource> sources, string packageId, Dictionary<string, string> packages, CancellationToken cancellationToken)
@@ -173,7 +163,7 @@ namespace Credfeto.Package.Update
             return packageVersion.Version.Contains(value: "+", comparisonType: StringComparison.Ordinal);
         }
 
-        private static int UpdateProject(string project, Dictionary<string, string> packages, bool fromNuget, Dictionary<string, string> updatesMade)
+        private static int UpdateProject(string project, Dictionary<string, string> packages, Dictionary<string, string> updatesMade)
         {
             XmlDocument? doc = TryLoadDocument(project);
 
@@ -211,8 +201,7 @@ namespace Credfeto.Package.Update
                                 Console.WriteLine($"  >> {package} Installed: {installedVersion} Upgrade: True. New Version: {entry.Value}.");
 
                                 // Set the package Id to be that from nuget
-                                if (fromNuget && StringComparer.InvariantCultureIgnoreCase.Equals(x: package, y: entry.Key) &&
-                                    !StringComparer.InvariantCultureIgnoreCase.Equals(x: package, y: entry.Key))
+                                if (IsPackageIdCasedDifferently(package: package, actualName: entry.Key))
                                 {
                                     node.SetAttribute(name: "Include", value: entry.Key);
                                 }
@@ -239,6 +228,11 @@ namespace Credfeto.Package.Update
             }
 
             return changes;
+        }
+
+        private static bool IsPackageIdCasedDifferently(string package, string actualName)
+        {
+            return StringComparer.InvariantCultureIgnoreCase.Equals(x: package, y: actualName) && !StringComparer.InvariantCultureIgnoreCase.Equals(x: package, y: actualName);
         }
 
         private static bool ShouldUpgrade(string installedVersion, KeyValuePair<string, string> entry)
