@@ -9,6 +9,14 @@ Please ADD ALL Changes to the UNRELASED SECTION and not a specific release
 ### Added
 ### Fixed
 ### Changed
+### Removed
+### Deployment Changes
+
+<!--
+Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
+-->
+## [1.2.0] 2020-10-26
+### Changed
 - FF-1429 - Updated Microsoft.VisualStudio.Threading.Analyzers to 16.8.50
 - FF-1429 - Updated SonarAnalyzer.CSharp to 8.14.0.22654
 - FF-1429 - Updated SonarAnalyzer.CSharp to 8.13.1.21947
@@ -19,12 +27,8 @@ Please ADD ALL Changes to the UNRELASED SECTION and not a specific release
 - FF-1429 - Updated SonarAnalyzer.CSharp to 8.11.0.20529
 - FF-1429 - Updated Microsoft.CodeAnalysis.FxCopAnalyzers to 3.3.0
 - FF-1429 - Updated Microsoft.VisualStudio.Threading.Analyzers to 16.7.54
-### Removed
-### Deployment Changes
+- Updated build scripts
 
-<!--
-Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
--->
 ## [1.1.0] 2020-04-26
 ### Changed
 - Updated to .net core 3.1.302

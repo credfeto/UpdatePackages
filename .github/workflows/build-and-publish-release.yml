@@ -38,6 +38,8 @@ jobs:
       run: dotnet tool install --local FunFair.BuildVersion --add-source ${{ secrets.FUNFAIR_NUGET_FEED }}
     - name: Install Multi-Push Tool
       run: dotnet tool install --local Credfeto.Package.Push
+    - name: Install ChangeLog Tool
+      run: dotnet tool install --local Credfeto.ChangeLog.Cmd --add-source ${{ secrets.FUNFAIR_NUGET_FEED }}
     - name: Set Define Build Version
       run: dotnet buildversion  ${{ steps.buildnumber.outputs.build_number }} 
     - name: Build with dotnet
@@ -51,3 +53,17 @@ jobs:
     - name: Publish
       run: |
         dotnet pushpackages -folder dist --api-key ${{ secrets.NUGET_API_KEY }} --source ${{ secrets.NUGET_FEED }}
+    - name: Create Release Notes
+      run: |
+        dotnet changelog -changelog CHANGELOG.md -extract RELEASE_NOTES.md -version ${{ env.BUILD_VERSION }}
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ env.BUILD_VERSION }}
+        release_name: Release ${{ env.BUILD_VERSION }}
+        body_path: RELEASE_NOTES.md
+        draft: false
+        prerelease: false
