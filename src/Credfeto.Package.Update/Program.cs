@@ -46,6 +46,10 @@ namespace Credfeto.Package.Update
                     return ERROR;
                 }
 
+                string source = configuration.GetValue<string>(key: @"source");
+
+                List<PackageSource> sources = DefinePackageSources(source);
+
                 string packageId = configuration.GetValue<string>(key: @"packageid");
 
                 if (string.IsNullOrEmpty(packageId))
@@ -53,20 +57,6 @@ namespace Credfeto.Package.Update
                     Console.WriteLine("ERROR: packageid not specified");
 
                     return ERROR;
-                }
-
-                // string version = configuration.GetValue<string>(key: @"Version");
-
-                string source = configuration.GetValue<string>(key: @"source");
-
-                PackageSourceProvider packageSourceProvider = new PackageSourceProvider(Settings.LoadDefaultSettings(Environment.CurrentDirectory));
-
-                List<PackageSource> sources = packageSourceProvider.LoadPackageSources()
-                                                                   .ToList();
-
-                if (!string.IsNullOrEmpty(source))
-                {
-                    sources.Add(new PackageSource(name: "Custom", source: source, isEnabled: true, isPersistable: true, isOfficial: true));
                 }
 
                 await FindPackagesAsync(sources: sources, packageId: packageId, packages: packages, cancellationToken: CancellationToken.None);
@@ -106,6 +96,21 @@ namespace Credfeto.Package.Update
 
                 return ERROR;
             }
+        }
+
+        private static List<PackageSource> DefinePackageSources(string source)
+        {
+            PackageSourceProvider packageSourceProvider = new PackageSourceProvider(Settings.LoadDefaultSettings(Environment.CurrentDirectory));
+
+            List<PackageSource> sources = packageSourceProvider.LoadPackageSources()
+                                                               .ToList();
+
+            if (!string.IsNullOrEmpty(source))
+            {
+                sources.Add(new PackageSource(name: "Custom", source: source, isEnabled: true, isPersistable: true, isOfficial: true));
+            }
+
+            return sources;
         }
 
         private static IConfigurationRoot LoadConfiguration(string[] args)
