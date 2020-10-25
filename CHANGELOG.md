@@ -7,7 +7,6 @@ Please ADD ALL Changes to the UNRELASED SECTION and not a specific release
 
 ## [Unreleased]
 ### Added
-- Added support for updating one package or a group of packages with the same prefix e.g. Microsoft.Extensions
 ### Fixed
 ### Changed
 ### Removed
@@ -16,6 +15,10 @@ Please ADD ALL Changes to the UNRELASED SECTION and not a specific release
 <!--
 Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
 -->
+## [1.3.0] 2020-10-26
+### Added
+- Added support for updating one package or a group of packages with the same prefix e.g. Microsoft.Extensions
+
 ## [1.2.0] 2020-10-26
 ### Changed
 - FF-1429 - Updated Microsoft.VisualStudio.Threading.Analyzers to 16.8.50
