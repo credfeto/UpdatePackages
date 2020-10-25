@@ -7,6 +7,7 @@ Please ADD ALL Changes to the UNRELASED SECTION and not a specific release
 
 ## [Unreleased]
 ### Added
+- Added support for updating one package or a group of packages with the same prefix e.g. Microsoft.Extensions
 ### Fixed
 ### Changed
 ### Removed

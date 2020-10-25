@@ -33,13 +33,7 @@ namespace Credfeto.Package.Update
 
             try
             {
-                IConfigurationRoot configuration = new ConfigurationBuilder()
-                                                   .AddCommandLine(args: args,
-                                                                   new Dictionary<string, string>
-                                                                   {
-                                                                       {@"-prefix", @"prefix"}, {@"-version", @"version"}, {@"-folder", @"folder"}, {@"-source", @"source"}
-                                                                   })
-                                                   .Build();
+                IConfigurationRoot configuration = LoadConfiguration(args);
 
                 Dictionary<string, string> packages = new Dictionary<string, string>();
 
@@ -52,42 +46,36 @@ namespace Credfeto.Package.Update
                     return ERROR;
                 }
 
-                string prefix = configuration.GetValue<string>(key: @"Prefix");
-
-                if (string.IsNullOrEmpty(prefix))
-                {
-                    Console.WriteLine("ERROR: prefix not specified");
-
-                    return ERROR;
-                }
-
-                string version = configuration.GetValue<string>(key: @"Version");
-
                 string source = configuration.GetValue<string>(key: @"source");
 
-                PackageSourceProvider packageSourceProvider = new PackageSourceProvider(Settings.LoadDefaultSettings(Environment.CurrentDirectory));
+                IReadOnlyList<PackageSource> sources = DefinePackageSources(source);
 
-                List<PackageSource> sources = packageSourceProvider.LoadPackageSources()
-                                                                   .ToList();
+                IReadOnlyList<string> projects = FindProjects(folder);
 
-                if (!string.IsNullOrEmpty(source))
+                string packageId = configuration.GetValue<string>(key: @"packageid");
+
+                if (string.IsNullOrEmpty(packageId))
                 {
-                    sources.Add(new PackageSource(name: "Custom", source: source, isEnabled: true, isPersistable: true, isOfficial: true));
-                }
+                    string prefix = configuration.GetValue<string>(key: @"packageprefix");
 
-                bool fromNuget = false;
+                    if (string.IsNullOrWhiteSpace(prefix))
+                    {
+                        Console.WriteLine("ERROR: neither packageid or packageprefix specified");
 
-                if (string.IsNullOrWhiteSpace(version))
-                {
-                    await FindPackagesAsync(sources: sources, prefix: prefix, packages: packages, cancellationToken: CancellationToken.None);
-                    fromNuget = true;
+                        return ERROR;
+                    }
+
+                    IReadOnlyList<string> packageIds = FindPackagesByPrefixFromProjects(projects: projects, packageIdPrefix: prefix);
+
+                    foreach (string? id in packageIds)
+                    {
+                        await FindPackagesAsync(sources: sources, packageId: id, packages: packages, cancellationToken: CancellationToken.None);
+                    }
                 }
                 else
                 {
-                    packages.Add(key: prefix, value: version);
+                    await FindPackagesAsync(sources: sources, packageId: packageId, packages: packages, cancellationToken: CancellationToken.None);
                 }
-
-                IEnumerable<string> projects = Directory.EnumerateFiles(path: folder, searchPattern: "*.csproj", searchOption: SearchOption.AllDirectories);
 
                 int updates = 0;
 
@@ -95,7 +83,7 @@ namespace Credfeto.Package.Update
 
                 foreach (string project in projects)
                 {
-                    updates += UpdateProject(project: project, packages: packages, fromNuget: fromNuget, updatesMade: updatesMade);
+                    updates += UpdateProject(project: project, packages: packages, updatesMade: updatesMade);
                 }
 
                 Console.WriteLine();
@@ -124,14 +112,80 @@ namespace Credfeto.Package.Update
             }
         }
 
-        private static async Task FindPackagesAsync(List<PackageSource> sources, string prefix, Dictionary<string, string> packages, CancellationToken cancellationToken)
+        private static IReadOnlyList<string> FindPackagesByPrefixFromProjects(IReadOnlyList<string> projects, string packageIdPrefix)
         {
-            Console.WriteLine(value: "Enumerating matching packages...");
+            HashSet<string> packages = new HashSet<string>();
+
+            foreach (var project in projects)
+            {
+                XmlDocument? doc = TryLoadDocument(project);
+
+                if (doc == null)
+                {
+                    continue;
+                }
+
+                XmlNodeList nodes = doc.SelectNodes(xpath: "/Project/ItemGroup/PackageReference");
+
+                foreach (XmlElement node in nodes.OfType<XmlElement>())
+                {
+                    string package = node.GetAttribute(name: "Include");
+
+                    if (IsPrefixMatch(packageIdPrefix: packageIdPrefix, package: package))
+                    {
+                        packages.Add(package.ToLowerInvariant());
+                    }
+                }
+            }
+
+            return packages.ToArray();
+        }
+
+        private static bool IsPrefixMatch(string packageIdPrefix, string package)
+        {
+            return package.StartsWith(packageIdPrefix + ".", comparisonType: StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string[] FindProjects(string folder)
+        {
+            return Directory.EnumerateFiles(path: folder, searchPattern: "*.csproj", searchOption: SearchOption.AllDirectories)
+                            .ToArray();
+        }
+
+        private static List<PackageSource> DefinePackageSources(string source)
+        {
+            PackageSourceProvider packageSourceProvider = new PackageSourceProvider(Settings.LoadDefaultSettings(Environment.CurrentDirectory));
+
+            List<PackageSource> sources = packageSourceProvider.LoadPackageSources()
+                                                               .ToList();
+
+            if (!string.IsNullOrEmpty(source))
+            {
+                sources.Add(new PackageSource(name: "Custom", source: source, isEnabled: true, isPersistable: true, isOfficial: true));
+            }
+
+            return sources;
+        }
+
+        private static IConfigurationRoot LoadConfiguration(string[] args)
+        {
+            Dictionary<string, string> mappings =
+                new Dictionary<string, string> {[@"-packageId"] = @"packageid", ["-packageprefix"] = "packageprefix", [@"-folder"] = @"folder", [@"-source"] = @"source"};
+
+            return new ConfigurationBuilder().AddCommandLine(args: args, switchMappings: mappings)
+                                             .Build();
+        }
+
+        private static async Task FindPackagesAsync(IReadOnlyList<PackageSource> sources, string packageId, Dictionary<string, string> packages, CancellationToken cancellationToken)
+        {
+            Console.WriteLine(value: $"Enumerating matching package versions for {packageId}...");
 
             ConcurrentDictionary<string, string> found = new ConcurrentDictionary<string, string>();
 
-            await Task.WhenAll(
-                sources.Select(selector: source => LoadPackagesFromSourceAsync(packageSource: source, prefix: prefix, concurrentDictionary: found, cancellationToken: cancellationToken)));
+            await Task.WhenAll(sources.Select(selector: source => LoadPackagesFromSourceAsync(packageSource: source,
+                                                                                              packageId: packageId,
+                                                                                              concurrentDictionary: found,
+                                                                                              cancellationToken: cancellationToken)));
 
             foreach (KeyValuePair<string, string> item in found)
             {
@@ -140,7 +194,7 @@ namespace Credfeto.Package.Update
         }
 
         private static async Task LoadPackagesFromSourceAsync(PackageSource packageSource,
-                                                              string prefix,
+                                                              string packageId,
                                                               ConcurrentDictionary<string, string> concurrentDictionary,
                                                               CancellationToken cancellationToken)
         {
@@ -148,31 +202,30 @@ namespace Credfeto.Package.Update
 
             PackageSearchResource searcher = await sourceRepository.GetResourceAsync<PackageSearchResource>(cancellationToken);
             IEnumerable<IPackageSearchMetadata> result =
-                await searcher.SearchAsync(searchTerm: prefix, filters: SearchFilter, log: NugetLogger, cancellationToken: cancellationToken, skip: 0, take: int.MaxValue);
+                await searcher.SearchAsync(searchTerm: packageId, filters: SearchFilter, log: NugetLogger, cancellationToken: cancellationToken, skip: 0, take: int.MaxValue);
 
             foreach (IPackageSearchMetadata entry in result)
             {
                 PackageVersion packageVersion = new PackageVersion(packageId: entry.Identity.Id, entry.Identity.Version.ToString());
 
-                if (Matches(prefix: prefix, packageVersion: packageVersion) && !IsBannedPackage(packageVersion))
+                if (IsExactMatch(packageId: packageId, packageVersion: packageVersion) && !IsBannedPackage(packageVersion))
                 {
                     concurrentDictionary.TryAdd(key: packageVersion.PackageId, value: packageVersion.Version);
                 }
             }
         }
 
-        private static bool Matches(string prefix, PackageVersion packageVersion)
+        private static bool IsExactMatch(string packageId, PackageVersion packageVersion)
         {
-            return IsMatch(package: packageVersion.PackageId, prefix: prefix);
+            return IsExactMatch(package: packageVersion.PackageId, packageId: packageId);
         }
 
         private static bool IsBannedPackage(PackageVersion packageVersion)
         {
-            return packageVersion.Version.Contains(value: "+", comparisonType: StringComparison.Ordinal) ||
-                   StringComparer.InvariantCultureIgnoreCase.Equals(x: packageVersion.PackageId, y: "Nuget.Version");
+            return packageVersion.Version.Contains(value: "+", comparisonType: StringComparison.Ordinal);
         }
 
-        private static int UpdateProject(string project, Dictionary<string, string> packages, bool fromNuget, Dictionary<string, string> updatesMade)
+        private static int UpdateProject(string project, Dictionary<string, string> packages, Dictionary<string, string> updatesMade)
         {
             XmlDocument? doc = TryLoadDocument(project);
 
@@ -189,36 +242,30 @@ namespace Credfeto.Package.Update
                 Console.WriteLine();
                 Console.WriteLine($"* {project}");
 
-                foreach (XmlElement? node in nodes)
+                foreach (XmlElement node in nodes.OfType<XmlElement>())
                 {
-                    if (node == null)
-                    {
-                        continue;
-                    }
-
                     string package = node.GetAttribute(name: "Include");
 
-                    foreach (KeyValuePair<string, string> entry in packages)
+                    foreach ((string nugetPackageId, string nugetVersion) in packages)
                     {
-                        if (IsMatch(package: package, prefix: entry.Key))
+                        if (IsExactMatch(package: package, packageId: nugetPackageId))
                         {
                             string installedVersion = node.GetAttribute(name: "Version");
-                            bool upgrade = ShouldUpgrade(installedVersion: installedVersion, entry: entry);
+                            bool upgrade = ShouldUpgrade(installedVersion: installedVersion, nugetVersion: nugetVersion);
 
                             if (upgrade)
                             {
-                                Console.WriteLine($"  >> {package} Installed: {installedVersion} Upgrade: True. New Version: {entry.Value}.");
+                                Console.WriteLine($"  >> {package} Installed: {installedVersion} Upgrade: True. New Version: {nugetVersion}.");
 
                                 // Set the package Id to be that from nuget
-                                if (fromNuget && StringComparer.InvariantCultureIgnoreCase.Equals(x: package, y: entry.Key) &&
-                                    !StringComparer.InvariantCultureIgnoreCase.Equals(x: package, y: entry.Key))
+                                if (IsPackageIdCasedDifferently(package: package, actualName: nugetPackageId))
                                 {
-                                    node.SetAttribute(name: "Include", value: entry.Key);
+                                    node.SetAttribute(name: "Include", value: nugetPackageId);
                                 }
 
-                                node.SetAttribute(name: "Version", value: entry.Value);
+                                node.SetAttribute(name: "Version", value: nugetVersion);
                                 changes++;
-                                updatesMade.TryAdd(key: entry.Key, value: entry.Value);
+                                updatesMade.TryAdd(key: nugetPackageId, value: nugetVersion);
                             }
                             else
                             {
@@ -240,12 +287,17 @@ namespace Credfeto.Package.Update
             return changes;
         }
 
-        private static bool ShouldUpgrade(string installedVersion, KeyValuePair<string, string> entry)
+        private static bool IsPackageIdCasedDifferently(string package, string actualName)
         {
-            if (!StringComparer.InvariantCultureIgnoreCase.Equals(x: installedVersion, y: entry.Value))
+            return StringComparer.InvariantCultureIgnoreCase.Equals(x: package, y: actualName) && !StringComparer.InvariantCultureIgnoreCase.Equals(x: package, y: actualName);
+        }
+
+        private static bool ShouldUpgrade(string installedVersion, string nugetVersion)
+        {
+            if (!StringComparer.InvariantCultureIgnoreCase.Equals(x: installedVersion, y: nugetVersion))
             {
                 NuGetVersion iv = new NuGetVersion(installedVersion);
-                NuGetVersion ev = new NuGetVersion(entry.Value);
+                NuGetVersion ev = new NuGetVersion(nugetVersion);
 
                 return iv < ev;
             }
@@ -271,9 +323,9 @@ namespace Credfeto.Package.Update
             }
         }
 
-        private static bool IsMatch(string package, string prefix)
+        private static bool IsExactMatch(string package, string packageId)
         {
-            return package.Equals(value: prefix, comparisonType: StringComparison.OrdinalIgnoreCase);
+            return package.Equals(value: packageId, comparisonType: StringComparison.OrdinalIgnoreCase);
         }
     }
 }
