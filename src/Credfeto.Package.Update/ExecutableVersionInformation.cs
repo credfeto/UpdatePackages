@@ -14,7 +14,7 @@ namespace Credfeto.Package.Update
         {
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(type.Assembly.Location);
 
-            return fileVersionInfo.ProductVersion;
+            return fileVersionInfo.ProductVersion!;
         }
     }
 }

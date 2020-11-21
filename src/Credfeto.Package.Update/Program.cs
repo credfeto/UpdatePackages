@@ -23,7 +23,7 @@ namespace Credfeto.Package.Update
         private const bool INCLUDE_UNLISTED_PACKAGES = false;
 
         private static readonly SearchFilter SearchFilter =
-            new SearchFilter(includePrerelease: false, filter: SearchFilterType.IsLatestVersion) {IncludeDelisted = INCLUDE_UNLISTED_PACKAGES, OrderBy = SearchOrderBy.Id};
+            new(includePrerelease: false, filter: SearchFilterType.IsLatestVersion) {IncludeDelisted = INCLUDE_UNLISTED_PACKAGES, OrderBy = SearchOrderBy.Id};
 
         private static readonly ILogger NugetLogger = new NullLogger();
 
@@ -35,7 +35,7 @@ namespace Credfeto.Package.Update
             {
                 IConfigurationRoot configuration = LoadConfiguration(args);
 
-                Dictionary<string, string> packages = new Dictionary<string, string>();
+                Dictionary<string, string> packages = new();
 
                 string folder = configuration.GetValue<string>(key: @"Folder");
 
@@ -79,7 +79,7 @@ namespace Credfeto.Package.Update
 
                 int updates = 0;
 
-                Dictionary<string, string> updatesMade = new Dictionary<string, string>();
+                Dictionary<string, string> updatesMade = new();
 
                 foreach (string project in projects)
                 {
@@ -114,7 +114,7 @@ namespace Credfeto.Package.Update
 
         private static IReadOnlyList<string> FindPackagesByPrefixFromProjects(IReadOnlyList<string> projects, string packageIdPrefix)
         {
-            HashSet<string> packages = new HashSet<string>();
+            HashSet<string> packages = new();
 
             foreach (var project in projects)
             {
@@ -125,15 +125,18 @@ namespace Credfeto.Package.Update
                     continue;
                 }
 
-                XmlNodeList nodes = doc.SelectNodes(xpath: "/Project/ItemGroup/PackageReference");
+                XmlNodeList? nodes = doc.SelectNodes(xpath: "/Project/ItemGroup/PackageReference");
 
-                foreach (XmlElement node in nodes.OfType<XmlElement>())
+                if (nodes != null)
                 {
-                    string package = node.GetAttribute(name: "Include");
-
-                    if (IsPrefixMatch(packageIdPrefix: packageIdPrefix, package: package))
+                    foreach (XmlElement node in nodes.OfType<XmlElement>())
                     {
-                        packages.Add(package.ToLowerInvariant());
+                        string package = node.GetAttribute(name: "Include");
+
+                        if (IsPrefixMatch(packageIdPrefix: packageIdPrefix, package: package))
+                        {
+                            packages.Add(package.ToLowerInvariant());
+                        }
                     }
                 }
             }
@@ -154,7 +157,7 @@ namespace Credfeto.Package.Update
 
         private static List<PackageSource> DefinePackageSources(string source)
         {
-            PackageSourceProvider packageSourceProvider = new PackageSourceProvider(Settings.LoadDefaultSettings(Environment.CurrentDirectory));
+            PackageSourceProvider packageSourceProvider = new(Settings.LoadDefaultSettings(Environment.CurrentDirectory));
 
             List<PackageSource> sources = packageSourceProvider.LoadPackageSources()
                                                                .ToList();
@@ -169,8 +172,7 @@ namespace Credfeto.Package.Update
 
         private static IConfigurationRoot LoadConfiguration(string[] args)
         {
-            Dictionary<string, string> mappings =
-                new Dictionary<string, string> {[@"-packageId"] = @"packageid", ["-packageprefix"] = "packageprefix", [@"-folder"] = @"folder", [@"-source"] = @"source"};
+            Dictionary<string, string> mappings = new() {[@"-packageId"] = @"packageid", ["-packageprefix"] = "packageprefix", [@"-folder"] = @"folder", [@"-source"] = @"source"};
 
             return new ConfigurationBuilder().AddCommandLine(args: args, switchMappings: mappings)
                                              .Build();
@@ -180,7 +182,7 @@ namespace Credfeto.Package.Update
         {
             Console.WriteLine(value: $"Enumerating matching package versions for {packageId}...");
 
-            ConcurrentDictionary<string, string> found = new ConcurrentDictionary<string, string>();
+            ConcurrentDictionary<string, string> found = new();
 
             await Task.WhenAll(sources.Select(selector: source => LoadPackagesFromSourceAsync(packageSource: source,
                                                                                               packageId: packageId,
@@ -198,7 +200,7 @@ namespace Credfeto.Package.Update
                                                               ConcurrentDictionary<string, string> concurrentDictionary,
                                                               CancellationToken cancellationToken)
         {
-            SourceRepository sourceRepository = new SourceRepository(source: packageSource, new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3()));
+            SourceRepository sourceRepository = new(source: packageSource, new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3()));
 
             PackageSearchResource searcher = await sourceRepository.GetResourceAsync<PackageSearchResource>(cancellationToken);
             IEnumerable<IPackageSearchMetadata> result =
@@ -206,7 +208,7 @@ namespace Credfeto.Package.Update
 
             foreach (IPackageSearchMetadata entry in result)
             {
-                PackageVersion packageVersion = new PackageVersion(packageId: entry.Identity.Id, entry.Identity.Version.ToString());
+                PackageVersion packageVersion = new(packageId: entry.Identity.Id, entry.Identity.Version.ToString());
 
                 if (IsExactMatch(packageId: packageId, packageVersion: packageVersion) && !IsBannedPackage(packageVersion))
                 {
@@ -235,9 +237,9 @@ namespace Credfeto.Package.Update
             }
 
             int changes = 0;
-            XmlNodeList nodes = doc.SelectNodes(xpath: "/Project/ItemGroup/PackageReference");
+            XmlNodeList? nodes = doc.SelectNodes(xpath: "/Project/ItemGroup/PackageReference");
 
-            if (nodes.Count > 0)
+            if (nodes != null && nodes.Count != 0)
             {
                 Console.WriteLine();
                 Console.WriteLine($"* {project}");
@@ -296,8 +298,8 @@ namespace Credfeto.Package.Update
         {
             if (!StringComparer.InvariantCultureIgnoreCase.Equals(x: installedVersion, y: nugetVersion))
             {
-                NuGetVersion iv = new NuGetVersion(installedVersion);
-                NuGetVersion ev = new NuGetVersion(nugetVersion);
+                NuGetVersion iv = new(installedVersion);
+                NuGetVersion ev = new(nugetVersion);
 
                 return iv < ev;
             }
@@ -309,7 +311,7 @@ namespace Credfeto.Package.Update
         {
             try
             {
-                XmlDocument doc = new XmlDocument();
+                XmlDocument doc = new();
 
                 doc.Load(project);
 
