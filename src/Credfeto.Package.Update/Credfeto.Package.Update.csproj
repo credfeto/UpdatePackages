@@ -25,7 +25,11 @@
     <Company>Mark Ridgwell</Company>
     <Copyright>Mark Ridgwell</Copyright>
     <Product>Package Update Tool</Product>
-    <PackageLicense>https://raw.githubusercontent.com/credfeto/UpdatePackages/master/LICENSE</PackageLicense>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>Scriptable update package tool</Description>
+    <PackageTags>Nuget;update;tool;packages</PackageTags>
+    <RepositoryUrl>https://github.com/credfeto/UpdatePackages</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <NeutralLanguage>en-GB</NeutralLanguage>
   </PropertyGroup>
   <ItemGroup>
