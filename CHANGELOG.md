@@ -11,6 +11,7 @@ Please ADD ALL Changes to the UNRELASED SECTION and not a specific release
 ### Changed
 - FF-1429 - Updated SonarAnalyzer.CSharp to 8.15.0.24505
 - FF-1429 - Updated SonarAnalyzer.CSharp to 8.16.0.25740
+- FF-1429 - Updated AsyncFixer to 1.4.0
 ### Removed
 ### Deployment Changes
 
