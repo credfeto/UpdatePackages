@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -26,6 +27,19 @@ namespace Credfeto.Package.Update
             new(includePrerelease: false, filter: SearchFilterType.IsLatestVersion) {IncludeDelisted = INCLUDE_UNLISTED_PACKAGES, OrderBy = SearchOrderBy.Id};
 
         private static readonly ILogger NugetLogger = new NullLogger();
+
+        private static readonly XmlWriterSettings WriterSettings = new()
+                                                                   {
+                                                                       Async = true,
+                                                                       Indent = true,
+                                                                       IndentChars = "    ",
+                                                                       OmitXmlDeclaration = true,
+                                                                       Encoding = Encoding.UTF8,
+                                                                       NewLineHandling = NewLineHandling.None,
+                                                                       NewLineOnAttributes = false,
+                                                                       NamespaceHandling = NamespaceHandling.OmitDuplicates,
+                                                                       CloseOutput = true
+                                                                   };
 
         private static async Task<int> Main(string[] args)
         {
@@ -282,7 +296,11 @@ namespace Credfeto.Package.Update
                 if (changes > 0)
                 {
                     Console.WriteLine(value: "=========== UPDATED ===========");
-                    doc.Save(project);
+
+                    using (XmlWriter writer = XmlWriter.Create(outputFileName: project, settings: WriterSettings))
+                    {
+                        doc.Save(writer);
+                    }
                 }
             }
 
