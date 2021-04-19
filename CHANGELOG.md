@@ -9,6 +9,14 @@ Please ADD ALL Changes to the UNRELASED SECTION and not a specific release
 ### Added
 ### Fixed
 ### Changed
+### Removed
+### Deployment Changes
+
+<!--
+Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
+-->
+## [1.5.0] - 2021-04-19
+### Changed
 - FF-1429 - Updated SonarAnalyzer.CSharp to 8.15.0.24505
 - FF-1429 - Updated SonarAnalyzer.CSharp to 8.16.0.25740
 - FF-1429 - Updated AsyncFixer to 1.4.0
@@ -24,12 +32,7 @@ Please ADD ALL Changes to the UNRELASED SECTION and not a specific release
 - FF-1429 - Updated NuGet to 5.9.1
 - FF-1429 - Updated SonarAnalyzer.CSharp to 8.21.0.30542
 - Tab size to 4 chars
-### Removed
-### Deployment Changes
 
-<!--
-Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
--->
 ## [1.4.0] 2020-11-21
 ### Changed
 - FF-1429 - Updated Microsoft.Extensions to 5.0.0
