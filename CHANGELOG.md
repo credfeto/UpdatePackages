@@ -8,16 +8,20 @@ Please ADD ALL Changes to the UNRELASED SECTION and not a specific release
 ## [Unreleased]
 ### Added
 ### Fixed
-- Prefix match now matches an exact package too
 ### Changed
-- FF-1429 - Updated SonarAnalyzer.CSharp to 8.23.0.32424
-- FF-1429 - Updated Microsoft.VisualStudio.Threading.Analyzers to 16.10.56
 ### Removed
 ### Deployment Changes
 
 <!--
 Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
 -->
+## [1.6.0] - 2021-06-04
+### Fixed
+- Prefix match now matches an exact package too
+### Changed
+- FF-1429 - Updated SonarAnalyzer.CSharp to 8.23.0.32424
+- FF-1429 - Updated Microsoft.VisualStudio.Threading.Analyzers to 16.10.56
+
 ## [1.5.0] - 2021-04-19
 ### Changed
 - FF-1429 - Updated AsyncFixer to 1.5.1
