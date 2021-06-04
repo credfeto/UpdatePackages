@@ -160,7 +160,8 @@ namespace Credfeto.Package.Update
 
         private static bool IsPrefixMatch(string packageIdPrefix, string package)
         {
-            return package.StartsWith(packageIdPrefix + ".", comparisonType: StringComparison.OrdinalIgnoreCase);
+            return StringComparer.InvariantCultureIgnoreCase.Equals(packageIdPrefix, package) ||
+                   	package.StartsWith(packageIdPrefix + ".", comparisonType: StringComparison.OrdinalIgnoreCase);
         }
 
         private static string[] FindProjects(string folder)
