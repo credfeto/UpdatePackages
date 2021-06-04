@@ -8,6 +8,7 @@ Please ADD ALL Changes to the UNRELASED SECTION and not a specific release
 ## [Unreleased]
 ### Added
 ### Fixed
+- Prefix match now matches an exact package too
 ### Changed
 - FF-1429 - Updated SonarAnalyzer.CSharp to 8.22.0.31243
 - FF-1429 - Updated SonarAnalyzer.CSharp to 8.23.0.32424
