@@ -24,7 +24,7 @@ namespace Credfeto.Package.Update
         private const bool INCLUDE_UNLISTED_PACKAGES = false;
 
         private static readonly SearchFilter SearchFilter =
-            new(includePrerelease: false, filter: SearchFilterType.IsLatestVersion) {IncludeDelisted = INCLUDE_UNLISTED_PACKAGES, OrderBy = SearchOrderBy.Id};
+            new(includePrerelease: false, filter: SearchFilterType.IsLatestVersion) { IncludeDelisted = INCLUDE_UNLISTED_PACKAGES, OrderBy = SearchOrderBy.Id };
 
         private static readonly ILogger NugetLogger = new NullLogger();
 
@@ -130,7 +130,7 @@ namespace Credfeto.Package.Update
         {
             HashSet<string> packages = new();
 
-            foreach (var project in projects)
+            foreach (string project in projects)
             {
                 XmlDocument? doc = TryLoadDocument(project);
 
@@ -160,8 +160,7 @@ namespace Credfeto.Package.Update
 
         private static bool IsPrefixMatch(string packageIdPrefix, string package)
         {
-            return StringComparer.InvariantCultureIgnoreCase.Equals(packageIdPrefix, package) ||
-                   	package.StartsWith(packageIdPrefix + ".", comparisonType: StringComparison.OrdinalIgnoreCase);
+            return StringComparer.InvariantCultureIgnoreCase.Equals(packageIdPrefix, package) || package.StartsWith(packageIdPrefix + ".", comparisonType: StringComparison.OrdinalIgnoreCase);
         }
 
         private static string[] FindProjects(string folder)
@@ -187,7 +186,7 @@ namespace Credfeto.Package.Update
 
         private static IConfigurationRoot LoadConfiguration(string[] args)
         {
-            Dictionary<string, string> mappings = new() {[@"-packageId"] = @"packageid", ["-packageprefix"] = "packageprefix", [@"-folder"] = @"folder", [@"-source"] = @"source"};
+            Dictionary<string, string> mappings = new() { [@"-packageId"] = @"packageid", ["-packageprefix"] = "packageprefix", [@"-folder"] = @"folder", [@"-source"] = @"source" };
 
             return new ConfigurationBuilder().AddCommandLine(args: args, switchMappings: mappings)
                                              .Build();
