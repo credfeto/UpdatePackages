@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
+using NuGet.Versioning;
 
 namespace Credfeto.Package.Update
 {
     [DebuggerDisplay(value: "{PackageId} {Version}")]
     public sealed class PackageVersion : IEquatable<PackageVersion>
     {
-        public PackageVersion(string packageId, string version)
+        public PackageVersion(string packageId, NuGetVersion version)
         {
             this.PackageId = packageId;
             this.Version = version;
@@ -14,7 +15,7 @@ namespace Credfeto.Package.Update
 
         public string PackageId { get; }
 
-        public string Version { get; }
+        public NuGetVersion Version { get; }
 
         public bool Equals(PackageVersion? other)
         {
@@ -24,7 +25,7 @@ namespace Credfeto.Package.Update
 
         public override bool Equals(object? obj)
         {
-            return !ReferenceEquals(objA: null, objB: obj) && (ReferenceEquals(this, objB: obj) || obj.GetType() == this.GetType() && this.Equals((PackageVersion) obj));
+            return !ReferenceEquals(objA: null, objB: obj) && (ReferenceEquals(this, objB: obj) || obj.GetType() == this.GetType() && this.Equals((PackageVersion)obj));
         }
 
         public override int GetHashCode()
