@@ -84,7 +84,7 @@ namespace Credfeto.Package.Update
 
                 Console.WriteLine();
 
-                if (updates > 0)
+                if (updates != 0)
                 {
                     Console.WriteLine($"Total Updates: {updates}");
 
