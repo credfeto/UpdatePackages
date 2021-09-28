@@ -9,18 +9,18 @@ namespace Credfeto.Package.Update.Helpers
 {
     internal static class ProjectHelpers
     {
-        public static readonly XmlWriterSettings WriterSettings = new()
-                                                                  {
-                                                                      Async = true,
-                                                                      Indent = true,
-                                                                      IndentChars = "    ",
-                                                                      OmitXmlDeclaration = true,
-                                                                      Encoding = Encoding.UTF8,
-                                                                      NewLineHandling = NewLineHandling.None,
-                                                                      NewLineOnAttributes = false,
-                                                                      NamespaceHandling = NamespaceHandling.OmitDuplicates,
-                                                                      CloseOutput = true
-                                                                  };
+        private static readonly XmlWriterSettings WriterSettings = new()
+                                                                   {
+                                                                       Async = true,
+                                                                       Indent = true,
+                                                                       IndentChars = "    ",
+                                                                       OmitXmlDeclaration = true,
+                                                                       Encoding = Encoding.UTF8,
+                                                                       NewLineHandling = NewLineHandling.None,
+                                                                       NewLineOnAttributes = false,
+                                                                       NamespaceHandling = NamespaceHandling.OmitDuplicates,
+                                                                       CloseOutput = true
+                                                                   };
 
         public static string[] FindProjects(string folder)
         {
@@ -53,6 +53,14 @@ namespace Credfeto.Package.Update.Helpers
                 Console.Error.WriteLine($"Failed to load {project}: {exception.Message}");
 
                 return null;
+            }
+        }
+
+        public static void SaveProject(string project, XmlDocument doc)
+        {
+            using (XmlWriter writer = XmlWriter.Create(outputFileName: project, settings: WriterSettings))
+            {
+                doc.Save(writer);
             }
         }
     }

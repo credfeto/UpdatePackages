@@ -8,6 +8,7 @@ using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
+using NuGet.Versioning;
 
 namespace Credfeto.Package.Update.Helpers
 {
@@ -35,10 +36,7 @@ namespace Credfeto.Package.Update.Helpers
             return sources;
         }
 
-        public static async Task LoadPackagesFromSourceAsync(PackageSource packageSource,
-                                                             string packageId,
-                                                             ConcurrentDictionary<string, string> concurrentDictionary,
-                                                             CancellationToken cancellationToken)
+        private static async Task LoadPackagesFromSourceAsync(PackageSource packageSource, string packageId, ConcurrentDictionary<string, NuGetVersion> found, CancellationToken cancellationToken)
         {
             SourceRepository sourceRepository = new(source: packageSource, new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3()));
 
@@ -48,34 +46,32 @@ namespace Credfeto.Package.Update.Helpers
 
             foreach (IPackageSearchMetadata entry in result)
             {
-                PackageVersion packageVersion = new(packageId: entry.Identity.Id, entry.Identity.Version.ToString());
+                PackageVersion packageVersion = new(packageId: entry.Identity.Id, version: entry.Identity.Version);
 
                 if (PackageIdHelpers.IsExactMatch(packageId: packageId, packageVersion: packageVersion) && !IsBannedPackage(packageVersion))
                 {
-                    concurrentDictionary.TryAdd(key: packageVersion.PackageId, value: packageVersion.Version);
+                    found.TryAdd(key: packageVersion.PackageId, value: packageVersion.Version);
                 }
             }
         }
 
         private static bool IsBannedPackage(PackageVersion packageVersion)
         {
-            return packageVersion.Version.Contains(value: "+", comparisonType: StringComparison.Ordinal);
+            return packageVersion.Version.ToString()
+                                 .Contains(value: "+", comparisonType: StringComparison.Ordinal);
         }
 
-        public static async Task FindPackagesAsync(IReadOnlyList<PackageSource> sources, string packageId, Dictionary<string, string> packages, CancellationToken cancellationToken)
+        public static async Task FindPackagesAsync(IReadOnlyList<PackageSource> sources, string packageId, Dictionary<string, NuGetVersion> packages, CancellationToken cancellationToken)
         {
             Console.WriteLine(value: $"Enumerating matching package versions for {packageId}...");
 
-            ConcurrentDictionary<string, string> found = new();
+            ConcurrentDictionary<string, NuGetVersion> found = new();
 
-            await Task.WhenAll(sources.Select(selector: source => LoadPackagesFromSourceAsync(packageSource: source,
-                                                                                              packageId: packageId,
-                                                                                              concurrentDictionary: found,
-                                                                                              cancellationToken: cancellationToken)));
+            await Task.WhenAll(sources.Select(selector: source => LoadPackagesFromSourceAsync(packageSource: source, packageId: packageId, found: found, cancellationToken: cancellationToken)));
 
-            foreach (KeyValuePair<string, string> item in found)
+            foreach ((string key, NuGetVersion value) in found)
             {
-                packages.TryAdd(key: item.Key, value: item.Value);
+                packages.TryAdd(key: key, value: value);
             }
         }
     }

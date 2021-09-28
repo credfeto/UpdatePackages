@@ -24,7 +24,7 @@ namespace Credfeto.Package.Update
             {
                 IConfigurationRoot configuration = ConfigurationLoader.LoadConfiguration(args);
 
-                Dictionary<string, string> packages = new();
+                Dictionary<string, NuGetVersion> packages = new();
 
                 string folder = configuration.GetValue<string>(key: @"Folder");
 
@@ -103,11 +103,9 @@ namespace Credfeto.Package.Update
             }
         }
 
-        private static int UpdateProjects(IReadOnlyList<string> projects, Dictionary<string, string> packages)
+        private static int UpdateProjects(IReadOnlyList<string> projects, Dictionary<string, NuGetVersion> packages)
         {
-            Dictionary<string, string> updatesMade = new();
-
-            return projects.Sum(project => UpdateProject(project: project, packages: packages, updatesMade: updatesMade));
+            return projects.Sum(project => UpdateProject(project: project, packages: packages));
         }
 
         private static bool HasMatchingPackagesInProjects(IReadOnlyList<string> projects, string packageId)
@@ -125,7 +123,7 @@ namespace Credfeto.Package.Update
                                  .ToArray();
         }
 
-        private static int UpdateProject(string project, Dictionary<string, string> packages, Dictionary<string, string> updatesMade)
+        private static int UpdateProject(string project, IReadOnlyDictionary<string, NuGetVersion> packages)
         {
             XmlDocument? doc = ProjectHelpers.TryLoadDocument(project);
 
@@ -146,7 +144,7 @@ namespace Credfeto.Package.Update
                 {
                     string package = node.GetAttribute(name: "Include");
 
-                    foreach ((string nugetPackageId, string nugetVersion) in packages)
+                    foreach ((string nugetPackageId, NuGetVersion nugetVersion) in packages)
                     {
                         if (PackageIdHelpers.IsExactMatch(package: package, packageId: nugetPackageId))
                         {
@@ -163,9 +161,8 @@ namespace Credfeto.Package.Update
                                     node.SetAttribute(name: "Include", value: nugetPackageId);
                                 }
 
-                                node.SetAttribute(name: "Version", value: nugetVersion);
+                                node.SetAttribute(name: "Version", nugetVersion.ToString());
                                 changes++;
-                                updatesMade.TryAdd(key: nugetPackageId, value: nugetVersion);
                             }
                             else
                             {
@@ -177,14 +174,11 @@ namespace Credfeto.Package.Update
                     }
                 }
 
-                if (changes > 0)
+                if (changes != 0)
                 {
                     Console.WriteLine(value: "=========== UPDATED ===========");
 
-                    using (XmlWriter writer = XmlWriter.Create(outputFileName: project, settings: ProjectHelpers.WriterSettings))
-                    {
-                        doc.Save(writer);
-                    }
+                    ProjectHelpers.SaveProject(project: project, doc: doc);
                 }
             }
 
@@ -196,15 +190,15 @@ namespace Credfeto.Package.Update
             return StringComparer.InvariantCultureIgnoreCase.Equals(x: package, y: actualName) && !StringComparer.InvariantCultureIgnoreCase.Equals(x: package, y: actualName);
         }
 
-        private static bool ShouldUpgrade(string installedVersion, string nugetVersion)
+        private static bool ShouldUpgrade(string installedVersion, NuGetVersion nugetVersion)
         {
-            if (StringComparer.InvariantCultureIgnoreCase.Equals(x: installedVersion, y: nugetVersion))
+            if (StringComparer.InvariantCultureIgnoreCase.Equals(x: installedVersion, nugetVersion.ToString()))
             {
                 return false;
             }
 
             NuGetVersion iv = new(installedVersion);
-            NuGetVersion ev = new(nugetVersion);
+            NuGetVersion ev = nugetVersion;
 
             return iv < ev;
         }
