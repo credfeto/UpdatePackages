@@ -58,7 +58,7 @@ namespace Credfeto.Package.Update
 
                     if (packageIds.Count == 0)
                     {
-                        Console.WriteLine("No matching packages used by any project");
+                        Console.WriteLine($"No updates needed - No packaged matching {packageId} is are used by any project.");
 
                         return SUCCESS;
                     }
@@ -72,7 +72,7 @@ namespace Credfeto.Package.Update
                 {
                     if (!HasMatchingPackagesInProjects(projects: projects, packageId: packageId))
                     {
-                        Console.WriteLine("No matching packages used by any project");
+                        Console.WriteLine($"No updates needed - package {packageId} is not used by any project.");
 
                         return SUCCESS;
                     }
