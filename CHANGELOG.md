@@ -8,6 +8,7 @@ Please ADD ALL Changes to the UNRELASED SECTION and not a specific release
 ## [Unreleased]
 ### Added
 ### Fixed
+- Re-added the missing output metadata used by scripts
 ### Changed
 ### Removed
 ### Deployment Changes

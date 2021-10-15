@@ -24,8 +24,6 @@ namespace Credfeto.Package.Update
             {
                 IConfigurationRoot configuration = ConfigurationLoader.LoadConfiguration(args);
 
-                Dictionary<string, NuGetVersion> packages = new();
-
                 string folder = configuration.GetValue<string>(key: @"Folder");
 
                 if (string.IsNullOrEmpty(folder))
@@ -42,51 +40,31 @@ namespace Credfeto.Package.Update
                 IReadOnlyList<string> projects = ProjectHelpers.FindProjects(folder);
 
                 string packageId = configuration.GetValue<string>(key: @"packageid");
+                string prefix = configuration.GetValue<string>(key: @"packageprefix");
 
-                if (string.IsNullOrEmpty(packageId))
+                Dictionary<string, NuGetVersion>? packages = await DetermineMatchingInstalledPackagesAsync(packageId: packageId, prefix: prefix, projects: projects, sources: sources);
+
+                if (packages == null)
                 {
-                    string prefix = configuration.GetValue<string>(key: @"packageprefix");
-
-                    if (string.IsNullOrWhiteSpace(prefix))
-                    {
-                        Console.WriteLine("ERROR: neither packageid or packageprefix specified");
-
-                        return ERROR;
-                    }
-
-                    IReadOnlyList<string> packageIds = FindPackagesByPrefixFromProjects(projects: projects, packageIdPrefix: prefix);
-
-                    if (packageIds.Count == 0)
-                    {
-                        Console.WriteLine($"No updates needed - No packaged matching {packageId} is are used by any project.");
-
-                        return SUCCESS;
-                    }
-
-                    foreach (string id in packageIds)
-                    {
-                        await PackageSourceHelpers.FindPackagesAsync(sources: sources, packageId: id, packages: packages, cancellationToken: CancellationToken.None);
-                    }
-                }
-                else
-                {
-                    if (!HasMatchingPackagesInProjects(projects: projects, packageId: packageId))
-                    {
-                        Console.WriteLine($"No updates needed - package {packageId} is not used by any project.");
-
-                        return SUCCESS;
-                    }
-
-                    await PackageSourceHelpers.FindPackagesAsync(sources: sources, packageId: packageId, packages: packages, cancellationToken: CancellationToken.None);
+                    return ERROR;
                 }
 
-                int updates = UpdateProjects(projects: projects, packages: packages);
+                if (packages.Count == 0)
+                {
+                    Console.WriteLine($"No updates needed - package {packageId} is not used by any project.");
+
+                    return SUCCESS;
+                }
+
+                Dictionary<string, NuGetVersion> updatesMade = UpdateProjects(projects: projects, packages: packages);
 
                 Console.WriteLine();
 
-                if (updates != 0)
+                if (updatesMade.Count != 0)
                 {
-                    Console.WriteLine($"Total Updates: {updates}");
+                    Console.WriteLine($"Total Updates: {updatesMade.Count}");
+
+                    OutputPackageUpdateTags(updatesMade);
 
                     return SUCCESS;
                 }
@@ -103,9 +81,87 @@ namespace Credfeto.Package.Update
             }
         }
 
-        private static int UpdateProjects(IReadOnlyList<string> projects, Dictionary<string, NuGetVersion> packages)
+        private static async Task<Dictionary<string, NuGetVersion>?> DetermineMatchingInstalledPackagesAsync(string packageId,
+                                                                                                             string prefix,
+                                                                                                             IReadOnlyList<string> projects,
+                                                                                                             IReadOnlyList<PackageSource> sources)
         {
-            return projects.Sum(project => UpdateProject(project: project, packages: packages));
+            if (!string.IsNullOrEmpty(packageId))
+            {
+                return await DetermineMatchingInstalledPackagesForPackageIdAsync(packageId: packageId, projects: projects, sources: sources);
+            }
+
+            if (string.IsNullOrWhiteSpace(prefix))
+            {
+                Console.WriteLine("ERROR: neither packageid or packageprefix specified");
+
+                return null;
+            }
+
+            return await DetermineMatchingInstalledPackagesForPrefixAsync(packageId: packageId, prefix: prefix, projects: projects, sources: sources);
+        }
+
+        private static async Task<Dictionary<string, NuGetVersion>?> DetermineMatchingInstalledPackagesForPackageIdAsync(
+            string packageId,
+            IReadOnlyList<string> projects,
+            IReadOnlyList<PackageSource> sources)
+        {
+            Dictionary<string, NuGetVersion> packages = new();
+
+            if (!HasMatchingPackagesInProjects(projects: projects, packageId: packageId))
+            {
+                Console.WriteLine($"No updates needed - package {packageId} is not used by any project.");
+
+                return packages;
+            }
+
+            await PackageSourceHelpers.FindPackagesAsync(sources: sources, packageId: packageId, packages: packages, cancellationToken: CancellationToken.None);
+
+            return packages;
+        }
+
+        private static async Task<Dictionary<string, NuGetVersion>?> DetermineMatchingInstalledPackagesForPrefixAsync(string packageId,
+                                                                                                                      string prefix,
+                                                                                                                      IReadOnlyList<string> projects,
+                                                                                                                      IReadOnlyList<PackageSource> sources)
+        {
+            Dictionary<string, NuGetVersion> packages = new();
+            IReadOnlyList<string> packageIds = FindPackagesByPrefixFromProjects(projects: projects, packageIdPrefix: prefix);
+
+            if (packageIds.Count == 0)
+            {
+                Console.WriteLine($"No updates needed - No packaged matching {packageId} is are used by any project.");
+
+                return packages;
+            }
+
+            foreach (string id in packageIds)
+            {
+                await PackageSourceHelpers.FindPackagesAsync(sources: sources, packageId: id, packages: packages, cancellationToken: CancellationToken.None);
+            }
+
+            return packages;
+        }
+
+        private static void OutputPackageUpdateTags(Dictionary<string, NuGetVersion> updatesMade)
+        {
+            // Used to tell scripts that the package id has been updated and to what version
+            foreach ((string updatedPackageId, NuGetVersion version) in updatesMade)
+            {
+                Console.WriteLine($"echo ::set-env name={updatedPackageId}::{version}");
+            }
+        }
+
+        private static Dictionary<string, NuGetVersion> UpdateProjects(IReadOnlyList<string> projects, Dictionary<string, NuGetVersion> packages)
+        {
+            Dictionary<string, NuGetVersion> updates = new();
+
+            foreach (string project in projects)
+            {
+                UpdateProject(project: project, packages: packages, updates: updates);
+            }
+
+            return updates;
         }
 
         private static bool HasMatchingPackagesInProjects(IReadOnlyList<string> projects, string packageId)
@@ -123,13 +179,13 @@ namespace Credfeto.Package.Update
                                  .ToArray();
         }
 
-        private static int UpdateProject(string project, IReadOnlyDictionary<string, NuGetVersion> packages)
+        private static void UpdateProject(string project, IReadOnlyDictionary<string, NuGetVersion> packages, Dictionary<string, NuGetVersion> updates)
         {
             XmlDocument? doc = ProjectHelpers.TryLoadDocument(project);
 
             if (doc == null)
             {
-                return 0;
+                return;
             }
 
             int changes = 0;
@@ -148,25 +204,12 @@ namespace Credfeto.Package.Update
                     {
                         if (PackageIdHelpers.IsExactMatch(package: package, packageId: nugetPackageId))
                         {
-                            string installedVersion = node.GetAttribute(name: "Version");
-                            bool upgrade = ShouldUpgrade(installedVersion: installedVersion, nugetVersion: nugetVersion);
+                            bool updated = UpdateOnePackage(node: node, installedPackageId: package, nugetPackageId: nugetPackageId, nugetVersion: nugetVersion);
 
-                            if (upgrade)
+                            if (updated)
                             {
-                                Console.WriteLine($"  >> {package} Installed: {installedVersion} Upgrade: True. New Version: {nugetVersion}.");
-
-                                // Set the package Id to be that from nuget
-                                if (IsPackageIdCasedDifferently(package: package, actualName: nugetPackageId))
-                                {
-                                    node.SetAttribute(name: "Include", value: nugetPackageId);
-                                }
-
-                                node.SetAttribute(name: "Version", nugetVersion.ToString());
+                                TrackUpdate(updates: updates, nugetPackageId: nugetPackageId, nugetVersion: nugetVersion);
                                 changes++;
-                            }
-                            else
-                            {
-                                Console.WriteLine($"  >> {package} Installed: {installedVersion} Upgrade: False.");
                             }
 
                             break;
@@ -181,8 +224,39 @@ namespace Credfeto.Package.Update
                     ProjectHelpers.SaveProject(project: project, doc: doc);
                 }
             }
+        }
 
-            return changes;
+        private static bool UpdateOnePackage(XmlElement node, string installedPackageId, string nugetPackageId, NuGetVersion nugetVersion)
+        {
+            string installedVersion = node.GetAttribute(name: "Version");
+            bool upgrade = ShouldUpgrade(installedVersion: installedVersion, nugetVersion: nugetVersion);
+
+            if (upgrade)
+            {
+                Console.WriteLine($"  >> {installedPackageId} Installed: {installedVersion} Upgrade: True. New Version: {nugetVersion}.");
+
+                // Set the package Id to be that from nuget
+                if (IsPackageIdCasedDifferently(package: installedPackageId, actualName: nugetPackageId))
+                {
+                    node.SetAttribute(name: "Include", value: nugetPackageId);
+                }
+
+                node.SetAttribute(name: "Version", nugetVersion.ToString());
+
+                return true;
+            }
+
+            Console.WriteLine($"  >> {installedPackageId} Installed: {installedVersion} Upgrade: False.");
+
+            return false;
+        }
+
+        private static void TrackUpdate(Dictionary<string, NuGetVersion> updates, string nugetPackageId, NuGetVersion nugetVersion)
+        {
+            if (!updates.ContainsKey(nugetPackageId))
+            {
+                updates.Add(key: nugetPackageId, value: nugetVersion);
+            }
         }
 
         private static bool IsPackageIdCasedDifferently(string package, string actualName)
