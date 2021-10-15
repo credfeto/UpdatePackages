@@ -8,7 +8,6 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ## [Unreleased]
 ### Added
 ### Fixed
-- Re-added the missing output metadata used by scripts
 ### Changed
 ### Removed
 ### Deployment Changes
@@ -16,6 +15,10 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 <!--
 Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
 -->
+## [1.7.1] - 2021-10-15
+### Fixed
+- Re-added the missing output metadata used by scripts
+
 ## [1.7.0] - 2021-09-29
 ### Changed
 - FF-1429 - Updated Roslynator.Analyzers to 3.2.0
