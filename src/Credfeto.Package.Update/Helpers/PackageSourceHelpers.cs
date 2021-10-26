@@ -43,10 +43,9 @@ namespace Credfeto.Package.Update.Helpers
             IEnumerable<IPackageSearchMetadata> result =
                 await searcher.SearchAsync(searchTerm: packageId, filters: SearchFilter, log: NugetLogger, cancellationToken: cancellationToken, skip: 0, take: int.MaxValue);
 
-            foreach (IPackageSearchMetadata entry in result)
+            foreach (PackageVersion packageVersion in result.Select(entry => entry.Identity)
+                                                            .Select(identity => new PackageVersion(packageId: identity.Id, version: identity.Version)))
             {
-                PackageVersion packageVersion = new(packageId: entry.Identity.Id, version: entry.Identity.Version);
-
                 if (PackageIdHelpers.IsExactMatch(packageId: packageId, packageVersion: packageVersion) && !IsBannedPackage(packageVersion))
                 {
                     found.TryAdd(key: packageVersion.PackageId, value: packageVersion.Version);
