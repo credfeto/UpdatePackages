@@ -7,16 +7,20 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 
 ## [Unreleased]
 ### Added
-- Support for packages in Product SDK
 ### Fixed
 ### Changed
-- FF-1429 - Updated SonarAnalyzer.CSharp to 8.30.0.37606
 ### Removed
 ### Deployment Changes
 
 <!--
 Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
 -->
+## [1.8.0] - 2021-10-26
+### Added
+- Support for packages in Product SDK
+### Changed
+- FF-1429 - Updated SonarAnalyzer.CSharp to 8.30.0.37606
+
 ## [1.7.1] - 2021-10-15
 ### Fixed
 - Re-added the missing output metadata used by scripts
