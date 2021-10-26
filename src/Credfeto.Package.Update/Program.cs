@@ -188,42 +188,109 @@ namespace Credfeto.Package.Update
                 return;
             }
 
-            int changes = 0;
+            Console.WriteLine();
+            Console.WriteLine($"* {project}");
+
+            bool sdkUpdated = TryUpdateSdk(doc: doc, packages: packages, updates: updates);
+            bool packageReferencesUpdated = TryUpdatePackageReferences(doc: doc, packages: packages, updates: updates);
+
+            if (sdkUpdated || packageReferencesUpdated)
+            {
+                Console.WriteLine(value: "=========== UPDATED ===========");
+
+                ProjectHelpers.SaveProject(project: project, doc: doc);
+            }
+        }
+
+        private static bool TryUpdatePackageReferences(XmlDocument doc, IReadOnlyDictionary<string, NuGetVersion> packages, Dictionary<string, NuGetVersion> updates)
+        {
             XmlNodeList? nodes = doc.SelectNodes(xpath: "/Project/ItemGroup/PackageReference");
 
-            if (nodes != null && nodes.Count != 0)
+            if (nodes == null || nodes.Count == 0)
             {
-                Console.WriteLine();
-                Console.WriteLine($"* {project}");
+                return false;
+            }
 
-                foreach (XmlElement node in nodes.OfType<XmlElement>())
+            bool packageReferencesUpdated = false;
+
+            foreach (XmlElement node in nodes.OfType<XmlElement>())
+            {
+                string package = node.GetAttribute(name: "Include");
+
+                foreach ((string nugetPackageId, NuGetVersion nugetVersion) in packages)
                 {
-                    string package = node.GetAttribute(name: "Include");
-
-                    foreach ((string nugetPackageId, NuGetVersion nugetVersion) in packages)
+                    if (!PackageIdHelpers.IsExactMatch(package: package, packageId: nugetPackageId))
                     {
-                        if (PackageIdHelpers.IsExactMatch(package: package, packageId: nugetPackageId))
-                        {
-                            bool updated = UpdateOnePackage(node: node, installedPackageId: package, nugetPackageId: nugetPackageId, nugetVersion: nugetVersion);
-
-                            if (updated)
-                            {
-                                TrackUpdate(updates: updates, nugetPackageId: nugetPackageId, nugetVersion: nugetVersion);
-                                changes++;
-                            }
-
-                            break;
-                        }
+                        continue;
                     }
-                }
 
-                if (changes != 0)
-                {
-                    Console.WriteLine(value: "=========== UPDATED ===========");
+                    bool updated = UpdateOnePackage(node: node, installedPackageId: package, nugetPackageId: nugetPackageId, nugetVersion: nugetVersion);
 
-                    ProjectHelpers.SaveProject(project: project, doc: doc);
+                    if (updated)
+                    {
+                        TrackUpdate(updates: updates, nugetPackageId: nugetPackageId, nugetVersion: nugetVersion);
+                        packageReferencesUpdated = true;
+                    }
+
+                    break;
                 }
             }
+
+            return packageReferencesUpdated;
+        }
+
+        private static bool TryUpdateSdk(XmlDocument doc, IReadOnlyDictionary<string, NuGetVersion> packages, Dictionary<string, NuGetVersion> updates)
+        {
+            if (doc.SelectSingleNode("/Project") is not XmlElement projectNode)
+            {
+                return false;
+            }
+
+            string sdk = projectNode.GetAttribute("Sdk");
+
+            if (string.IsNullOrWhiteSpace(sdk))
+            {
+                return false;
+            }
+
+            IReadOnlyList<string> parts = sdk.Split("/");
+
+            if (parts.Count != 2)
+            {
+                return false;
+            }
+
+            string installedPackageId = parts[0];
+            string installedVersion = parts[1];
+
+            foreach ((string nugetPackageId, NuGetVersion nugetVersion) in packages)
+            {
+                if (!PackageIdHelpers.IsExactMatch(package: installedPackageId, packageId: nugetPackageId))
+                {
+                    continue;
+                }
+
+                bool upgrade = ShouldUpgrade(installedVersion: installedVersion, nugetVersion: nugetVersion);
+
+                if (!upgrade)
+                {
+                    Console.WriteLine($"  >> {installedPackageId} Installed: {installedVersion} Upgrade: False.");
+
+                    return false;
+                }
+
+                Console.WriteLine($"  >> {installedPackageId} Installed: {installedVersion} Upgrade: True. New Version: {nugetVersion}.");
+                string newSdk = string.Join(separator: "/", nugetPackageId, nugetVersion);
+                projectNode.SetAttribute(name: "Sdk", value: newSdk);
+
+                TrackUpdate(updates: updates, nugetPackageId: nugetPackageId, nugetVersion: nugetVersion);
+
+                return true;
+
+                // Package matched but was not upgraded.
+            }
+
+            return false;
         }
 
         private static bool UpdateOnePackage(XmlElement node, string installedPackageId, string nugetPackageId, NuGetVersion nugetVersion)

@@ -22,7 +22,7 @@ namespace Credfeto.Package.Update.Helpers
                                                                        CloseOutput = true
                                                                    };
 
-        public static string[] FindProjects(string folder)
+        public static IReadOnlyList<string> FindProjects(string folder)
         {
             return Directory.EnumerateFiles(path: folder, searchPattern: "*.csproj", searchOption: SearchOption.AllDirectories)
                             .ToArray();
@@ -32,10 +32,35 @@ namespace Credfeto.Package.Update.Helpers
         {
             return projects.Select(TryLoadDocument)
                            .Where(doc => doc != null)
-                           .Select(doc => doc!.SelectNodes(xpath: "/Project/ItemGroup/PackageReference"))
-                           .Where(nodes => nodes != null)
-                           .SelectMany(nodes => nodes!.OfType<XmlElement>())
-                           .Select(node => node.GetAttribute(name: "Include"));
+                           .Select(doc => doc!)
+                           .SelectMany(doc => GetPackagesFromReferences(doc)
+                                           .Concat(GetPackagesFromSdk(doc)))
+                           .Select(item => item.ToLowerInvariant())
+                           .Distinct();
+        }
+
+        private static IEnumerable<string> GetPackagesFromSdk(XmlDocument doc)
+        {
+            if (doc.SelectSingleNode("/Project") is not XmlElement project)
+            {
+                yield break;
+            }
+
+            IReadOnlyList<string> sdk = project.GetAttribute("Sdk")
+                                               .Split("/");
+
+            if (sdk.Count == 2)
+            {
+                yield return sdk[0];
+            }
+        }
+
+        private static IEnumerable<string> GetPackagesFromReferences(XmlDocument doc)
+        {
+            return doc.SelectNodes(xpath: "/Project/ItemGroup/PackageReference")
+                      ?.OfType<XmlElement>()
+                      .Select(node => node!.GetAttribute(name: "Include"))
+                      .Where(include => !string.IsNullOrWhiteSpace(include)) ?? Array.Empty<string>();
         }
 
         public static XmlDocument? TryLoadDocument(string project)
