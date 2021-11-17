@@ -56,7 +56,7 @@ namespace Credfeto.Package.Update.Helpers
         private static bool IsBannedPackage(PackageVersion packageVersion)
         {
             return packageVersion.Version.ToString()
-                                 .Contains(value: "+", comparisonType: StringComparison.Ordinal);
+                                 .Contains(value: '+', comparisonType: StringComparison.Ordinal);
         }
 
         public static async Task FindPackagesAsync(IReadOnlyList<PackageSource> sources, string packageId, Dictionary<string, NuGetVersion> packages, CancellationToken cancellationToken)
