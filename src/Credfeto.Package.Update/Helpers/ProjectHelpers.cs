@@ -5,88 +5,87 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 
-namespace Credfeto.Package.Update.Helpers
+namespace Credfeto.Package.Update.Helpers;
+
+internal static class ProjectHelpers
 {
-    internal static class ProjectHelpers
+    private static readonly XmlWriterSettings WriterSettings = new()
+                                                               {
+                                                                   Async = true,
+                                                                   Indent = true,
+                                                                   IndentChars = "    ",
+                                                                   OmitXmlDeclaration = true,
+                                                                   Encoding = Encoding.UTF8,
+                                                                   NewLineHandling = NewLineHandling.None,
+                                                                   NewLineOnAttributes = false,
+                                                                   NamespaceHandling = NamespaceHandling.OmitDuplicates,
+                                                                   CloseOutput = true
+                                                               };
+
+    public static IReadOnlyList<string> FindProjects(string folder)
     {
-        private static readonly XmlWriterSettings WriterSettings = new()
-                                                                   {
-                                                                       Async = true,
-                                                                       Indent = true,
-                                                                       IndentChars = "    ",
-                                                                       OmitXmlDeclaration = true,
-                                                                       Encoding = Encoding.UTF8,
-                                                                       NewLineHandling = NewLineHandling.None,
-                                                                       NewLineOnAttributes = false,
-                                                                       NamespaceHandling = NamespaceHandling.OmitDuplicates,
-                                                                       CloseOutput = true
-                                                                   };
+        return Directory.EnumerateFiles(path: folder, searchPattern: "*.csproj", searchOption: SearchOption.AllDirectories)
+                        .ToArray();
+    }
 
-        public static IReadOnlyList<string> FindProjects(string folder)
+    public static IEnumerable<string> GetPackageIds(IReadOnlyList<string> projects)
+    {
+        return projects.Select(TryLoadDocument)
+                       .Where(doc => doc != null)
+                       .Select(doc => doc!)
+                       .SelectMany(doc => GetPackagesFromReferences(doc)
+                                       .Concat(GetPackagesFromSdk(doc)))
+                       .Select(item => item.ToLowerInvariant())
+                       .Distinct(StringComparer.Ordinal);
+    }
+
+    private static IEnumerable<string> GetPackagesFromSdk(XmlDocument doc)
+    {
+        if (doc.SelectSingleNode("/Project") is not XmlElement project)
         {
-            return Directory.EnumerateFiles(path: folder, searchPattern: "*.csproj", searchOption: SearchOption.AllDirectories)
-                            .ToArray();
+            yield break;
         }
 
-        public static IEnumerable<string> GetPackageIds(IReadOnlyList<string> projects)
+        IReadOnlyList<string> sdk = project.GetAttribute("Sdk")
+                                           .Split("/");
+
+        if (sdk.Count == 2)
         {
-            return projects.Select(TryLoadDocument)
-                           .Where(doc => doc != null)
-                           .Select(doc => doc!)
-                           .SelectMany(doc => GetPackagesFromReferences(doc)
-                                           .Concat(GetPackagesFromSdk(doc)))
-                           .Select(item => item.ToLowerInvariant())
-                           .Distinct(StringComparer.Ordinal);
+            yield return sdk[0];
         }
+    }
 
-        private static IEnumerable<string> GetPackagesFromSdk(XmlDocument doc)
+    private static IEnumerable<string> GetPackagesFromReferences(XmlDocument doc)
+    {
+        return doc.SelectNodes(xpath: "/Project/ItemGroup/PackageReference")
+                  ?.OfType<XmlElement>()
+                  .Select(node => node!.GetAttribute(name: "Include"))
+                  .Where(include => !string.IsNullOrWhiteSpace(include)) ?? Array.Empty<string>();
+    }
+
+    public static XmlDocument? TryLoadDocument(string project)
+    {
+        try
         {
-            if (doc.SelectSingleNode("/Project") is not XmlElement project)
-            {
-                yield break;
-            }
+            XmlDocument doc = new();
 
-            IReadOnlyList<string> sdk = project.GetAttribute("Sdk")
-                                               .Split("/");
+            doc.Load(project);
 
-            if (sdk.Count == 2)
-            {
-                yield return sdk[0];
-            }
+            return doc;
         }
-
-        private static IEnumerable<string> GetPackagesFromReferences(XmlDocument doc)
+        catch (Exception exception)
         {
-            return doc.SelectNodes(xpath: "/Project/ItemGroup/PackageReference")
-                      ?.OfType<XmlElement>()
-                      .Select(node => node!.GetAttribute(name: "Include"))
-                      .Where(include => !string.IsNullOrWhiteSpace(include)) ?? Array.Empty<string>();
+            Console.Error.WriteLine($"Failed to load {project}: {exception.Message}");
+
+            return null;
         }
+    }
 
-        public static XmlDocument? TryLoadDocument(string project)
+    public static void SaveProject(string project, XmlDocument doc)
+    {
+        using (XmlWriter writer = XmlWriter.Create(outputFileName: project, settings: WriterSettings))
         {
-            try
-            {
-                XmlDocument doc = new();
-
-                doc.Load(project);
-
-                return doc;
-            }
-            catch (Exception exception)
-            {
-                Console.Error.WriteLine($"Failed to load {project}: {exception.Message}");
-
-                return null;
-            }
-        }
-
-        public static void SaveProject(string project, XmlDocument doc)
-        {
-            using (XmlWriter writer = XmlWriter.Create(outputFileName: project, settings: WriterSettings))
-            {
-                doc.Save(writer);
-            }
+            doc.Save(writer);
         }
     }
 }
