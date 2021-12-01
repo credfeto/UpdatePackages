@@ -22,56 +22,7 @@ namespace Credfeto.Package.Update
 
             try
             {
-                IConfigurationRoot configuration = ConfigurationLoader.LoadConfiguration(args);
-
-                string folder = configuration.GetValue<string>(key: @"Folder");
-
-                if (string.IsNullOrEmpty(folder))
-                {
-                    Console.WriteLine("ERROR: folder not specified");
-
-                    return ERROR;
-                }
-
-                string source = configuration.GetValue<string>(key: @"source");
-
-                IReadOnlyList<PackageSource> sources = PackageSourceHelpers.DefinePackageSources(source);
-
-                IReadOnlyList<string> projects = ProjectHelpers.FindProjects(folder);
-
-                string packageId = configuration.GetValue<string>(key: @"packageid");
-                string prefix = configuration.GetValue<string>(key: @"packageprefix");
-
-                Dictionary<string, NuGetVersion>? packages = await DetermineMatchingInstalledPackagesAsync(packageId: packageId, prefix: prefix, projects: projects, sources: sources);
-
-                if (packages == null)
-                {
-                    return ERROR;
-                }
-
-                if (packages.Count == 0)
-                {
-                    Console.WriteLine($"No updates needed - package {packageId} is not used by any project.");
-
-                    return SUCCESS;
-                }
-
-                Dictionary<string, NuGetVersion> updatesMade = UpdateProjects(projects: projects, packages: packages);
-
-                Console.WriteLine();
-
-                if (updatesMade.Count != 0)
-                {
-                    Console.WriteLine($"Total Updates: {updatesMade.Count}");
-
-                    OutputPackageUpdateTags(updatesMade);
-
-                    return SUCCESS;
-                }
-
-                Console.WriteLine(value: "No updates made.");
-
-                return ERROR;
+                return await LookForUpdatesAsync(args);
             }
             catch (Exception exception)
             {
@@ -79,6 +30,60 @@ namespace Credfeto.Package.Update
 
                 return ERROR;
             }
+        }
+
+        private static async Task<int> LookForUpdatesAsync(string[] args)
+        {
+            IConfigurationRoot configuration = ConfigurationLoader.LoadConfiguration(args);
+
+            string folder = configuration.GetValue<string>(key: @"Folder");
+
+            if (string.IsNullOrEmpty(folder))
+            {
+                Console.WriteLine("ERROR: folder not specified");
+
+                return ERROR;
+            }
+
+            string source = configuration.GetValue<string>(key: @"source");
+
+            IReadOnlyList<PackageSource> sources = PackageSourceHelpers.DefinePackageSources(source);
+
+            IReadOnlyList<string> projects = ProjectHelpers.FindProjects(folder);
+
+            string packageId = configuration.GetValue<string>(key: @"packageid");
+            string prefix = configuration.GetValue<string>(key: @"packageprefix");
+
+            Dictionary<string, NuGetVersion>? packages = await DetermineMatchingInstalledPackagesAsync(packageId: packageId, prefix: prefix, projects: projects, sources: sources);
+
+            if (packages == null)
+            {
+                return ERROR;
+            }
+
+            if (packages.Count == 0)
+            {
+                Console.WriteLine($"No updates needed - package {packageId} is not used by any project.");
+
+                return SUCCESS;
+            }
+
+            Dictionary<string, NuGetVersion> updatesMade = UpdateProjects(projects: projects, packages: packages);
+
+            Console.WriteLine();
+
+            if (updatesMade.Count != 0)
+            {
+                Console.WriteLine($"Total Updates: {updatesMade.Count}");
+
+                OutputPackageUpdateTags(updatesMade);
+
+                return SUCCESS;
+            }
+
+            Console.WriteLine(value: "No updates made.");
+
+            return ERROR;
         }
 
         private static async Task<Dictionary<string, NuGetVersion>?> DetermineMatchingInstalledPackagesAsync(string packageId,
