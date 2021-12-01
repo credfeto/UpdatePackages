@@ -36,7 +36,7 @@ namespace Credfeto.Package.Update.Helpers
                            .SelectMany(doc => GetPackagesFromReferences(doc)
                                            .Concat(GetPackagesFromSdk(doc)))
                            .Select(item => item.ToLowerInvariant())
-                           .Distinct();
+                           .Distinct(StringComparer.Ordinal);
         }
 
         private static IEnumerable<string> GetPackagesFromSdk(XmlDocument doc)

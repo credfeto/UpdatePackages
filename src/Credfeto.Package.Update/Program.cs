@@ -106,7 +106,7 @@ namespace Credfeto.Package.Update
             IReadOnlyList<string> projects,
             IReadOnlyList<PackageSource> sources)
         {
-            Dictionary<string, NuGetVersion> packages = new();
+            Dictionary<string, NuGetVersion> packages = new(StringComparer.Ordinal);
 
             if (!HasMatchingPackagesInProjects(projects: projects, packageId: packageId))
             {
@@ -125,7 +125,7 @@ namespace Credfeto.Package.Update
                                                                                                                       IReadOnlyList<string> projects,
                                                                                                                       IReadOnlyList<PackageSource> sources)
         {
-            Dictionary<string, NuGetVersion> packages = new();
+            Dictionary<string, NuGetVersion> packages = new(StringComparer.Ordinal);
             IReadOnlyList<string> packageIds = FindPackagesByPrefixFromProjects(projects: projects, packageIdPrefix: prefix);
 
             if (packageIds.Count == 0)
@@ -154,7 +154,7 @@ namespace Credfeto.Package.Update
 
         private static Dictionary<string, NuGetVersion> UpdateProjects(IReadOnlyList<string> projects, Dictionary<string, NuGetVersion> packages)
         {
-            Dictionary<string, NuGetVersion> updates = new();
+            Dictionary<string, NuGetVersion> updates = new(StringComparer.Ordinal);
 
             foreach (string project in projects)
             {
@@ -175,7 +175,7 @@ namespace Credfeto.Package.Update
             return ProjectHelpers.GetPackageIds(projects)
                                  .Where(package => PackageIdHelpers.IsPrefixMatch(packageIdPrefix: packageIdPrefix, package: package))
                                  .Select(packageId => packageId.ToLowerInvariant())
-                                 .Distinct()
+                                 .Distinct(StringComparer.Ordinal)
                                  .ToArray();
         }
 

@@ -1,9 +1,9 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using NonBlocking;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
@@ -63,7 +63,7 @@ namespace Credfeto.Package.Update.Helpers
         {
             Console.WriteLine(value: $"Enumerating matching package versions for {packageId}...");
 
-            ConcurrentDictionary<string, NuGetVersion> found = new();
+            ConcurrentDictionary<string, NuGetVersion> found = new(StringComparer.Ordinal);
 
             await Task.WhenAll(sources.Select(selector: source => LoadPackagesFromSourceAsync(packageSource: source, packageId: packageId, found: found, cancellationToken: cancellationToken)));
 
