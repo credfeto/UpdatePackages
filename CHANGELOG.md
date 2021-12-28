@@ -19,6 +19,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - FF-1429 - Updated SecurityCodeScan.VS2019 to 5.6.0
 - FF-1429 - Updated Meziantou.Analyzer to 1.0.681
 - FF-3881 - Updated DotNet SDK to 6.0.101
+- FF-1429 - Updated Meziantou.Analyzer to 1.0.683
 ### Removed
 ### Deployment Changes
 
