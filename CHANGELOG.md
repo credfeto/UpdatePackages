@@ -8,6 +8,15 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ## [Unreleased]
 ### Added
 ### Fixed
+### Changed
+### Removed
+### Deployment Changes
+
+<!--
+Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
+-->
+## [1.8.2] - 2022-02-09
+### Fixed
 - New code analysis issues
 ### Changed
 - FF-1429 - Updated Microsoft.Extensions to 6.0.0
@@ -39,12 +48,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - FF-1429 - Updated Meziantou.Analyzer to 1.0.694
 - FF-1429 - Updated FunFair.CodeAnalysis to 5.8.0.1196
 - FF-3881 - Updated DotNet SDK to 6.0.102
-### Removed
-### Deployment Changes
 
-<!--
-Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
--->
 ## [1.8.0] - 2021-10-26
 ### Added
 - Support for packages in Product SDK
