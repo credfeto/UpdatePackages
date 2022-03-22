@@ -58,7 +58,8 @@ internal static class ProjectHelpers
     {
         return doc.SelectNodes("/Project/ItemGroup/PackageReference")
             ?.OfType<XmlElement>()
-            .Select(node => node!.GetAttribute("Include"))
+            .RemoveNulls()
+            .Select(node => node.GetAttribute("Include"))
             .Where(include => !string.IsNullOrWhiteSpace(include)) ?? Array.Empty<string>();
     }
 
