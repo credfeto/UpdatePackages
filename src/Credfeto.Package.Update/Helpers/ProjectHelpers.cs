@@ -10,33 +10,32 @@ namespace Credfeto.Package.Update.Helpers;
 internal static class ProjectHelpers
 {
     private static readonly XmlWriterSettings WriterSettings = new()
-                                                               {
-                                                                   Async = true,
-                                                                   Indent = true,
-                                                                   IndentChars = "    ",
-                                                                   OmitXmlDeclaration = true,
-                                                                   Encoding = Encoding.UTF8,
-                                                                   NewLineHandling = NewLineHandling.None,
-                                                                   NewLineOnAttributes = false,
-                                                                   NamespaceHandling = NamespaceHandling.OmitDuplicates,
-                                                                   CloseOutput = true
-                                                               };
+    {
+        Async = true,
+        Indent = true,
+        IndentChars = "  ",
+        OmitXmlDeclaration = true,
+        Encoding = Encoding.UTF8,
+        NewLineHandling = NewLineHandling.None,
+        NewLineOnAttributes = false,
+        NamespaceHandling = NamespaceHandling.OmitDuplicates,
+        CloseOutput = true
+    };
 
     public static IReadOnlyList<string> FindProjects(string folder)
     {
-        return Directory.EnumerateFiles(path: folder, searchPattern: "*.csproj", searchOption: SearchOption.AllDirectories)
-                        .ToArray();
+        return Directory.EnumerateFiles(folder, "*.csproj", SearchOption.AllDirectories)
+            .ToArray();
     }
 
     public static IEnumerable<string> GetPackageIds(IReadOnlyList<string> projects)
     {
         return projects.Select(TryLoadDocument)
-                       .Where(doc => doc != null)
-                       .Select(doc => doc!)
-                       .SelectMany(doc => GetPackagesFromReferences(doc)
-                                       .Concat(GetPackagesFromSdk(doc)))
-                       .Select(item => item.ToLowerInvariant())
-                       .Distinct(StringComparer.Ordinal);
+            .RemoveNulls()
+            .SelectMany(doc => GetPackagesFromReferences(doc)
+                .Concat(GetPackagesFromSdk(doc)))
+            .Select(item => item.ToLowerInvariant())
+            .Distinct(StringComparer.Ordinal);
     }
 
     private static IEnumerable<string> GetPackagesFromSdk(XmlDocument doc)
@@ -47,7 +46,7 @@ internal static class ProjectHelpers
         }
 
         IReadOnlyList<string> sdk = project.GetAttribute("Sdk")
-                                           .Split("/");
+            .Split("/");
 
         if (sdk.Count == 2)
         {
@@ -57,10 +56,10 @@ internal static class ProjectHelpers
 
     private static IEnumerable<string> GetPackagesFromReferences(XmlDocument doc)
     {
-        return doc.SelectNodes(xpath: "/Project/ItemGroup/PackageReference")
-                  ?.OfType<XmlElement>()
-                  .Select(node => node!.GetAttribute(name: "Include"))
-                  .Where(include => !string.IsNullOrWhiteSpace(include)) ?? Array.Empty<string>();
+        return doc.SelectNodes("/Project/ItemGroup/PackageReference")
+            ?.OfType<XmlElement>()
+            .Select(node => node!.GetAttribute("Include"))
+            .Where(include => !string.IsNullOrWhiteSpace(include)) ?? Array.Empty<string>();
     }
 
     public static XmlDocument? TryLoadDocument(string project)
@@ -83,7 +82,7 @@ internal static class ProjectHelpers
 
     public static void SaveProject(string project, XmlDocument doc)
     {
-        using (XmlWriter writer = XmlWriter.Create(outputFileName: project, settings: WriterSettings))
+        using (XmlWriter writer = XmlWriter.Create(project, WriterSettings))
         {
             doc.Save(writer);
         }
