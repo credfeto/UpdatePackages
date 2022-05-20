@@ -25,7 +25,7 @@ internal static class ProjectHelpers
 
     public static IReadOnlyList<string> FindProjects(string folder)
     {
-        return Directory.EnumerateFiles(folder, "*.csproj", SearchOption.AllDirectories)
+        return Directory.EnumerateFiles(path: folder, searchPattern: "*.csproj", searchOption: SearchOption.AllDirectories)
                         .ToArray();
     }
 
@@ -84,7 +84,7 @@ internal static class ProjectHelpers
 
     public static void SaveProject(string project, XmlDocument doc)
     {
-        using (XmlWriter writer = XmlWriter.Create(project, WriterSettings))
+        using (XmlWriter writer = XmlWriter.Create(outputFileName: project, settings: WriterSettings))
         {
             doc.Save(writer);
         }

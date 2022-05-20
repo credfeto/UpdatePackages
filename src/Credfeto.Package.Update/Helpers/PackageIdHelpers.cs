@@ -6,7 +6,8 @@ internal static class PackageIdHelpers
 {
     public static bool IsPrefixMatch(string packageIdPrefix, string package)
     {
-        return StringComparer.InvariantCultureIgnoreCase.Equals(x: packageIdPrefix, y: package) || package.StartsWith(packageIdPrefix + ".", comparisonType: StringComparison.OrdinalIgnoreCase);
+        return StringComparer.InvariantCultureIgnoreCase.Equals(x: packageIdPrefix, y: package) ||
+               package.StartsWith(packageIdPrefix + ".", comparisonType: StringComparison.OrdinalIgnoreCase);
     }
 
     public static bool IsExactMatch(string package, string packageId)

@@ -8,7 +8,8 @@ internal static class ConfigurationLoader
 {
     public static IConfigurationRoot LoadConfiguration(string[] args)
     {
-        Dictionary<string, string> mappings = new(StringComparer.Ordinal) { [@"-packageId"] = @"packageid", ["-packageprefix"] = "packageprefix", [@"-folder"] = @"folder", [@"-source"] = @"source" };
+        Dictionary<string, string> mappings =
+            new(StringComparer.Ordinal) { [@"-packageId"] = @"packageid", ["-packageprefix"] = "packageprefix", [@"-folder"] = @"folder", [@"-source"] = @"source" };
 
         return new ConfigurationBuilder().AddCommandLine(args: args, switchMappings: mappings)
                                          .Build();

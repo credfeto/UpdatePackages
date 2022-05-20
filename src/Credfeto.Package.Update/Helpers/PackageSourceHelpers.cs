@@ -29,19 +29,26 @@ internal static class PackageSourceHelpers
 
         if (!string.IsNullOrEmpty(source))
         {
-            sources.Add(new PackageSource(name: "Custom", source: source, isEnabled: true, isPersistable: true, isOfficial: true));
+            sources.Add(new(name: "Custom", source: source, isEnabled: true, isPersistable: true, isOfficial: true));
         }
 
         return sources;
     }
 
-    private static async Task LoadPackagesFromSourceAsync(PackageSource packageSource, string packageId, ConcurrentDictionary<string, NuGetVersion> found, CancellationToken cancellationToken)
+    private static async Task LoadPackagesFromSourceAsync(PackageSource packageSource,
+                                                          string packageId,
+                                                          ConcurrentDictionary<string, NuGetVersion> found,
+                                                          CancellationToken cancellationToken)
     {
         SourceRepository sourceRepository = new(source: packageSource, new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3()));
 
         PackageSearchResource searcher = await sourceRepository.GetResourceAsync<PackageSearchResource>(cancellationToken);
-        IEnumerable<IPackageSearchMetadata> result =
-            await searcher.SearchAsync(searchTerm: packageId, filters: SearchFilter, log: NugetLogger, cancellationToken: cancellationToken, skip: 0, take: int.MaxValue);
+        IEnumerable<IPackageSearchMetadata> result = await searcher.SearchAsync(searchTerm: packageId,
+                                                                                filters: SearchFilter,
+                                                                                log: NugetLogger,
+                                                                                cancellationToken: cancellationToken,
+                                                                                skip: 0,
+                                                                                take: int.MaxValue);
 
         foreach (PackageVersion packageVersion in result.Select(entry => entry.Identity)
                                                         .Select(identity => new PackageVersion(packageId: identity.Id, version: identity.Version)))
@@ -59,13 +66,17 @@ internal static class PackageSourceHelpers
                              .Contains(value: '+', comparisonType: StringComparison.Ordinal);
     }
 
-    public static async Task FindPackagesAsync(IReadOnlyList<PackageSource> sources, string packageId, Dictionary<string, NuGetVersion> packages, CancellationToken cancellationToken)
+    public static async Task FindPackagesAsync(IReadOnlyList<PackageSource> sources,
+                                               string packageId,
+                                               Dictionary<string, NuGetVersion> packages,
+                                               CancellationToken cancellationToken)
     {
         Console.WriteLine(value: $"Enumerating matching package versions for {packageId}...");
 
         ConcurrentDictionary<string, NuGetVersion> found = new(StringComparer.Ordinal);
 
-        await Task.WhenAll(sources.Select(selector: source => LoadPackagesFromSourceAsync(packageSource: source, packageId: packageId, found: found, cancellationToken: cancellationToken)));
+        await Task.WhenAll(
+            sources.Select(selector: source => LoadPackagesFromSourceAsync(packageSource: source, packageId: packageId, found: found, cancellationToken: cancellationToken)));
 
         foreach ((string key, NuGetVersion value) in found)
         {
