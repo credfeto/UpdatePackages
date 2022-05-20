@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Credfeto.Package.Update.Helpers;
+namespace Credfeto.Package.Update.Extensions;
 
 internal static class EnumerableExtensions
 {
