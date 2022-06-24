@@ -10,6 +10,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Fixed
 ### Changed
 - FF-1429 - Updated FunFair.CodeAnalysis to 5.8.3.1353
+- FF-1429 - Updated NonBlocking to 2.1.0
 ### Removed
 ### Deployment Changes
 
