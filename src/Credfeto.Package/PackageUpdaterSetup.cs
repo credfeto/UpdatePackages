@@ -17,6 +17,7 @@ public static class PackageUpdaterSetup
     public static IServiceCollection AddPackageUpdater(this IServiceCollection services)
     {
         return services.AddSingleton<IProjectLoader, ProjectLoader>()
-                       .AddSingleton<IPackageUpdater, PackageUpdater>();
+                       .AddSingleton<IPackageUpdater, PackageUpdater>()
+                       .AddSingleton<IPackageRegistry, PackageRegistry>();
     }
 }

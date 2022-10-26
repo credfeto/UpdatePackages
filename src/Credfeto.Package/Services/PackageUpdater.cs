@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Credfeto.Package.Extensions;
 using Microsoft.Extensions.Logging;
@@ -13,15 +14,17 @@ namespace Credfeto.Package.Services;
 public sealed class PackageUpdater : IPackageUpdater
 {
     private readonly ILogger<PackageUpdater> _logger;
+    private readonly IPackageRegistry _packageRegistry;
     private readonly IProjectLoader _projectLoader;
 
-    public PackageUpdater(IProjectLoader projectLoader, ILogger<PackageUpdater> logger)
+    public PackageUpdater(IProjectLoader projectLoader, IPackageRegistry packageRegistry, ILogger<PackageUpdater> logger)
     {
         this._projectLoader = projectLoader;
+        this._packageRegistry = packageRegistry;
         this._logger = logger;
     }
 
-    public async Task<int> UpdateAsync(string basePath, PackageUpdateConfiguration configuration, IReadOnlyList<string> packageSources)
+    public async Task<int> UpdateAsync(string basePath, PackageUpdateConfiguration configuration, IReadOnlyList<string> packageSources, CancellationToken cancellationToken)
     {
         IReadOnlyList<IProject> projects = await this.FindProjectsAsync(basePath);
 
@@ -29,12 +32,48 @@ public sealed class PackageUpdater : IPackageUpdater
 
         if (projectsByPackage.Count == 0)
         {
-            this._logger.LogInformation("Found 0 matching packages");
+            this._logger.LogInformation("No matching packages installed");
 
             return 0;
         }
 
-        return projectsByPackage.Count;
+        IReadOnlyList<PackageVersion> matching = await this._packageRegistry.FindPackagesAsync(projectsByPackage.Keys.ToArray(), packageSources: packageSources, cancellationToken: cancellationToken);
+
+        if (matching.Count == 0)
+        {
+            this._logger.LogInformation("No matching packages found in event source");
+
+            return 0;
+        }
+
+        int updates = 0;
+
+        foreach (PackageVersion packageVersion in matching)
+        {
+            if (!projectsByPackage.TryGetValue(key: packageVersion.PackageId, out ConcurrentDictionary<IProject, NuGetVersion>? projectsToUpdate))
+            {
+                continue;
+            }
+
+            foreach ((IProject project, NuGetVersion version) in projectsToUpdate)
+            {
+                if (packageVersion.Version > version)
+                {
+                    this._logger.LogInformation($"Updating {packageVersion.PackageId} from {version} to {packageVersion.Version} in {project.FileName}");
+
+                    project.UpdatePackage(packageVersion);
+                    ++updates;
+                }
+            }
+        }
+
+        foreach (IProject project in projects.Where(project => project.Changed))
+        {
+            this._logger.LogInformation($"Saving {project.FileName}");
+            project.Save();
+        }
+
+        return updates;
     }
 
     private static ConcurrentDictionary<string, ConcurrentDictionary<IProject, NuGetVersion>> FindMatchingPackages(PackageUpdateConfiguration configuration, IReadOnlyList<IProject> projects)
