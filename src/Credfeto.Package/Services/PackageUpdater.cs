@@ -46,6 +46,30 @@ public sealed class PackageUpdater : IPackageUpdater
             return 0;
         }
 
+        ConcurrentDictionary<string, NuGetVersion> updated = new(StringComparer.OrdinalIgnoreCase);
+
+        int updates = this.UpdateProjects(matching: matching, projectsByPackage: projectsByPackage, updated: updated);
+
+        this.SaveChanges(projects);
+
+        this.OutputPackageUpdateTags(updated);
+
+        return updates;
+    }
+
+    private void SaveChanges(IReadOnlyList<IProject> projects)
+    {
+        foreach (IProject project in projects.Where(project => project.Changed))
+        {
+            this._logger.LogInformation($"Saving {project.FileName}");
+            project.Save();
+        }
+    }
+
+    private int UpdateProjects(IReadOnlyList<PackageVersion> matching,
+                               ConcurrentDictionary<string, ConcurrentDictionary<IProject, NuGetVersion>> projectsByPackage,
+                               ConcurrentDictionary<string, NuGetVersion> updated)
+    {
         int updates = 0;
 
         foreach (PackageVersion packageVersion in matching)
@@ -63,17 +87,21 @@ public sealed class PackageUpdater : IPackageUpdater
 
                     project.UpdatePackage(packageVersion);
                     ++updates;
+
+                    updated.TryAdd(key: packageVersion.PackageId, value: packageVersion.Version);
                 }
             }
         }
 
-        foreach (IProject project in projects.Where(project => project.Changed))
-        {
-            this._logger.LogInformation($"Saving {project.FileName}");
-            project.Save();
-        }
-
         return updates;
+    }
+
+    private void OutputPackageUpdateTags(ConcurrentDictionary<string, NuGetVersion> updated)
+    {
+        foreach ((string packageId, NuGetVersion version) in updated)
+        {
+            this._logger.LogInformation($"echo ::set-env name={packageId}::{version}");
+        }
     }
 
     private static ConcurrentDictionary<string, ConcurrentDictionary<IProject, NuGetVersion>> FindMatchingPackages(PackageUpdateConfiguration configuration, IReadOnlyList<IProject> projects)
@@ -107,7 +135,7 @@ public sealed class PackageUpdater : IPackageUpdater
                              .ToArray();
     }
 
-    public static IReadOnlyList<string> FindProjects(string folder)
+    private static IReadOnlyList<string> FindProjects(string folder)
     {
         return Directory.EnumerateFiles(path: folder, searchPattern: "*.csproj", searchOption: SearchOption.AllDirectories)
                         .ToArray();
