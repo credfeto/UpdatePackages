@@ -54,7 +54,10 @@ internal static class Program
         string packageId = configuration.GetValue<string>(key: @"packageid");
         string prefix = configuration.GetValue<string>(key: @"packageprefix");
 
-        Dictionary<string, NuGetVersion>? packages = await DetermineMatchingInstalledPackagesAsync(packageId: packageId, prefix: prefix, projects: projects, sources: sources);
+        IReadOnlyList<ExcludedPackage> excludedPackages = GetExcludedPackages(configuration);
+
+        Dictionary<string, NuGetVersion>? packages =
+            await DetermineMatchingInstalledPackagesAsync(packageId: packageId, prefix: prefix, projects: projects, excludes: excludedPackages, sources: sources);
 
         if (packages == null)
         {
@@ -86,14 +89,45 @@ internal static class Program
         return ERROR;
     }
 
+    private static IReadOnlyList<ExcludedPackage> GetExcludedPackages(IConfigurationRoot configuration)
+    {
+        string[]? excludes = configuration.GetValue<string[]>("excludes");
+
+        if (excludes != null && excludes.Length != 0)
+        {
+            List<ExcludedPackage> excludedPackages = new();
+
+            foreach (string exclude in excludes)
+            {
+                string[] p = exclude.Split(separator: ':');
+
+                if (p.Length == 2)
+                {
+                    excludedPackages.Add(new(p[0], StringComparer.InvariantCultureIgnoreCase.Equals(p[1], y: "prefix")));
+                }
+                else
+                {
+                    excludedPackages.Add(new(p[0], Prefix: false));
+                }
+
+                Console.WriteLine($"Excluding {exclude}");
+            }
+
+            return excludedPackages;
+        }
+
+        return Array.Empty<ExcludedPackage>();
+    }
+
     private static async Task<Dictionary<string, NuGetVersion>?> DetermineMatchingInstalledPackagesAsync(string packageId,
                                                                                                          string prefix,
                                                                                                          IReadOnlyList<string> projects,
+                                                                                                         IReadOnlyList<ExcludedPackage> excludes,
                                                                                                          IReadOnlyList<PackageSource> sources)
     {
         if (!string.IsNullOrEmpty(packageId))
         {
-            return await DetermineMatchingInstalledPackagesForPackageIdAsync(packageId: packageId, projects: projects, sources: sources);
+            return await DetermineMatchingInstalledPackagesForPackageIdAsync(packageId: packageId, projects: projects, excludes: excludes, sources: sources);
         }
 
         if (string.IsNullOrWhiteSpace(prefix))
@@ -103,11 +137,12 @@ internal static class Program
             return null;
         }
 
-        return await DetermineMatchingInstalledPackagesForPrefixAsync(packageId: packageId, prefix: prefix, projects: projects, sources: sources);
+        return await DetermineMatchingInstalledPackagesForPrefixAsync(packageId: packageId, prefix: prefix, projects: projects, excludes: excludes, sources: sources);
     }
 
     private static async Task<Dictionary<string, NuGetVersion>?> DetermineMatchingInstalledPackagesForPackageIdAsync(string packageId,
                                                                                                                      IReadOnlyList<string> projects,
+                                                                                                                     IReadOnlyList<ExcludedPackage> excludes,
                                                                                                                      IReadOnlyList<PackageSource> sources)
     {
         Dictionary<string, NuGetVersion> packages = new(StringComparer.Ordinal);
@@ -119,14 +154,45 @@ internal static class Program
             return packages;
         }
 
+        if (IsExcluded(packageId: packageId, excludes: excludes))
+        {
+            Console.WriteLine($"No updates needed for package {packageId} as it is excluded.");
+
+            return packages;
+        }
+
         await PackageSourceHelpers.FindPackagesAsync(sources: sources, packageId: packageId, packages: packages, cancellationToken: CancellationToken.None);
 
         return packages;
     }
 
+    private static bool IsExcluded(string packageId, IReadOnlyList<ExcludedPackage> excludes)
+    {
+        foreach (ExcludedPackage exclude in excludes)
+        {
+            if (exclude.Prefix)
+            {
+                if (PackageIdHelpers.IsPrefixMatch(packageIdPrefix: exclude.PackageId, package: packageId))
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                if (PackageIdHelpers.IsExactMatch(package: exclude.PackageId, packageId: packageId))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     private static async Task<Dictionary<string, NuGetVersion>?> DetermineMatchingInstalledPackagesForPrefixAsync(string packageId,
                                                                                                                   string prefix,
                                                                                                                   IReadOnlyList<string> projects,
+                                                                                                                  IReadOnlyList<ExcludedPackage> excludes,
                                                                                                                   IReadOnlyList<PackageSource> sources)
     {
         Dictionary<string, NuGetVersion> packages = new(StringComparer.Ordinal);
@@ -141,6 +207,13 @@ internal static class Program
 
         foreach (string id in packageIds)
         {
+            if (IsExcluded(packageId: id, excludes: excludes))
+            {
+                Console.WriteLine($"No updates needed for package {id} as it is excluded.");
+
+                continue;
+            }
+
             await PackageSourceHelpers.FindPackagesAsync(sources: sources, packageId: id, packages: packages, cancellationToken: CancellationToken.None);
         }
 
