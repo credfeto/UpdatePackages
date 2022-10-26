@@ -16,6 +16,7 @@ public static class PackageUpdaterSetup
     /// <param name="services">The services to add things to.</param>
     public static IServiceCollection AddPackageUpdater(this IServiceCollection services)
     {
-        return services.AddSingleton<IProjectLoader, ProjectLoader>();
+        return services.AddSingleton<IProjectLoader, ProjectLoader>()
+                       .AddSingleton<IPackageUpdater, PackageUpdater>();
     }
 }

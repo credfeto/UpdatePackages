@@ -25,14 +25,14 @@ internal sealed class Project : IProject
 
     private readonly XmlDocument _doc;
 
-    private readonly string _fileName;
-
     public Project(string fileName, XmlDocument doc)
     {
-        this._fileName = fileName;
+        this.FileName = fileName;
         this._doc = doc;
         this.Changed = false;
     }
+
+    public string FileName { get; }
 
     public IReadOnlyList<PackageVersion> Packages => this.GetCurrentPackageVersions();
 
@@ -56,7 +56,7 @@ internal sealed class Project : IProject
             return false;
         }
 
-        using (XmlWriter writer = XmlWriter.Create(outputFileName: this._fileName, settings: WriterSettings))
+        using (XmlWriter writer = XmlWriter.Create(outputFileName: this.FileName, settings: WriterSettings))
         {
             this._doc.Save(writer);
 

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.Extensions.Logging;
 using NonBlocking;
@@ -16,7 +17,7 @@ public sealed class ProjectLoader : IProjectLoader
         this._loadedProjects = new(StringComparer.Ordinal);
     }
 
-    public IProject? Load(string path)
+    public async Task<IProject?> LoadAsync(string path)
     {
         if (this._loadedProjects.TryGetValue(key: path, out IProject? project))
         {
@@ -26,6 +27,9 @@ public sealed class ProjectLoader : IProjectLoader
         try
         {
             XmlDocument doc = new();
+
+            // TODO: work out how to load the doc async from disk
+            await Task.CompletedTask;
 
             doc.Load(path);
 
