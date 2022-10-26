@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Credfeto.Package.Update.Services;
+using Credfeto.Package.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Credfeto.Package;
@@ -14,7 +14,7 @@ public static class PackageUpdaterSetup
     ///     Configures the ethereum client services.
     /// </summary>
     /// <param name="services">The services to add things to.</param>
-    public static IServiceCollection AddAbiTypeFactory(this IServiceCollection services)
+    public static IServiceCollection AddPackageUpdater(this IServiceCollection services)
     {
         return services.AddSingleton<IProjectLoader, ProjectLoader>();
     }

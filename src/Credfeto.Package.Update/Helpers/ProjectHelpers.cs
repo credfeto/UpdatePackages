@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using Credfeto.Package.Update.Extensions;
+using Credfeto.Package.Extensions;
 
 namespace Credfeto.Package.Update.Helpers;
 

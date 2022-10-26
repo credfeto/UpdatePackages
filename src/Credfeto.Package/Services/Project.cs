@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using Credfeto.Package.Extensions;
 
-namespace Credfeto.Package.Update.Services;
+namespace Credfeto.Package.Services;
 
-internal sealed class Project
+internal sealed class Project : IProject
 {
     private readonly XmlDocument _doc;
 

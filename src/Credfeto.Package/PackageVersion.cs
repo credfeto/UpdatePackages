@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using NuGet.Versioning;
 
-namespace Credfeto.Package.Update;
+namespace Credfeto.Package;
 
 [DebuggerDisplay(value: "{PackageId} {Version}")]
 public sealed class PackageVersion : IEquatable<PackageVersion>

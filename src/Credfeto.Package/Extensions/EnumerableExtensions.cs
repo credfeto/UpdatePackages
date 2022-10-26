@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace Credfeto.Package.Update.Extensions;
+namespace Credfeto.Package.Extensions;
 
-internal static class EnumerableExtensions
+public static class EnumerableExtensions
 {
     public static IEnumerable<T> RemoveNulls<T>(this IEnumerable<T?> source)
         where T : notnull

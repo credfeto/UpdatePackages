@@ -1,4 +1,4 @@
-namespace Credfeto.Package.Update.Services;
+namespace Credfeto.Package;
 
 public interface IProjectLoader
 {
