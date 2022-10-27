@@ -70,12 +70,10 @@ public sealed class PackageRegistry : IPackageRegistry
         foreach (PackageVersion packageVersion in result.Select(entry => entry.Identity)
                                                         .Select(identity => new PackageVersion(packageId: identity.Id, version: identity.Version)))
         {
-            if (StringComparer.InvariantCultureIgnoreCase.Equals(x: packageId, y: packageVersion.PackageId) && !IsBannedPackage(packageVersion))
+            if (StringComparer.InvariantCultureIgnoreCase.Equals(x: packageId, y: packageVersion.PackageId) && !IsBannedPackage(packageVersion) &&
+                found.TryAdd(key: packageVersion.PackageId, value: packageVersion.Version))
             {
-                if (found.TryAdd(key: packageVersion.PackageId, value: packageVersion.Version))
-                {
-                    this._logger.LogInformation($"Found package {packageVersion.PackageId} version {packageVersion.Version} in {packageSource.Source}");
-                }
+                this._logger.LogInformation($"Found package {packageVersion.PackageId} version {packageVersion.Version} in {packageSource.Source}");
             }
         }
     }
