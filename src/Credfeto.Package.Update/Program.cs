@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Credfeto.Package.Update.Helpers;
-using Credfeto.Package.Update.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Credfeto.Package.Update;
 
@@ -48,7 +46,7 @@ internal static class Program
 
         PackageUpdateConfiguration config = GetUpdateConfiguration(configuration);
 
-        IServiceProvider services = Setup(false);
+        IServiceProvider services = ApplicationSetup.Setup(false);
 
         IPackageUpdater packageUpdater = services.GetRequiredService<IPackageUpdater>();
 
@@ -131,16 +129,5 @@ internal static class Program
         return parts.Length == 2
             ? new(parts[0], StringComparer.InvariantCultureIgnoreCase.Equals(parts[1], y: "prefix"))
             : new(parts[0], Prefix: false);
-    }
-
-    private static IServiceProvider Setup(bool warningsAsErrors)
-    {
-        DiagnosticLogger logger = new(warningsAsErrors);
-
-        return new ServiceCollection().AddSingleton<ILogger>(logger)
-                                      .AddSingleton<IDiagnosticLogger>(logger)
-                                      .AddSingleton(typeof(ILogger<>), typeof(LoggerProxy<>))
-                                      .AddPackageUpdater()
-                                      .BuildServiceProvider();
     }
 }
