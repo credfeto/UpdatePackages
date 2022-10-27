@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using NuGet.Versioning;
 
-namespace Credfeto.Package.Update;
+namespace Credfeto.Package;
 
 [DebuggerDisplay(value: "{PackageId} {Version}")]
 public sealed class PackageVersion : IEquatable<PackageVersion>
@@ -19,13 +19,17 @@ public sealed class PackageVersion : IEquatable<PackageVersion>
 
     public bool Equals(PackageVersion? other)
     {
-        return !ReferenceEquals(objA: null, objB: other) && (ReferenceEquals(this, objB: other) ||
-                                                             string.Equals(a: this.PackageId, b: other.PackageId, comparisonType: StringComparison.OrdinalIgnoreCase));
+        return !ReferenceEquals(objA: null, objB: other) && AreEqual(this, right: other);
+    }
+
+    private static bool AreEqual(PackageVersion left, PackageVersion right)
+    {
+        return ReferenceEquals(objA: left, objB: right) || StringComparer.InvariantCultureIgnoreCase.Equals(x: left.PackageId, y: right.PackageId);
     }
 
     public override bool Equals(object? obj)
     {
-        return !ReferenceEquals(objA: null, objB: obj) && (ReferenceEquals(this, objB: obj) || obj.GetType() == this.GetType() && this.Equals((PackageVersion)obj));
+        return !ReferenceEquals(objA: null, objB: obj) && (ReferenceEquals(this, objB: obj) || obj is PackageVersion other && AreEqual(this, right: other));
     }
 
     public override int GetHashCode()

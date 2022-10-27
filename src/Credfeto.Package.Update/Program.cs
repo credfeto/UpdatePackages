@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
-using Credfeto.Package.Update.Helpers;
-using Microsoft.Extensions.Configuration;
-using NuGet.Configuration;
-using NuGet.Versioning;
+using CommandLine;
+using Credfeto.Package.Update.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Credfeto.Package.Update;
 
@@ -19,332 +17,131 @@ internal static class Program
     private static async Task<int> Main(string[] args)
     {
         Console.WriteLine($"{typeof(Program).Namespace} {ExecutableVersionInformation.ProgramVersion()}");
+        Console.WriteLine();
 
         try
         {
-            return await LookForUpdatesAsync(args);
+            ParserResult<Options> parser = await Parser.Default.ParseArguments<Options>(args)
+                                                       .WithNotParsed(NotParsed)
+                                                       .WithParsedAsync(ParsedOkAsync);
+
+            return parser.Tag == ParserResultType.Parsed
+                ? SUCCESS
+                : ERROR;
+        }
+        catch (NoPackagesUpdatedException)
+        {
+            return ERROR;
+        }
+        catch (PackageUpdateException exception)
+        {
+            Console.WriteLine(exception.Message);
+
+            return ERROR;
         }
         catch (Exception exception)
         {
             Console.WriteLine($"ERROR: {exception.Message}");
 
+            if (exception.StackTrace != null)
+            {
+                Console.WriteLine(exception.StackTrace);
+            }
+
             return ERROR;
         }
     }
 
-    private static async Task<int> LookForUpdatesAsync(string[] args)
+    private static void NotParsed(IEnumerable<Error> errors)
     {
-        IConfigurationRoot configuration = ConfigurationLoader.LoadConfiguration(args);
+        Console.WriteLine("Errors:");
 
-        string folder = configuration.GetValue<string>(key: @"Folder");
-
-        if (string.IsNullOrEmpty(folder))
+        foreach (Error error in errors)
         {
-            Console.WriteLine("ERROR: folder not specified");
-
-            return ERROR;
-        }
-
-        string source = configuration.GetValue<string>(key: @"source");
-
-        IReadOnlyList<PackageSource> sources = PackageSourceHelpers.DefinePackageSources(source);
-
-        IReadOnlyList<string> projects = ProjectHelpers.FindProjects(folder);
-
-        string packageId = configuration.GetValue<string>(key: @"packageid");
-        string prefix = configuration.GetValue<string>(key: @"packageprefix");
-
-        Dictionary<string, NuGetVersion>? packages = await DetermineMatchingInstalledPackagesAsync(packageId: packageId, prefix: prefix, projects: projects, sources: sources);
-
-        if (packages == null)
-        {
-            return ERROR;
-        }
-
-        if (packages.Count == 0)
-        {
-            Console.WriteLine($"No updates needed - package {packageId} is not used by any project.");
-
-            return SUCCESS;
-        }
-
-        Dictionary<string, NuGetVersion> updatesMade = UpdateProjects(projects: projects, packages: packages);
-
-        Console.WriteLine();
-
-        if (updatesMade.Count != 0)
-        {
-            Console.WriteLine($"Total Updates: {updatesMade.Count}");
-
-            OutputPackageUpdateTags(updatesMade);
-
-            return SUCCESS;
-        }
-
-        Console.WriteLine(value: "No updates made.");
-
-        return ERROR;
-    }
-
-    private static async Task<Dictionary<string, NuGetVersion>?> DetermineMatchingInstalledPackagesAsync(string packageId,
-                                                                                                         string prefix,
-                                                                                                         IReadOnlyList<string> projects,
-                                                                                                         IReadOnlyList<PackageSource> sources)
-    {
-        if (!string.IsNullOrEmpty(packageId))
-        {
-            return await DetermineMatchingInstalledPackagesForPackageIdAsync(packageId: packageId, projects: projects, sources: sources);
-        }
-
-        if (string.IsNullOrWhiteSpace(prefix))
-        {
-            Console.WriteLine("ERROR: neither packageid or packageprefix specified");
-
-            return null;
-        }
-
-        return await DetermineMatchingInstalledPackagesForPrefixAsync(packageId: packageId, prefix: prefix, projects: projects, sources: sources);
-    }
-
-    private static async Task<Dictionary<string, NuGetVersion>?> DetermineMatchingInstalledPackagesForPackageIdAsync(string packageId,
-                                                                                                                     IReadOnlyList<string> projects,
-                                                                                                                     IReadOnlyList<PackageSource> sources)
-    {
-        Dictionary<string, NuGetVersion> packages = new(StringComparer.Ordinal);
-
-        if (!HasMatchingPackagesInProjects(projects: projects, packageId: packageId))
-        {
-            Console.WriteLine($"No updates needed - package {packageId} is not used by any project.");
-
-            return packages;
-        }
-
-        await PackageSourceHelpers.FindPackagesAsync(sources: sources, packageId: packageId, packages: packages, cancellationToken: CancellationToken.None);
-
-        return packages;
-    }
-
-    private static async Task<Dictionary<string, NuGetVersion>?> DetermineMatchingInstalledPackagesForPrefixAsync(string packageId,
-                                                                                                                  string prefix,
-                                                                                                                  IReadOnlyList<string> projects,
-                                                                                                                  IReadOnlyList<PackageSource> sources)
-    {
-        Dictionary<string, NuGetVersion> packages = new(StringComparer.Ordinal);
-        IReadOnlyList<string> packageIds = FindPackagesByPrefixFromProjects(projects: projects, packageIdPrefix: prefix);
-
-        if (packageIds.Count == 0)
-        {
-            Console.WriteLine($"No updates needed - No packaged matching {packageId} is are used by any project.");
-
-            return packages;
-        }
-
-        foreach (string id in packageIds)
-        {
-            await PackageSourceHelpers.FindPackagesAsync(sources: sources, packageId: id, packages: packages, cancellationToken: CancellationToken.None);
-        }
-
-        return packages;
-    }
-
-    private static void OutputPackageUpdateTags(Dictionary<string, NuGetVersion> updatesMade)
-    {
-        // Used to tell scripts that the package id has been updated and to what version
-        foreach ((string updatedPackageId, NuGetVersion version) in updatesMade)
-        {
-            Console.WriteLine($"echo ::set-env name={updatedPackageId}::{version}");
+            Console.WriteLine($" * {error.Tag}");
         }
     }
 
-    private static Dictionary<string, NuGetVersion> UpdateProjects(IReadOnlyList<string> projects, Dictionary<string, NuGetVersion> packages)
+    private static async Task ParsedOkAsync(Options options)
     {
-        Dictionary<string, NuGetVersion> updates = new(StringComparer.Ordinal);
-
-        foreach (string project in projects)
+        if (!string.IsNullOrWhiteSpace(options.Folder) && !string.IsNullOrWhiteSpace(options.PackageId))
         {
-            UpdateProject(project: project, packages: packages, updates: updates);
-        }
+            IServiceProvider services = ApplicationSetup.Setup(false);
 
-        return updates;
-    }
+            IDiagnosticLogger logging = services.GetRequiredService<IDiagnosticLogger>();
+            IPackageUpdater packageUpdater = services.GetRequiredService<IPackageUpdater>();
 
-    private static bool HasMatchingPackagesInProjects(IReadOnlyList<string> projects, string packageId)
-    {
-        return ProjectHelpers.GetPackageIds(projects)
-                             .Any(package => PackageIdHelpers.IsExactMatch(packageId: packageId, package: package));
-    }
+            PackageUpdateConfiguration config = BuildConfiguration(packageId: options.PackageId, options.Exclude?.ToArray() ?? Array.Empty<string>());
+            IReadOnlyList<PackageVersion> updatesMade = await packageUpdater.UpdateAsync(basePath: options.Folder,
+                                                                                         configuration: config,
+                                                                                         options.Source?.ToArray() ?? Array.Empty<string>(),
+                                                                                         cancellationToken: CancellationToken.None);
 
-    private static IReadOnlyList<string> FindPackagesByPrefixFromProjects(IReadOnlyList<string> projects, string packageIdPrefix)
-    {
-        return ProjectHelpers.GetPackageIds(projects)
-                             .Where(package => PackageIdHelpers.IsPrefixMatch(packageIdPrefix: packageIdPrefix, package: package))
-                             .Select(packageId => packageId.ToLowerInvariant())
-                             .Distinct(StringComparer.Ordinal)
-                             .ToArray();
-    }
-
-    private static void UpdateProject(string project, IReadOnlyDictionary<string, NuGetVersion> packages, Dictionary<string, NuGetVersion> updates)
-    {
-        XmlDocument? doc = ProjectHelpers.TryLoadDocument(project);
-
-        if (doc == null)
-        {
-            return;
-        }
-
-        Console.WriteLine();
-        Console.WriteLine($"* {project}");
-
-        bool sdkUpdated = TryUpdateSdk(doc: doc, packages: packages, updates: updates);
-        bool packageReferencesUpdated = TryUpdatePackageReferences(doc: doc, packages: packages, updates: updates);
-
-        if (sdkUpdated || packageReferencesUpdated)
-        {
-            Console.WriteLine(value: "=========== UPDATED ===========");
-
-            ProjectHelpers.SaveProject(project: project, doc: doc);
-        }
-    }
-
-    private static bool TryUpdatePackageReferences(XmlDocument doc, IReadOnlyDictionary<string, NuGetVersion> packages, Dictionary<string, NuGetVersion> updates)
-    {
-        XmlNodeList? nodes = doc.SelectNodes(xpath: "/Project/ItemGroup/PackageReference");
-
-        if (nodes == null || nodes.Count == 0)
-        {
-            return false;
-        }
-
-        bool packageReferencesUpdated = false;
-
-        foreach (XmlElement node in nodes.OfType<XmlElement>())
-        {
-            string package = node.GetAttribute(name: "Include");
-
-            foreach ((string nugetPackageId, NuGetVersion nugetVersion) in packages)
+            if (logging.IsErrored)
             {
-                if (!PackageIdHelpers.IsExactMatch(package: package, packageId: nugetPackageId))
-                {
-                    continue;
-                }
-
-                bool updated = UpdateOnePackage(node: node, installedPackageId: package, nugetPackageId: nugetPackageId, nugetVersion: nugetVersion);
-
-                if (updated)
-                {
-                    TrackUpdate(updates: updates, nugetPackageId: nugetPackageId, nugetVersion: nugetVersion);
-                    packageReferencesUpdated = true;
-                }
-
-                break;
-            }
-        }
-
-        return packageReferencesUpdated;
-    }
-
-    private static bool TryUpdateSdk(XmlDocument doc, IReadOnlyDictionary<string, NuGetVersion> packages, Dictionary<string, NuGetVersion> updates)
-    {
-        if (doc.SelectSingleNode("/Project") is not XmlElement projectNode)
-        {
-            return false;
-        }
-
-        string sdk = projectNode.GetAttribute("Sdk");
-
-        if (string.IsNullOrWhiteSpace(sdk))
-        {
-            return false;
-        }
-
-        IReadOnlyList<string> parts = sdk.Split("/");
-
-        if (parts.Count != 2)
-        {
-            return false;
-        }
-
-        string installedPackageId = parts[0];
-        string installedVersion = parts[1];
-
-        foreach ((string nugetPackageId, NuGetVersion nugetVersion) in packages)
-        {
-            if (!PackageIdHelpers.IsExactMatch(package: installedPackageId, packageId: nugetPackageId))
-            {
-                continue;
+                throw new PackageUpdateException();
             }
 
-            bool upgrade = ShouldUpgrade(installedVersion: installedVersion, nugetVersion: nugetVersion);
+            Console.WriteLine($"Total updates: {updatesMade.Count}");
 
-            if (!upgrade)
+            if (updatesMade.Count != 0)
             {
-                Console.WriteLine($"  >> {installedPackageId} Installed: {installedVersion} Upgrade: False.");
+                OutputPackageUpdateTags(updatesMade);
 
-                return false;
+                return;
             }
 
-            Console.WriteLine($"  >> {installedPackageId} Installed: {installedVersion} Upgrade: True. New Version: {nugetVersion}.");
-            string newSdk = string.Join(separator: "/", nugetPackageId, nugetVersion);
-            projectNode.SetAttribute(name: "Sdk", value: newSdk);
-
-            TrackUpdate(updates: updates, nugetPackageId: nugetPackageId, nugetVersion: nugetVersion);
-
-            return true;
-
-            // Package matched but was not upgraded.
+            throw new NoPackagesUpdatedException();
         }
 
-        return false;
+        throw new InvalidOptionsException();
     }
 
-    private static bool UpdateOnePackage(XmlElement node, string installedPackageId, string nugetPackageId, NuGetVersion nugetVersion)
+    private static PackageUpdateConfiguration BuildConfiguration(string packageId, IReadOnlyList<string> exclude)
     {
-        string installedVersion = node.GetAttribute(name: "Version");
-        bool upgrade = ShouldUpgrade(installedVersion: installedVersion, nugetVersion: nugetVersion);
+        PackageMatch packageMatch = ExtractSearchPackage(packageId);
+        Console.WriteLine($"Including {packageMatch.PackageId} (Using Prefix match: {packageMatch.Prefix})");
 
-        if (upgrade)
+        IReadOnlyList<PackageMatch> excludedPackages = GetExcludedPackages(exclude);
+
+        return new(PackageMatch: packageMatch, ExcludedPackages: excludedPackages);
+    }
+
+    private static void OutputPackageUpdateTags(IReadOnlyList<PackageVersion> updated)
+    {
+        foreach (PackageVersion package in updated)
         {
-            Console.WriteLine($"  >> {installedPackageId} Installed: {installedVersion} Upgrade: True. New Version: {nugetVersion}.");
-
-            // Set the package Id to be that from nuget
-            if (IsPackageIdCasedDifferently(package: installedPackageId, actualName: nugetPackageId))
-            {
-                node.SetAttribute(name: "Include", value: nugetPackageId);
-            }
-
-            node.SetAttribute(name: "Version", nugetVersion.ToString());
-
-            return true;
+            Console.WriteLine($"echo ::set-env name={package.PackageId}::{package.Version}");
         }
-
-        Console.WriteLine($"  >> {installedPackageId} Installed: {installedVersion} Upgrade: False.");
-
-        return false;
     }
 
-    private static void TrackUpdate(Dictionary<string, NuGetVersion> updates, string nugetPackageId, NuGetVersion nugetVersion)
+    private static IReadOnlyList<PackageMatch> GetExcludedPackages(IReadOnlyList<string> excludes)
     {
-        if (!updates.ContainsKey(nugetPackageId))
+        if (excludes.Count == 0)
         {
-            updates.Add(key: nugetPackageId, value: nugetVersion);
+            return Array.Empty<PackageMatch>();
         }
-    }
 
-    private static bool IsPackageIdCasedDifferently(string package, string actualName)
-    {
-        return StringComparer.InvariantCultureIgnoreCase.Equals(x: package, y: actualName) && !StringComparer.InvariantCultureIgnoreCase.Equals(x: package, y: actualName);
-    }
+        List<PackageMatch> excludedPackages = new();
 
-    private static bool ShouldUpgrade(string installedVersion, NuGetVersion nugetVersion)
-    {
-        if (StringComparer.InvariantCultureIgnoreCase.Equals(x: installedVersion, nugetVersion.ToString()))
+        foreach (string exclude in excludes)
         {
-            return false;
+            PackageMatch packageMatch = ExtractSearchPackage(exclude);
+
+            excludedPackages.Add(packageMatch);
+
+            Console.WriteLine($"Excluding {packageMatch.PackageId} (Using Prefix match: {packageMatch.Prefix})");
         }
 
-        NuGetVersion iv = new(installedVersion);
-        NuGetVersion ev = nugetVersion;
+        return excludedPackages;
+    }
 
-        return iv < ev;
+    private static PackageMatch ExtractSearchPackage(string exclude)
+    {
+        string[] parts = exclude.Split(separator: ':');
+
+        return parts.Length == 2
+            ? new(parts[0], StringComparer.InvariantCultureIgnoreCase.Equals(parts[1], y: "prefix"))
+            : new(parts[0], Prefix: false);
     }
 }
