@@ -32,5 +32,7 @@
  - any: [ './**/*.md' ]
 "github-actions":
  - any: [ '.github/workflows/*.yml' ]
+"Credfeto.Package":
+ - any: [ 'src/Credfeto.Package/**/*' ]
 "Credfeto.Package.Update":
  - any: [ 'src/Credfeto.Package.Update/**/*' ]
