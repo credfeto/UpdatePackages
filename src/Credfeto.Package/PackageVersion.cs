@@ -24,7 +24,7 @@ public sealed class PackageVersion : IEquatable<PackageVersion>
 
     private static bool AreEqual(PackageVersion left, PackageVersion right)
     {
-        return (ReferenceEquals(objA: left, objB: right) || StringComparer.InvariantCultureIgnoreCase.Equals(x: left.PackageId, y: right.PackageId);
+        return ReferenceEquals(objA: left, objB: right) || StringComparer.InvariantCultureIgnoreCase.Equals(x: left.PackageId, y: right.PackageId);
     }
 
     public override bool Equals(object? obj)
