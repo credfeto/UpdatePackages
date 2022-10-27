@@ -24,7 +24,7 @@ public sealed class PackageUpdater : IPackageUpdater
         this._logger = logger;
     }
 
-    public async Task<int> UpdateAsync(string basePath, PackageUpdateConfiguration configuration, IReadOnlyList<string> packageSources, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<PackageVersion>> UpdateAsync(string basePath, PackageUpdateConfiguration configuration, IReadOnlyList<string> packageSources, CancellationToken cancellationToken)
     {
         IReadOnlyList<IProject> projects = await this.FindProjectsAsync(basePath);
 
@@ -34,7 +34,7 @@ public sealed class PackageUpdater : IPackageUpdater
         {
             this._logger.LogInformation("No matching packages installed");
 
-            return 0;
+            return Array.Empty<PackageVersion>();
         }
 
         IReadOnlyList<PackageVersion> matching = await this._packageRegistry.FindPackagesAsync(projectsByPackage.Keys.ToArray(), packageSources: packageSources, cancellationToken: cancellationToken);
@@ -43,18 +43,24 @@ public sealed class PackageUpdater : IPackageUpdater
         {
             this._logger.LogInformation("No matching packages found in event source");
 
-            return 0;
+            return Array.Empty<PackageVersion>();
         }
 
         ConcurrentDictionary<string, NuGetVersion> updated = new(StringComparer.OrdinalIgnoreCase);
 
         int updates = this.UpdateProjects(matching: matching, projectsByPackage: projectsByPackage, updated: updated);
 
+        if (updates == 0)
+        {
+            this._logger.LogInformation("No packages updated");
+
+            return Array.Empty<PackageVersion>();
+        }
+
         this.SaveChanges(projects);
 
-        this.OutputPackageUpdateTags(updated);
-
-        return updates;
+        return updated.Select(p => new PackageVersion(packageId: p.Key, version: p.Value))
+                      .ToArray();
     }
 
     private void SaveChanges(IReadOnlyList<IProject> projects)
@@ -96,14 +102,6 @@ public sealed class PackageUpdater : IPackageUpdater
         return updates;
     }
 
-    private void OutputPackageUpdateTags(ConcurrentDictionary<string, NuGetVersion> updated)
-    {
-        foreach ((string packageId, NuGetVersion version) in updated)
-        {
-            this._logger.LogInformation($"echo ::set-env name={packageId}::{version}");
-        }
-    }
-
     private static ConcurrentDictionary<string, ConcurrentDictionary<IProject, NuGetVersion>> FindMatchingPackages(PackageUpdateConfiguration configuration, IReadOnlyList<IProject> projects)
     {
         ConcurrentDictionary<string, ConcurrentDictionary<IProject, NuGetVersion>> projectsByPackage = new(StringComparer.OrdinalIgnoreCase);
@@ -122,7 +120,7 @@ public sealed class PackageUpdater : IPackageUpdater
 
     private static bool IsMatchingPackage(PackageUpdateConfiguration configuration, PackageVersion package)
     {
-        return configuration.Package.IsMatchingPackage(package) && !configuration.ExcludedPackages.Any(x => x.IsMatchingPackage(package));
+        return configuration.PackageMatch.IsMatchingPackage(package) && !configuration.ExcludedPackages.Any(x => x.IsMatchingPackage(package));
     }
 
     private async Task<IReadOnlyList<IProject>> FindProjectsAsync(string basePath)

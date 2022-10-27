@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace Credfeto.Package;
 
 [DebuggerDisplay("{PackageId} => {Prefix}")]
-public sealed record ExcludedPackage(string PackageId, bool Prefix)
+public sealed record PackageMatch(string PackageId, bool Prefix)
 {
     public bool IsMatchingPackage(PackageVersion packageVersion)
     {
