@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Credfeto.Package.Update.Helpers;
-using Microsoft.Extensions.Configuration;
+using CommandLine;
+using Credfeto.Package.Update.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Credfeto.Package.Update;
@@ -19,67 +20,86 @@ internal static class Program
 
         try
         {
-            return await LookForUpdatesAsync(args);
+            ParserResult<Options> parser = await Parser.Default.ParseArguments<Options>(args)
+                                                       .WithNotParsed(NotParsed)
+                                                       .WithParsedAsync(ParsedOkAsync);
+
+            return parser.Tag == ParserResultType.Parsed
+                ? SUCCESS
+                : ERROR;
+        }
+        catch (PackageUpdateException exception)
+        {
+            Console.WriteLine(exception.Message);
+
+            return ERROR;
         }
         catch (Exception exception)
         {
             Console.WriteLine($"ERROR: {exception.Message}");
 
+            if (exception.StackTrace != null)
+            {
+                Console.WriteLine(exception.StackTrace);
+            }
+
             return ERROR;
         }
     }
 
-    private static async Task<int> LookForUpdatesAsync(string[] args)
+    private static void NotParsed(IEnumerable<Error> errors)
     {
-        IConfigurationRoot configuration = ConfigurationLoader.LoadConfiguration(args);
+        Console.WriteLine("Errors:");
 
-        string folder = configuration.GetValue<string>(key: @"Folder");
-
-        if (string.IsNullOrEmpty(folder))
+        foreach (Error error in errors)
         {
-            Console.WriteLine("ERROR: folder not specified");
+            Console.WriteLine($" * {error.Tag}");
+        }
+    }
 
-            return ERROR;
+    private static async Task ParsedOkAsync(Options options)
+    {
+        if (!string.IsNullOrWhiteSpace(options.Folder) && !string.IsNullOrWhiteSpace(options.PackageId))
+        {
+            IServiceProvider services = ApplicationSetup.Setup(false);
+
+            IDiagnosticLogger logging = services.GetRequiredService<IDiagnosticLogger>();
+            IPackageUpdater packageUpdater = services.GetRequiredService<IPackageUpdater>();
+
+            PackageUpdateConfiguration config = BuildConfiguration(packageId: options.PackageId, options.Exclude?.ToArray() ?? Array.Empty<string>());
+            IReadOnlyList<PackageVersion> updatesMade = await packageUpdater.UpdateAsync(basePath: options.Folder,
+                                                                                         configuration: config,
+                                                                                         options.Source?.ToArray() ?? Array.Empty<string>(),
+                                                                                         cancellationToken: CancellationToken.None);
+            Console.WriteLine();
+
+            if (logging.IsErrored)
+            {
+                throw new PackageUpdateException();
+            }
+
+            if (updatesMade.Count != 0)
+            {
+                Console.WriteLine($"Total Updates: {updatesMade.Count}");
+
+                OutputPackageUpdateTags(updatesMade);
+
+                return;
+            }
+
+            Console.WriteLine(value: "No updates made.");
+
+            return;
         }
 
-        string source = configuration.GetValue<string>(key: @"source");
+        throw new InvalidOptionsException();
+    }
 
-        PackageUpdateConfiguration config = GetUpdateConfiguration(configuration);
+    private static PackageUpdateConfiguration BuildConfiguration(string packageId, IReadOnlyList<string> exclude)
+    {
+        IReadOnlyList<PackageMatch> excludedPackages = GetExcludedPackages(exclude);
 
-        IServiceProvider services = ApplicationSetup.Setup(false);
-
-        IPackageUpdater packageUpdater = services.GetRequiredService<IPackageUpdater>();
-
-        List<string> packageSources = new();
-
-        if (!string.IsNullOrEmpty(source))
-        {
-            packageSources.Add(source);
-        }
-
-        IDiagnosticLogger logging = services.GetRequiredService<IDiagnosticLogger>();
-
-        IReadOnlyList<PackageVersion> updatesMade =
-            await packageUpdater.UpdateAsync(basePath: folder, configuration: config, packageSources: packageSources, cancellationToken: CancellationToken.None);
-        Console.WriteLine();
-
-        if (logging.IsErrored)
-        {
-            return ERROR;
-        }
-
-        if (updatesMade.Count != 0)
-        {
-            Console.WriteLine($"Total Updates: {updatesMade.Count}");
-
-            OutputPackageUpdateTags(updatesMade);
-
-            return SUCCESS;
-        }
-
-        Console.WriteLine(value: "No updates made.");
-
-        return SUCCESS;
+        return new(ExtractSearchPackage(packageId), ExcludedPackages: excludedPackages);
     }
 
     private static void OutputPackageUpdateTags(IReadOnlyList<PackageVersion> updated)
@@ -90,20 +110,9 @@ internal static class Program
         }
     }
 
-    private static PackageUpdateConfiguration GetUpdateConfiguration(IConfigurationRoot configuration)
+    private static IReadOnlyList<PackageMatch> GetExcludedPackages(IReadOnlyList<string> excludes)
     {
-        string packageId = configuration.GetValue<string>(key: @"packageid");
-
-        IReadOnlyList<PackageMatch> excludedPackages = GetExcludedPackages(configuration);
-
-        return new(ExtractSearchPackage(packageId), ExcludedPackages: excludedPackages);
-    }
-
-    private static IReadOnlyList<PackageMatch> GetExcludedPackages(IConfigurationRoot configuration)
-    {
-        string[]? excludes = configuration.GetValue<string[]>("excludes");
-
-        if (excludes == null || excludes.Length == 0)
+        if (excludes.Count == 0)
         {
             return Array.Empty<PackageMatch>();
         }
