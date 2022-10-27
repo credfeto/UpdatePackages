@@ -17,6 +17,7 @@ internal static class Program
     private static async Task<int> Main(string[] args)
     {
         Console.WriteLine($"{typeof(Program).Namespace} {ExecutableVersionInformation.ProgramVersion()}");
+        Console.WriteLine();
 
         try
         {
@@ -97,9 +98,12 @@ internal static class Program
 
     private static PackageUpdateConfiguration BuildConfiguration(string packageId, IReadOnlyList<string> exclude)
     {
+        PackageMatch packageMatch = ExtractSearchPackage(packageId);
+        Console.WriteLine($"Including {packageMatch.PackageId} (Using Prefix match: {packageMatch.Prefix})");
+
         IReadOnlyList<PackageMatch> excludedPackages = GetExcludedPackages(exclude);
 
-        return new(ExtractSearchPackage(packageId), ExcludedPackages: excludedPackages);
+        return new(PackageMatch: packageMatch, ExcludedPackages: excludedPackages);
     }
 
     private static void OutputPackageUpdateTags(IReadOnlyList<PackageVersion> updated)
