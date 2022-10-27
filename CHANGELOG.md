@@ -31,31 +31,15 @@ Releases that have at least been deployed to staging, BUT NOT necessarily releas
 
 ## [1.8.10] - 2022-09-13
 ### Changed
-- FF-1429 - Updated SecurityCodeScan.VS2019 to 5.6.5
 - FF-1429 - Updated SonarAnalyzer.CSharp to 8.44.0.52574
-- FF-1429 - Updated SecurityCodeScan.VS2019 to 5.6.6
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.714
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.715
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.716
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.717
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.719
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.720
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.721
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.722
 - FF-1429 - Updated SecurityCodeScan.VS2019 to 5.6.7
 - FF-1429 - Updated FunFair.CodeAnalysis to 5.9.0.1493
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.723
 - FF-1429 - Updated Meziantou.Analyzer to 1.0.725
 - FF-3881 - Updated DotNet SDK to 6.0.401
 
 ## [1.8.9] - 2022-08-09
 ### Changed
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.705
-- FF-1429 - Updated SonarAnalyzer.CSharp to 8.42.0.51121
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.706
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.707
 - FF-1429 - Updated Meziantou.Analyzer to 1.0.708
-- FF-1429 - Updated SmartAnalyzers.CSharpExtensions.Annotations to 4.2.6
 - FF-1429 - Updated SmartAnalyzers.CSharpExtensions.Annotations to 4.2.7
 - FF-1429 - Updated SonarAnalyzer.CSharp to 8.43.0.51858
 - FF-1429 - Updated NuGet to 6.3.0
@@ -63,7 +47,6 @@ Releases that have at least been deployed to staging, BUT NOT necessarily releas
 
 ## [1.8.8] - 2022-07-13
 ### Changed
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.703
 - FF-1429 - Updated Meziantou.Analyzer to 1.0.704
 - FF-1429 - Updated SonarAnalyzer.CSharp to 8.41.0.50478
 - FF-3881 - Updated DotNet SDK to 6.0.302
@@ -75,23 +58,11 @@ Releases that have at least been deployed to staging, BUT NOT necessarily releas
 
 ## [1.8.6] - 2022-06-16
 ### Changed
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.698
 - FF-1429 - Updated Philips.CodeAnalysis.MaintainabilityAnalyzers to 1.2.28
-- FF-1429 - Updated Roslynator.Analyzers to 4.1.0
-- FF-1429 - Updated SonarAnalyzer.CSharp to 8.37.0.45539
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.699
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.700
-- FF-3881 - Updated DotNet SDK to 6.0.202
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.701
-- FF-1429 - Updated SonarAnalyzer.CSharp to 8.38.0.46746
 - FF-1429 - Updated Microsoft.VisualStudio.Threading.Analyzers to 17.2.32
 - FF-1429 - Updated AsyncFixer to 1.6.0
-- FF-3881 - Updated DotNet SDK to 6.0.300
 - FF-1429 - Updated NuGet to 6.2.0
-- FF-1429 - Updated SmartAnalyzers.CSharpExtensions.Annotations to 4.2.3
-- FF-1429 - Updated SonarAnalyzer.CSharp to 8.39.0.47922
 - FF-1429 - Updated Meziantou.Analyzer to 1.0.702
-- FF-1429 - Updated SmartAnalyzers.CSharpExtensions.Annotations to 4.2.4
 - FF-1429 - Updated SmartAnalyzers.CSharpExtensions.Annotations to 4.2.5
 - FF-1429 - Updated FunFair.CodeAnalysis to 5.8.2.1317
 - FF-1429 - Updated Roslynator.Analyzers to 4.1.1
@@ -106,11 +77,8 @@ Releases that have at least been deployed to staging, BUT NOT necessarily releas
 
 ## [1.8.4] - 2022-03-10
 ### Changed
-- FF-1429 - Updated SonarAnalyzer.CSharp to 8.36.0.43782
-- FF-1429 - Updated SecurityCodeScan.VS2019 to 5.6.1
 - FF-1429 - Updated SecurityCodeScan.VS2019 to 5.6.2
 - FF-1429 - Updated SmartAnalyzers.CSharpExtensions.Annotations to 4.2.2
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.696
 - FF-1429 - Updated SonarAnalyzer.CSharp to 8.36.1.44192
 - FF-1429 - Updated Meziantou.Analyzer to 1.0.697
 - FF-3881 - Updated DotNet SDK to 6.0.201
@@ -128,30 +96,12 @@ Releases that have at least been deployed to staging, BUT NOT necessarily releas
 ### Changed
 - FF-1429 - Updated Microsoft.Extensions to 6.0.0
 - FF-1429 - Updated Microsoft.VisualStudio.Threading.Analyzers to 17.0.64
-- FF-1429 - Updated FunFair.CodeAnalysis to 5.7.3.1052
 - FF-1429 - Updated SmartAnalyzers.CSharpExtensions.Annotations to 4.2.1
-- FF-1429 - Updated SonarAnalyzer.CSharp to 8.33.0.40503
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.680
 - FF-1429 - Updated SecurityCodeScan.VS2019 to 5.6.0
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.681
-- FF-3881 - Updated DotNet SDK to 6.0.101
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.683
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.684
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.685
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.686
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.687
 - FF-1429 - Updated Philips.CodeAnalysis.MaintainabilityAnalyzers to 1.2.27
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.688
-- FF-1429 - Updated Philips.CodeAnalysis.DuplicateCodeAnalyzer to 1.1.5
 - FF-1429 - Updated Philips.CodeAnalysis.DuplicateCodeAnalyzer to 1.1.6
-- FF-1429 - Updated SonarAnalyzer.CSharp to 8.34.0.42011
-- FF-1429 - Updated Roslynator.Analyzers to 4.0.0
 - FF-1429 - Updated Roslynator.Analyzers to 4.0.2
 - FF-1429 - Updated SonarAnalyzer.CSharp to 8.35.0.42613
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.689
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.690
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.692
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.693
 - FF-1429 - Updated Meziantou.Analyzer to 1.0.694
 - FF-1429 - Updated FunFair.CodeAnalysis to 5.8.0.1196
 - FF-3881 - Updated DotNet SDK to 6.0.102
@@ -168,7 +118,6 @@ Releases that have at least been deployed to staging, BUT NOT necessarily releas
 
 ## [1.7.0] - 2021-09-29
 ### Changed
-- FF-1429 - Updated Roslynator.Analyzers to 3.2.0
 - FF-1429 - Updated NuGet to 5.11.0
 - FF-1429 - Updated Roslynator.Analyzers to 3.2.2
 - FF-1429 - Updated SonarAnalyzer.CSharp to 8.29.0.36737
