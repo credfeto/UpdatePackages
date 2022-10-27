@@ -98,9 +98,7 @@ internal static class Program
 
         IReadOnlyList<PackageMatch> excludedPackages = GetExcludedPackages(configuration);
 
-        PackageUpdateConfiguration config = new(ExtractSearchPackage(packageId), ExcludedPackages: excludedPackages);
-
-        return config;
+        return new(ExtractSearchPackage(packageId), ExcludedPackages: excludedPackages);
     }
 
     private static IReadOnlyList<PackageMatch> GetExcludedPackages(IConfigurationRoot configuration)
