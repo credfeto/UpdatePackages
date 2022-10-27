@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using NonBlocking;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
+using ILogger = NuGet.Common.ILogger;
 
 namespace Credfeto.Package.Services;
 
@@ -18,7 +20,13 @@ public sealed class PackageRegistry : IPackageRegistry
     private static readonly SearchFilter SearchFilter =
         new(includePrerelease: false, filter: SearchFilterType.IsLatestVersion) { IncludeDelisted = INCLUDE_UNLISTED_PACKAGES, OrderBy = SearchOrderBy.Id };
 
-    private static readonly ILogger NugetLogger = new NullLogger();
+    private static readonly ILogger NugetLogger = NullLogger.Instance;
+    private readonly ILogger<PackageRegistry> _logger;
+
+    public PackageRegistry(ILogger<PackageRegistry> logger)
+    {
+        this._logger = logger;
+    }
 
     public async Task<IReadOnlyList<PackageVersion>> FindPackagesAsync(IReadOnlyList<string> packageIds, IReadOnlyList<string> packageSources, CancellationToken cancellationToken)
     {
@@ -28,7 +36,7 @@ public sealed class PackageRegistry : IPackageRegistry
 
         foreach (string packageId in packageIds)
         {
-            await FindPackageInSourcesAsync(sources: sources, packageId: packageId, packages: packages, cancellationToken: cancellationToken);
+            await this.FindPackageInSourcesAsync(sources: sources, packageId: packageId, packages: packages, cancellationToken: cancellationToken);
         }
 
         return packages.Select(p => new PackageVersion(packageId: p.Key, version: p.Value))
@@ -53,7 +61,7 @@ public sealed class PackageRegistry : IPackageRegistry
         return packageSources;
     }
 
-    private static async Task LoadPackagesFromSourceAsync(PackageSource packageSource, string packageId, ConcurrentDictionary<string, NuGetVersion> found, CancellationToken cancellationToken)
+    private async Task LoadPackagesFromSourceAsync(PackageSource packageSource, string packageId, ConcurrentDictionary<string, NuGetVersion> found, CancellationToken cancellationToken)
     {
         SourceRepository sourceRepository = new(source: packageSource, new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3()));
 
@@ -70,7 +78,10 @@ public sealed class PackageRegistry : IPackageRegistry
         {
             if (StringComparer.InvariantCultureIgnoreCase.Equals(x: packageId, y: packageVersion.PackageId) && !IsBannedPackage(packageVersion))
             {
-                found.TryAdd(key: packageVersion.PackageId, value: packageVersion.Version);
+                if (found.TryAdd(key: packageVersion.PackageId, value: packageVersion.Version))
+                {
+                    this._logger.LogInformation($"Found package {packageVersion.PackageId} version {packageVersion.Version} in {packageSource.Source}");
+                }
             }
         }
     }
@@ -81,16 +92,13 @@ public sealed class PackageRegistry : IPackageRegistry
                              .Contains(value: '+', comparisonType: StringComparison.Ordinal);
     }
 
-    private static async Task FindPackageInSourcesAsync(IReadOnlyList<PackageSource> sources,
-                                                        string packageId,
-                                                        ConcurrentDictionary<string, NuGetVersion> packages,
-                                                        CancellationToken cancellationToken)
+    private async Task FindPackageInSourcesAsync(IReadOnlyList<PackageSource> sources, string packageId, ConcurrentDictionary<string, NuGetVersion> packages, CancellationToken cancellationToken)
     {
-        Console.WriteLine(value: $"Enumerating matching package versions for {packageId}...");
+        this._logger.LogInformation($"Enumerating matching package versions for {packageId}...");
 
         ConcurrentDictionary<string, NuGetVersion> found = new(StringComparer.Ordinal);
 
-        await Task.WhenAll(sources.Select(selector: source => LoadPackagesFromSourceAsync(packageSource: source, packageId: packageId, found: found, cancellationToken: cancellationToken)));
+        await Task.WhenAll(sources.Select(selector: source => this.LoadPackagesFromSourceAsync(packageSource: source, packageId: packageId, found: found, cancellationToken: cancellationToken)));
 
         foreach ((string key, NuGetVersion value) in found)
         {
