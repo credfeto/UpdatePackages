@@ -29,6 +29,10 @@ internal static class Program
                 ? SUCCESS
                 : ERROR;
         }
+        catch (NoPackagesUpdatedException)
+        {
+            return ERROR;
+        }
         catch (PackageUpdateException exception)
         {
             Console.WriteLine(exception.Message);
@@ -87,7 +91,7 @@ internal static class Program
                 return;
             }
 
-            return;
+            throw new NoPackagesUpdatedException();
         }
 
         throw new InvalidOptionsException();
