@@ -9,7 +9,6 @@ using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
-using ILogger = NuGet.Common.ILogger;
 
 namespace Credfeto.Package.Services;
 
@@ -20,7 +19,6 @@ public sealed class PackageRegistry : IPackageRegistry
     private static readonly SearchFilter SearchFilter =
         new(includePrerelease: false, filter: SearchFilterType.IsLatestVersion) { IncludeDelisted = INCLUDE_UNLISTED_PACKAGES, OrderBy = SearchOrderBy.Id };
 
-    private static readonly ILogger NugetLogger = NullLogger.Instance;
     private readonly ILogger<PackageRegistry> _logger;
 
     public PackageRegistry(ILogger<PackageRegistry> logger)
@@ -47,18 +45,14 @@ public sealed class PackageRegistry : IPackageRegistry
     {
         PackageSourceProvider packageSourceProvider = new(Settings.LoadDefaultSettings(Environment.CurrentDirectory));
 
-        List<PackageSource> packageSources = packageSourceProvider.LoadPackageSources()
-                                                                  .ToList();
+        return packageSourceProvider.LoadPackageSources()
+                                    .Concat(sources.Select(CreateCustomPackageSource))
+                                    .ToArray();
+    }
 
-        int sourceId = 0;
-
-        foreach (string source in sources)
-        {
-            ++sourceId;
-            packageSources.Add(new(name: $"Custom{sourceId}", source: source, isEnabled: true, isPersistable: true, isOfficial: true));
-        }
-
-        return packageSources;
+    private static PackageSource CreateCustomPackageSource(string source, int sourceId)
+    {
+        return new(name: $"Custom{sourceId}", source: source, isEnabled: true, isPersistable: true, isOfficial: true);
     }
 
     private async Task LoadPackagesFromSourceAsync(PackageSource packageSource, string packageId, ConcurrentDictionary<string, NuGetVersion> found, CancellationToken cancellationToken)
@@ -68,7 +62,7 @@ public sealed class PackageRegistry : IPackageRegistry
         PackageSearchResource searcher = await sourceRepository.GetResourceAsync<PackageSearchResource>(cancellationToken);
         IEnumerable<IPackageSearchMetadata> result = await searcher.SearchAsync(searchTerm: packageId,
                                                                                 filters: SearchFilter,
-                                                                                log: NugetLogger,
+                                                                                log: NullLogger.Instance,
                                                                                 cancellationToken: cancellationToken,
                                                                                 skip: 0,
                                                                                 take: int.MaxValue);
