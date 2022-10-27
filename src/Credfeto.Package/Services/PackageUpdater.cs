@@ -52,7 +52,7 @@ public sealed class PackageUpdater : IPackageUpdater
 
         if (updates == 0)
         {
-            this._logger.LogInformation("No packages updated");
+            this._logger.LogInformation("All installed packages are up-to-date");
 
             return Array.Empty<PackageVersion>();
         }

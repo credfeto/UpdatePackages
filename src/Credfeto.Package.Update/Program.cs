@@ -72,23 +72,20 @@ internal static class Program
                                                                                          configuration: config,
                                                                                          options.Source?.ToArray() ?? Array.Empty<string>(),
                                                                                          cancellationToken: CancellationToken.None);
-            Console.WriteLine();
 
             if (logging.IsErrored)
             {
                 throw new PackageUpdateException();
             }
 
+            Console.WriteLine($"Total updates: {updatesMade.Count}");
+
             if (updatesMade.Count != 0)
             {
-                Console.WriteLine($"Total Updates: {updatesMade.Count}");
-
                 OutputPackageUpdateTags(updatesMade);
 
                 return;
             }
-
-            Console.WriteLine(value: "No updates made.");
 
             return;
         }
