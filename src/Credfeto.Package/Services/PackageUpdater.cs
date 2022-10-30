@@ -26,7 +26,7 @@ public sealed class PackageUpdater : IPackageUpdater
 
     public async Task<IReadOnlyList<PackageVersion>> UpdateAsync(string basePath, PackageUpdateConfiguration configuration, IReadOnlyList<string> packageSources, CancellationToken cancellationToken)
     {
-        IReadOnlyList<IProject> projects = await this.FindProjectsAsync(basePath);
+        IReadOnlyList<IProject> projects = await this.FindProjectsAsync(basePath: basePath, cancellationToken: cancellationToken);
 
         ConcurrentDictionary<string, ConcurrentDictionary<IProject, NuGetVersion>> projectsByPackage = FindMatchingPackages(configuration: configuration, projects: projects);
 
@@ -123,11 +123,11 @@ public sealed class PackageUpdater : IPackageUpdater
         return configuration.PackageMatch.IsMatchingPackage(package) && !configuration.ExcludedPackages.Any(x => x.IsMatchingPackage(package));
     }
 
-    private async Task<IReadOnlyList<IProject>> FindProjectsAsync(string basePath)
+    private async Task<IReadOnlyList<IProject>> FindProjectsAsync(string basePath, CancellationToken cancellationToken)
     {
         IReadOnlyList<string> projectFileNames = FindProjects(basePath);
 
-        IReadOnlyList<IProject?> loadedProjects = await Task.WhenAll(projectFileNames.Select(fileName => this._projectLoader.LoadAsync(fileName)));
+        IReadOnlyList<IProject?> loadedProjects = await Task.WhenAll(projectFileNames.Select(fileName => this._projectLoader.LoadAsync(path: fileName, cancellationToken: cancellationToken)));
 
         return loadedProjects.RemoveNulls()
                              .ToArray();

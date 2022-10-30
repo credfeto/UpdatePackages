@@ -1,4 +1,7 @@
 using System;
+using System.IO;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.Extensions.Logging;
@@ -17,7 +20,7 @@ public sealed class ProjectLoader : IProjectLoader
         this._loadedProjects = new(StringComparer.Ordinal);
     }
 
-    public async Task<IProject?> LoadAsync(string path)
+    public async Task<IProject?> LoadAsync(string path, CancellationToken cancellationToken)
     {
         if (this._loadedProjects.TryGetValue(key: path, out IProject? project))
         {
@@ -26,12 +29,10 @@ public sealed class ProjectLoader : IProjectLoader
 
         try
         {
+            string content = await File.ReadAllTextAsync(path: path, encoding: Encoding.UTF8, cancellationToken: cancellationToken);
             XmlDocument doc = new();
 
-            // TODO: work out how to load the doc async from disk
-            await Task.CompletedTask;
-
-            doc.Load(path);
+            doc.LoadXml(content);
 
             project = new Project(fileName: path, doc: doc);
 
