@@ -34,5 +34,7 @@
  - any: [ '.github/workflows/*.yml' ]
 "Credfeto.Package":
  - any: [ 'src/Credfeto.Package/**/*' ]
+"Credfeto.Package.Test":
+ - any: [ 'src/Credfeto.Package.Test/**/*' ]
 "Credfeto.Package.Update":
  - any: [ 'src/Credfeto.Package.Update/**/*' ]
