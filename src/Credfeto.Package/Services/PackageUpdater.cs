@@ -14,13 +14,15 @@ namespace Credfeto.Package.Services;
 public sealed class PackageUpdater : IPackageUpdater
 {
     private readonly ILogger<PackageUpdater> _logger;
+    private readonly IPackageCache _packageCache;
     private readonly IPackageRegistry _packageRegistry;
     private readonly IProjectLoader _projectLoader;
 
-    public PackageUpdater(IProjectLoader projectLoader, IPackageRegistry packageRegistry, ILogger<PackageUpdater> logger)
+    public PackageUpdater(IProjectLoader projectLoader, IPackageRegistry packageRegistry, IPackageCache packageCache, ILogger<PackageUpdater> logger)
     {
         this._projectLoader = projectLoader;
         this._packageRegistry = packageRegistry;
+        this._packageCache = packageCache;
         this._logger = logger;
     }
 
@@ -37,13 +39,27 @@ public sealed class PackageUpdater : IPackageUpdater
             return Array.Empty<PackageVersion>();
         }
 
-        IReadOnlyList<PackageVersion> matching = await this._packageRegistry.FindPackagesAsync(projectsByPackage.Keys.ToArray(), packageSources: packageSources, cancellationToken: cancellationToken);
+        IReadOnlyList<string> packageIds = projectsByPackage.Keys.ToArray();
+        IReadOnlyList<PackageVersion> cachedVersions = this._packageCache.GetVersions(packageIds);
 
-        if (matching.Count == 0)
+        IReadOnlyList<PackageVersion> matching;
+
+        if (cachedVersions.Count != packageIds.Count)
         {
-            this._logger.LogInformation("No matching packages found in event source");
+            matching = await this._packageRegistry.FindPackagesAsync(packageIds: packageIds, packageSources: packageSources, cancellationToken: cancellationToken);
 
-            return Array.Empty<PackageVersion>();
+            if (matching.Count == 0)
+            {
+                this._logger.LogInformation("No matching packages found in event source");
+
+                return Array.Empty<PackageVersion>();
+            }
+
+            this._packageCache.SetVersions(matching);
+        }
+        else
+        {
+            matching = cachedVersions;
         }
 
         ConcurrentDictionary<string, NuGetVersion> updated = new(StringComparer.OrdinalIgnoreCase);

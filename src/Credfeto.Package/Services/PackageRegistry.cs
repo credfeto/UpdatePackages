@@ -21,8 +21,11 @@ public sealed class PackageRegistry : IPackageRegistry
 
     private readonly ILogger<PackageRegistry> _logger;
 
-    public PackageRegistry(ILogger<PackageRegistry> logger)
+    private readonly IPackageCache _packageCache;
+
+    public PackageRegistry(IPackageCache packageCache, ILogger<PackageRegistry> logger)
     {
+        this._packageCache = packageCache;
         this._logger = logger;
     }
 

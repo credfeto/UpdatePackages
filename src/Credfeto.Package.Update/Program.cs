@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -68,6 +69,13 @@ internal static class Program
         {
             IServiceProvider services = ApplicationSetup.Setup(false);
 
+            IPackageCache packageCache = services.GetRequiredService<IPackageCache>();
+
+            if (!string.IsNullOrWhiteSpace(options.Cache) && File.Exists(options.Cache))
+            {
+                await packageCache.LoadAsync(fileName: options.Cache, none: CancellationToken.None);
+            }
+
             IDiagnosticLogger logging = services.GetRequiredService<IDiagnosticLogger>();
             IPackageUpdater packageUpdater = services.GetRequiredService<IPackageUpdater>();
 
@@ -83,6 +91,11 @@ internal static class Program
             }
 
             Console.WriteLine($"Total updates: {updatesMade.Count}");
+
+            if (!string.IsNullOrWhiteSpace(options.Cache) && File.Exists(options.Cache))
+            {
+                await packageCache.SaveAsync(fileName: options.Cache, none: CancellationToken.None);
+            }
 
             if (updatesMade.Count != 0)
             {

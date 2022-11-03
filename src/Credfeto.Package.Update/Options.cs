@@ -14,6 +14,9 @@ public sealed class Options
     [Option(shortName: 'f', longName: "folder", Required = true, HelpText = "Folder containing projects")]
     public string? Folder { get; init; }
 
+    [Option(shortName: 'c', longName: "cache", Required = false, HelpText = "cache file")]
+    public string? Cache { get; init; }
+
     [Option(shortName: 's', longName: "source", Required = false, HelpText = "Urls to additional NuGet feeds to load")]
     public IEnumerable<string>? Source { get; init; }
 
