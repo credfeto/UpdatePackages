@@ -73,7 +73,7 @@ internal static class Program
 
             if (!string.IsNullOrWhiteSpace(options.Cache) && File.Exists(options.Cache))
             {
-                await packageCache.LoadAsync(fileName: options.Cache, none: CancellationToken.None);
+                await packageCache.LoadAsync(fileName: options.Cache, cancellationToken: CancellationToken.None);
             }
 
             IDiagnosticLogger logging = services.GetRequiredService<IDiagnosticLogger>();
@@ -92,9 +92,9 @@ internal static class Program
 
             Console.WriteLine($"Total updates: {updatesMade.Count}");
 
-            if (!string.IsNullOrWhiteSpace(options.Cache) && File.Exists(options.Cache))
+            if (!string.IsNullOrWhiteSpace(options.Cache))
             {
-                await packageCache.SaveAsync(fileName: options.Cache, none: CancellationToken.None);
+                await packageCache.SaveAsync(fileName: options.Cache, cancellationToken: CancellationToken.None);
             }
 
             if (updatesMade.Count != 0)

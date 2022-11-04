@@ -2,14 +2,14 @@
   <PropertyGroup>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
     <EnablePackageValidation>true</EnablePackageValidation>
-    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
     <Features>strict;flow-analysis</Features>
     <GenerateNeutralResourcesLanguageAttribute>true</GenerateNeutralResourcesLanguageAttribute>
     <ImplicitUsings>disable</ImplicitUsings>
     <IncludeOpenAPIAnalyzers>true</IncludeOpenAPIAnalyzers>
     <IsPackable>true</IsPackable>
     <IsPublishable>false</IsPublishable>
-    <IsTrimmable>true</IsTrimmable>
+    <IsTrimmable>false</IsTrimmable>
     <LangVersion>latest</LangVersion>
     <NoWarn />
     <Nullable>enable</Nullable>

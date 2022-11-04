@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
+using Credfeto.Package.SerializationContext;
 using Microsoft.Extensions.Logging;
 using NonBlocking;
 using NuGet.Versioning;
@@ -13,25 +17,43 @@ public sealed class PackageCache : IPackageCache
 {
     private readonly ConcurrentDictionary<string, NuGetVersion> _cache;
     private readonly ILogger<PackageCache> _logger;
+    private readonly JsonTypeInfo<Dictionary<string, string>> _typeInfo;
 
     public PackageCache(ILogger<PackageCache> logger)
     {
         this._logger = logger;
         this._cache = new(StringComparer.OrdinalIgnoreCase);
+
+        this._typeInfo = (SettingsSerializationContext.Default.GetTypeInfo(typeof(Dictionary<string, string>)) as JsonTypeInfo<Dictionary<string, string>>)!;
     }
 
-    public Task LoadAsync(string fileName, CancellationToken none)
+    public async Task LoadAsync(string fileName, CancellationToken cancellationToken)
     {
         this._logger.LogInformation($"Loading cache from {fileName}");
 
-        return Task.CompletedTask;
+        string content = await File.ReadAllTextAsync(path: fileName, cancellationToken: cancellationToken);
+
+        Dictionary<string, string>? packages = JsonSerializer.Deserialize(json: content, jsonTypeInfo: this._typeInfo);
+
+        if (packages != null)
+        {
+            foreach ((string packageId, string version) in packages)
+            {
+                this._logger.LogDebug($"Loaded {packageId} {version} from cache");
+                this._cache.TryAdd(key: packageId, NuGetVersion.Parse(version));
+            }
+        }
     }
 
-    public Task SaveAsync(string fileName, CancellationToken none)
+    public Task SaveAsync(string fileName, CancellationToken cancellationToken)
     {
         this._logger.LogInformation($"Saving cache to {fileName}");
 
-        return Task.CompletedTask;
+        Dictionary<string, string> toWrite = this._cache.ToDictionary(keySelector: x => x.Key, elementSelector: x => x.Value.ToString(), comparer: StringComparer.OrdinalIgnoreCase);
+
+        string content = JsonSerializer.Serialize(value: toWrite, jsonTypeInfo: this._typeInfo);
+
+        return File.WriteAllTextAsync(path: fileName, contents: content, cancellationToken: cancellationToken);
     }
 
     public IReadOnlyList<PackageVersion> GetVersions(IReadOnlyList<string> packageIds)

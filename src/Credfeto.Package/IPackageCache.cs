@@ -6,9 +6,9 @@ namespace Credfeto.Package;
 
 public interface IPackageCache
 {
-    Task LoadAsync(string fileName, CancellationToken none);
+    Task LoadAsync(string fileName, CancellationToken cancellationToken);
 
-    Task SaveAsync(string fileName, CancellationToken none);
+    Task SaveAsync(string fileName, CancellationToken cancellationToken);
 
     IReadOnlyList<PackageVersion> GetVersions(IReadOnlyList<string> packageIds);
 
