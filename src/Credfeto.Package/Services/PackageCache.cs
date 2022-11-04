@@ -18,6 +18,7 @@ public sealed class PackageCache : IPackageCache
     private readonly ConcurrentDictionary<string, NuGetVersion> _cache;
     private readonly ILogger<PackageCache> _logger;
     private readonly JsonTypeInfo<Dictionary<string, string>> _typeInfo;
+    private bool _changed;
 
     public PackageCache(ILogger<PackageCache> logger)
     {
@@ -25,6 +26,7 @@ public sealed class PackageCache : IPackageCache
         this._cache = new(StringComparer.OrdinalIgnoreCase);
 
         this._typeInfo = (SettingsSerializationContext.Default.GetTypeInfo(typeof(Dictionary<string, string>)) as JsonTypeInfo<Dictionary<string, string>>)!;
+        this._changed = false;
     }
 
     public async Task LoadAsync(string fileName, CancellationToken cancellationToken)
@@ -39,7 +41,7 @@ public sealed class PackageCache : IPackageCache
         {
             foreach ((string packageId, string version) in packages)
             {
-                this._logger.LogDebug($"Loaded {packageId} {version} from cache");
+                this._logger.LogInformation($"Loaded {packageId} {version} from cache");
                 this._cache.TryAdd(key: packageId, NuGetVersion.Parse(version));
             }
         }
@@ -47,6 +49,11 @@ public sealed class PackageCache : IPackageCache
 
     public Task SaveAsync(string fileName, CancellationToken cancellationToken)
     {
+        if (!this._changed)
+        {
+            return Task.CompletedTask;
+        }
+
         this._logger.LogInformation($"Saving cache to {fileName}");
 
         Dictionary<string, string> toWrite = this._cache.ToDictionary(keySelector: x => x.Key, elementSelector: x => x.Value.ToString(), comparer: StringComparer.OrdinalIgnoreCase);
@@ -80,6 +87,7 @@ public sealed class PackageCache : IPackageCache
                 if (this._cache.TryUpdate(key: packageVersion.PackageId, newValue: packageVersion.Version, comparisonValue: existing))
                 {
                     this._logger.LogInformation($"Updated cache of {packageVersion.PackageId} from {existing} to {packageVersion.Version}");
+                    this._changed = true;
                 }
             }
         }
@@ -88,6 +96,7 @@ public sealed class PackageCache : IPackageCache
             if (this._cache.TryAdd(key: packageVersion.PackageId, value: packageVersion.Version))
             {
                 this._logger.LogInformation($"Adding cache of {packageVersion.PackageId} at {packageVersion.Version}");
+                this._changed = true;
             }
         }
     }
