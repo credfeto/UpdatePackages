@@ -56,7 +56,8 @@ public sealed class PackageCache : IPackageCache
 
         this._logger.LogInformation($"Saving cache to {fileName}");
 
-        Dictionary<string, string> toWrite = this._cache.ToDictionary(keySelector: x => x.Key, elementSelector: x => x.Value.ToString(), comparer: StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, string> toWrite =
+            this._cache.ToDictionary(keySelector: x => x.Key, elementSelector: x => x.Value.ToString(), comparer: StringComparer.OrdinalIgnoreCase);
 
         string content = JsonSerializer.Serialize(value: toWrite, jsonTypeInfo: this._typeInfo);
 

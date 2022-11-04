@@ -55,7 +55,10 @@ public sealed class PackageRegistry : IPackageRegistry
         return new(name: $"Custom{sourceId}", source: source, isEnabled: true, isPersistable: true, isOfficial: true);
     }
 
-    private async Task LoadPackagesFromSourceAsync(PackageSource packageSource, string packageId, ConcurrentDictionary<string, NuGetVersion> found, CancellationToken cancellationToken)
+    private async Task LoadPackagesFromSourceAsync(PackageSource packageSource,
+                                                   string packageId,
+                                                   ConcurrentDictionary<string, NuGetVersion> found,
+                                                   CancellationToken cancellationToken)
     {
         SourceRepository sourceRepository = new(source: packageSource, new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3()));
 
@@ -84,13 +87,17 @@ public sealed class PackageRegistry : IPackageRegistry
                              .Contains(value: '+', comparisonType: StringComparison.Ordinal);
     }
 
-    private async Task FindPackageInSourcesAsync(IReadOnlyList<PackageSource> sources, string packageId, ConcurrentDictionary<string, NuGetVersion> packages, CancellationToken cancellationToken)
+    private async Task FindPackageInSourcesAsync(IReadOnlyList<PackageSource> sources,
+                                                 string packageId,
+                                                 ConcurrentDictionary<string, NuGetVersion> packages,
+                                                 CancellationToken cancellationToken)
     {
         this._logger.LogInformation($"Enumerating matching package versions for {packageId}...");
 
         ConcurrentDictionary<string, NuGetVersion> found = new(StringComparer.Ordinal);
 
-        await Task.WhenAll(sources.Select(selector: source => this.LoadPackagesFromSourceAsync(packageSource: source, packageId: packageId, found: found, cancellationToken: cancellationToken)));
+        await Task.WhenAll(
+            sources.Select(selector: source => this.LoadPackagesFromSourceAsync(packageSource: source, packageId: packageId, found: found, cancellationToken: cancellationToken)));
 
         foreach ((string key, NuGetVersion value) in found)
         {
