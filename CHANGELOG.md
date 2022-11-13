@@ -9,6 +9,14 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Added
 ### Fixed
 ### Changed
+### Removed
+### Deployment Changes
+
+<!--
+Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
+-->
+## [1.10.1] - 2022-11-13
+### Changed
 - FF-1429 - Updated Microsoft.NET.Test.Sdk to 17.4.0
 - FF-1429 - Updated SonarAnalyzer.CSharp to 8.48.0.56517
 - FF-1429 - Updated Microsoft.Extensions to 7.0.0
@@ -19,12 +27,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - FF-1429 - Updated FunFair.Test.Common to 6.0.8.2334
 - FF-1429 - Updated NuGet to 6.4.0
 - FF-1429 - Updated Meziantou.Analyzer to 1.0.747
-### Removed
-### Deployment Changes
 
-<!--
-Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
--->
 ## [1.10.0] - 2022-11-04
 ### Added
 - Added optional package cache to avoid querying nuget constantly in scripted runs for the same package
