@@ -9,22 +9,15 @@ public sealed class DiagnosticLogger : IDiagnosticLogger
     private readonly bool _warningsAsErrors;
     private long _errors;
 
-    /// <summary>
-    ///     Constructor.
-    /// </summary>
-    /// <param name="warningsAsErrors">Whether warnings should be considered errors.</param>
     public DiagnosticLogger(bool warningsAsErrors)
     {
         this._warningsAsErrors = warningsAsErrors;
     }
 
-    /// <inheritdoc />
     public long Errors => this._errors;
 
-    /// <inheritdoc />
     public bool IsErrored => this.Errors > 0;
 
-    /// <inheritdoc />
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
         if (this.IsWarningAsError(logLevel))
@@ -44,13 +37,11 @@ public sealed class DiagnosticLogger : IDiagnosticLogger
         this.OutputMessageWithStatus(logLevel: logLevel, state: state, exception: exception, formatter: formatter);
     }
 
-    /// <inheritdoc />
     public bool IsEnabled(LogLevel logLevel)
     {
         return logLevel != LogLevel.Debug;
     }
 
-    /// <inheritdoc />
     public IDisposable BeginScope<TState>(TState state)
         where TState : notnull
     {
@@ -104,7 +95,6 @@ public sealed class DiagnosticLogger : IDiagnosticLogger
 
     private sealed class DisposableScope : IDisposable
     {
-        /// <inheritdoc />
         public void Dispose()
         {
             // Nothing to do here.
