@@ -39,7 +39,7 @@ public sealed class PackageCache : IPackageCache
 
         if (packages != null)
         {
-            foreach ((string packageId, string version) in packages)
+            foreach ((string packageId, string version) in packages.OrderBy(keySelector: x => x.Key, comparer: StringComparer.OrdinalIgnoreCase))
             {
                 this._logger.LogInformation($"Loaded {packageId} {version} from cache");
                 this._cache.TryAdd(key: packageId, NuGetVersion.Parse(version));
@@ -56,8 +56,7 @@ public sealed class PackageCache : IPackageCache
 
         this._logger.LogInformation($"Saving cache to {fileName}");
 
-        Dictionary<string, string> toWrite =
-            this._cache.ToDictionary(keySelector: x => x.Key, elementSelector: x => x.Value.ToString(), comparer: StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, string> toWrite = this._cache.ToDictionary(keySelector: x => x.Key, elementSelector: x => x.Value.ToString(), comparer: StringComparer.OrdinalIgnoreCase);
 
         string content = JsonSerializer.Serialize(value: toWrite, jsonTypeInfo: this._typeInfo);
 
