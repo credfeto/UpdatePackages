@@ -9,15 +9,18 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Added
 ### Fixed
 ### Changed
-- FF-1429 - Updated FunFair.Test.Common to 6.0.11.2429
-- FF-1429 - Updated Meziantou.Analyzer to 1.0.757
-- FF-1429 - Updated Microsoft.NET.Test.Sdk to 17.4.1
 ### Removed
 ### Deployment Changes
 
 <!--
 Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
 -->
+## [1.10.5] - 2022-12-16
+### Changed
+- FF-1429 - Updated FunFair.Test.Common to 6.0.11.2429
+- FF-1429 - Updated Meziantou.Analyzer to 1.0.757
+- FF-1429 - Updated Microsoft.NET.Test.Sdk to 17.4.1
+
 ## [1.10.4] - 2022-12-15
 ### Changed
 - FF-1429 - Updated FunFair.Test.Common to 6.0.10.2422
