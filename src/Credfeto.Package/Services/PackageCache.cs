@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -17,7 +18,7 @@ public sealed class PackageCache : IPackageCache
 {
     private readonly ConcurrentDictionary<string, NuGetVersion> _cache;
     private readonly ILogger<PackageCache> _logger;
-    private readonly JsonTypeInfo<Dictionary<string, string>> _typeInfo;
+    private readonly JsonTypeInfo<CacheItems> _typeInfo;
     private bool _changed;
 
     public PackageCache(ILogger<PackageCache> logger)
@@ -25,7 +26,7 @@ public sealed class PackageCache : IPackageCache
         this._logger = logger;
         this._cache = new(StringComparer.OrdinalIgnoreCase);
 
-        this._typeInfo = (SettingsSerializationContext.Default.GetTypeInfo(typeof(Dictionary<string, string>)) as JsonTypeInfo<Dictionary<string, string>>)!;
+        this._typeInfo = SettingsSerializationContext.Default.GetTypeInfo(typeof(CacheItems)) as JsonTypeInfo<CacheItems> ?? MissingConverter();
         this._changed = false;
     }
 
@@ -35,11 +36,11 @@ public sealed class PackageCache : IPackageCache
 
         string content = await File.ReadAllTextAsync(path: fileName, cancellationToken: cancellationToken);
 
-        Dictionary<string, string>? packages = JsonSerializer.Deserialize(json: content, jsonTypeInfo: this._typeInfo);
+        CacheItems? packages = JsonSerializer.Deserialize(json: content, jsonTypeInfo: this._typeInfo);
 
         if (packages != null)
         {
-            foreach ((string packageId, string version) in packages.OrderBy(keySelector: x => x.Key, comparer: StringComparer.OrdinalIgnoreCase))
+            foreach ((string packageId, string version) in packages.Cache.OrderBy(keySelector: x => x.Key, comparer: StringComparer.OrdinalIgnoreCase))
             {
                 this._logger.LogInformation($"Loaded {packageId} {version} from cache");
                 this._cache.TryAdd(key: packageId, NuGetVersion.Parse(version));
@@ -56,7 +57,7 @@ public sealed class PackageCache : IPackageCache
 
         this._logger.LogInformation($"Saving cache to {fileName}");
 
-        Dictionary<string, string> toWrite = this._cache.ToDictionary(keySelector: x => x.Key, elementSelector: x => x.Value.ToString(), comparer: StringComparer.OrdinalIgnoreCase);
+        CacheItems toWrite = new(this._cache.ToDictionary(keySelector: x => x.Key, elementSelector: x => x.Value.ToString(), comparer: StringComparer.OrdinalIgnoreCase));
 
         string content = JsonSerializer.Serialize(value: toWrite, jsonTypeInfo: this._typeInfo);
 
@@ -76,6 +77,12 @@ public sealed class PackageCache : IPackageCache
         {
             this.UpdateCache(packageVersion);
         }
+    }
+
+    [DoesNotReturn]
+    private static JsonTypeInfo<CacheItems> MissingConverter()
+    {
+        throw new JsonException("No converter found for type CacheItems");
     }
 
     private void UpdateCache(PackageVersion packageVersion)

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
@@ -10,7 +9,7 @@ namespace Credfeto.Package.SerializationContext;
                              DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                              WriteIndented = false,
                              IncludeFields = false)]
-[JsonSerializable(typeof(Dictionary<string, string>))]
+[JsonSerializable(typeof(CacheItems))]
 internal sealed partial class SettingsSerializationContext : JsonSerializerContext
 {
 }
