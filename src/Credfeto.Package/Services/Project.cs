@@ -137,7 +137,7 @@ internal sealed class Project : IProject
         IEnumerable<PackageVersion> sdkPackages = this.GetPackagesFromSdk();
 
         return refPackages.Concat(sdkPackages)
-                          .OrderBy(x => x.PackageId)
+                          .OrderBy(keySelector: x => x.PackageId, comparer: StringComparer.OrdinalIgnoreCase)
                           .ThenBy(x => x.Version)
                           .ToArray();
     }

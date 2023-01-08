@@ -50,9 +50,9 @@ internal sealed class CacheItemsConverter : JsonConverter<CacheItems>
 
         writer.WriteStartObject();
 
-        foreach ((string key, string v) in value.Cache.OrderBy(x => x.Key.ToLowerInvariant()))
+        foreach ((string packageId, string version) in value.Cache.OrderBy(keySelector: x => x.Key, comparer: StringComparer.OrdinalIgnoreCase))
         {
-            writer.WriteString(propertyName: key, value: v);
+            writer.WriteString(propertyName: packageId, value: version);
         }
 
         writer.WriteEndObject();
