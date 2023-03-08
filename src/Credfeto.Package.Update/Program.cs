@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommandLine;
+using Credfeto.Package.Exceptions;
 using Credfeto.Package.Update.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,7 +14,7 @@ namespace Credfeto.Package.Update;
 internal static class Program
 {
     private const int SUCCESS = 0;
-    private const int ERROR = 1;
+    private const int ERROR = -1;
 
     private static async Task<int> Main(string[] args)
     {
@@ -35,6 +36,12 @@ internal static class Program
             return ERROR;
         }
         catch (PackageUpdateException exception)
+        {
+            Console.WriteLine(exception.Message);
+
+            return ERROR;
+        }
+        catch (UpdateFailedException exception)
         {
             Console.WriteLine(exception.Message);
 

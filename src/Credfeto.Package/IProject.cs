@@ -10,7 +10,7 @@ public interface IProject
 
     bool Changed { get; }
 
-    void UpdatePackage(PackageVersion package);
+    bool UpdatePackage(PackageVersion package);
 
     bool Save();
 }

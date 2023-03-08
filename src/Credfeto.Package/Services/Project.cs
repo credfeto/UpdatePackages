@@ -38,15 +38,18 @@ internal sealed class Project : IProject
 
     public bool Changed { get; private set; }
 
-    public void UpdatePackage(PackageVersion package)
+    public bool UpdatePackage(PackageVersion package)
     {
-        if (this.Packages.All(p => p.PackageId != package.PackageId))
+        if (this.Packages.All(p => !StringComparer.InvariantCultureIgnoreCase.Equals(x: p.PackageId, y: package.PackageId)))
         {
-            return;
+            return false;
         }
 
-        this.UpdatePackageFromReference(package);
-        this.UpdatePackageFromSdk(package);
+        bool updated = false;
+        updated |= this.UpdatePackageFromReference(package);
+        updated |= this.UpdatePackageFromSdk(package);
+
+        return updated;
     }
 
     public bool Save()
@@ -64,8 +67,9 @@ internal sealed class Project : IProject
         }
     }
 
-    private void UpdatePackageFromReference(PackageVersion package)
+    private bool UpdatePackageFromReference(PackageVersion package)
     {
+        int updates = 0;
         IEnumerable<XmlElement> references = this._doc.SelectNodes("/Project/ItemGroup/PackageReference")
                                                  ?.OfType<XmlElement>()
                                                  .RemoveNulls() ?? Array.Empty<XmlElement>();
@@ -84,16 +88,19 @@ internal sealed class Project : IProject
             {
                 node.SetAttribute(name: "Include", value: package.PackageId);
                 node.SetAttribute(name: "Version", package.Version.ToString());
+                ++updates;
                 this.Changed = true;
             }
         }
+
+        return updates > 0;
     }
 
-    private void UpdatePackageFromSdk(PackageVersion package)
+    private bool UpdatePackageFromSdk(PackageVersion package)
     {
         if (this._doc.SelectSingleNode("/Project") is not XmlElement project)
         {
-            return;
+            return false;
         }
 
         IReadOnlyList<string> sdk = project.GetAttribute("Sdk")
@@ -101,14 +108,18 @@ internal sealed class Project : IProject
 
         if (sdk.Count != 2)
         {
-            return;
+            return false;
         }
 
         if (ShouldUpdate(package: package, sdk[0], sdk[1]))
         {
             project.SetAttribute(name: "Sdk", $"{package.PackageId}/{package.Version}");
             this.Changed = true;
+
+            return true;
         }
+
+        return false;
     }
 
     private static bool ShouldUpdate(PackageVersion package, string packageId, string version)
