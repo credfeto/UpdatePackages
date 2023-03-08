@@ -8,17 +8,21 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ## [Unreleased]
 ### Added
 ### Fixed
-- Case insensitive package id check
 ### Changed
-- FF-1429 - Updated Meziantou.Analyzer to 2.0.19
-- FF-1429 - Updated FunFair.Test.Common to 6.0.26.2754
-- FF-1429 - Updated SonarAnalyzer.CSharp to 8.54.0.64047
 ### Removed
 ### Deployment Changes
 
 <!--
 Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
 -->
+## [1.10.17] - 2023-03-08
+### Fixed
+- Case insensitive package id check
+### Changed
+- FF-1429 - Updated Meziantou.Analyzer to 2.0.19
+- FF-1429 - Updated FunFair.Test.Common to 6.0.26.2754
+- FF-1429 - Updated SonarAnalyzer.CSharp to 8.54.0.64047
+
 ## [1.10.16] - 2023-02-25
 ### Changed
 - FF-1429 - Updated FunFair.Test.Common to 6.0.24.2725
