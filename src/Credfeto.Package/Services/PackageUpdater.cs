@@ -107,11 +107,11 @@ public sealed class PackageUpdater : IPackageUpdater
             {
                 if (packageVersion.Version > version)
                 {
-                    this._logger.LogInformation($"Updating {packageVersion.PackageId} from {version} to {packageVersion.Version} in {project.FileName}");
+                    this._logger.UpdatingPackageInProject(packageId: packageVersion.PackageId, existing: version, version: packageVersion.Version, fileName: project.FileName);
 
                     if (!project.UpdatePackage(packageVersion))
                     {
-                        this._logger.LogError($"Attempted update {packageVersion.PackageId} from {version} to {packageVersion.Version} in {project.FileName} failed.");
+                        this._logger.FailedUpdatePackageInProject(packageId: packageVersion.PackageId, existing: version, version: packageVersion.Version, fileName: project.FileName);
 
                         throw new UpdateFailedException($"Attempted update {packageVersion.PackageId} from {version} to {packageVersion.Version} in {project.FileName} failed.");
                     }
