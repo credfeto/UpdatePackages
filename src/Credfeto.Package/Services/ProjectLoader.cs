@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using Credfeto.Package.Services.LoggingExtensions;
 using Microsoft.Extensions.Logging;
 using NonBlocking;
 
@@ -40,7 +41,7 @@ public sealed class ProjectLoader : IProjectLoader
         }
         catch (Exception exception)
         {
-            this._logger.LogError(new(exception.HResult), exception: exception, $"Failed to load {path}: {exception.Message}");
+            this._logger.FailedToLoad(fileName: path, message: exception.Message, exception: exception);
 
             return null;
         }
