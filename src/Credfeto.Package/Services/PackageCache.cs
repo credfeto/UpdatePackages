@@ -8,6 +8,7 @@ using System.Text.Json.Serialization.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using Credfeto.Package.SerializationContext;
+using Credfeto.Package.Services.LoggingExtensions;
 using Microsoft.Extensions.Logging;
 using NonBlocking;
 using NuGet.Versioning;
@@ -32,7 +33,7 @@ public sealed class PackageCache : IPackageCache
 
     public async Task LoadAsync(string fileName, CancellationToken cancellationToken)
     {
-        this._logger.LogInformation($"Loading cache from {fileName}");
+        this._logger.LoadingCache(fileName);
 
         string content = await File.ReadAllTextAsync(path: fileName, cancellationToken: cancellationToken);
 
