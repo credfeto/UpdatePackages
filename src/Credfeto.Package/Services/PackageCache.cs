@@ -43,7 +43,7 @@ public sealed class PackageCache : IPackageCache
         {
             foreach ((string packageId, string version) in packages.Cache.OrderBy(keySelector: x => x.Key, comparer: StringComparer.OrdinalIgnoreCase))
             {
-                this._logger.LogInformation($"Loaded {packageId} {version} from cache");
+                this._logger.LoadedPackageVersionFromCache(packageId: packageId, version: version);
                 this._cache.TryAdd(key: packageId, NuGetVersion.Parse(version));
             }
         }
@@ -56,7 +56,7 @@ public sealed class PackageCache : IPackageCache
             return Task.CompletedTask;
         }
 
-        this._logger.LogInformation($"Saving cache to {fileName}");
+        this._logger.SavingCache(fileName);
 
         CacheItems toWrite = new(this._cache.ToDictionary(keySelector: x => x.Key, elementSelector: x => x.Value.ToString(), comparer: StringComparer.OrdinalIgnoreCase));
 
@@ -94,7 +94,7 @@ public sealed class PackageCache : IPackageCache
             {
                 if (this._cache.TryUpdate(key: packageVersion.PackageId, newValue: packageVersion.Version, comparisonValue: existing))
                 {
-                    this._logger.LogInformation($"Updated cache of {packageVersion.PackageId} from {existing} to {packageVersion.Version}");
+                    this._logger.UpdatingPackageVersion(packageId: packageVersion.PackageId, existing: existing, version: packageVersion.Version);
                     this._changed = true;
                 }
             }
@@ -103,7 +103,7 @@ public sealed class PackageCache : IPackageCache
         {
             if (this._cache.TryAdd(key: packageVersion.PackageId, value: packageVersion.Version))
             {
-                this._logger.LogInformation($"Adding cache of {packageVersion.PackageId} at {packageVersion.Version}");
+                this._logger.AddingPackageToCache(packageId: packageVersion.PackageId, version: packageVersion.Version);
                 this._changed = true;
             }
         }
