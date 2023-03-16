@@ -3,6 +3,13 @@
 Command line tool for updating nuget packages across a solution/folder which can be scripted as part of an automated
 build.
 
+## Build Status
+
+| Branch  | Status                                                                                                                                                                                                                            |
+|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| main    | [![Build: Pre-Release](https://github.com/credfeto/UpdatePackages/actions/workflows/build-and-publish-pre-release.yml/badge.svg)](https://github.com/credfeto/UpdatePackages/actions/workflows/build-and-publish-pre-release.yml) |
+| release | [![Build: Release](https://github.com/credfeto/UpdatePackages/actions/workflows/build-and-publish-release.yml/badge.svg)](https://github.com/credfeto/UpdatePackages/actions/workflows/build-and-publish-release.yml)             |
+
 ## Release Notes
 
 See [CHANGELOG.md](CHANGELOG.md) for release notes.
