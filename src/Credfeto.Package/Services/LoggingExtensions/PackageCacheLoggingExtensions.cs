@@ -5,10 +5,10 @@ namespace Credfeto.Package.Services.LoggingExtensions;
 
 internal static partial class PackageCacheLoggingExtensions
 {
-    [LoggerMessage(EventId = 0, Level = LogLevel.Information, Message = "Loading cache from {FileName}")]
+    [LoggerMessage(EventId = 0, Level = LogLevel.Information, Message = "Loading cache from {fileName}")]
     public static partial void LoadingCache(this ILogger<PackageCache> logger, string fileName);
 
-    [LoggerMessage(EventId = 1, Level = LogLevel.Information, Message = "Saving cache to {FileName}")]
+    [LoggerMessage(EventId = 1, Level = LogLevel.Information, Message = "Saving cache to {fileName}")]
     public static partial void SavingCache(this ILogger<PackageCache> logger, string fileName);
 
     [LoggerMessage(EventId = 2, Level = LogLevel.Information, Message = "Loaded {packageId} {version} from cache")]

@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Credfeto.Package.Exceptions;
 using Credfeto.Package.Extensions;
+using Credfeto.Package.Services.LoggingExtensions;
 using Microsoft.Extensions.Logging;
 using NonBlocking;
 using NuGet.Versioning;
@@ -35,7 +36,7 @@ public sealed class PackageUpdater : IPackageUpdater
 
         if (projectsByPackage.Count == 0)
         {
-            this._logger.LogInformation("No matching packages installed");
+            this._logger.NoMatchingPackagesInstalled();
 
             return Array.Empty<PackageVersion>();
         }
@@ -51,7 +52,7 @@ public sealed class PackageUpdater : IPackageUpdater
 
             if (matching.Count == 0)
             {
-                this._logger.LogInformation("No matching packages found in event source");
+                this._logger.NoMatchingPackagesInEventSource();
 
                 return Array.Empty<PackageVersion>();
             }
@@ -69,7 +70,7 @@ public sealed class PackageUpdater : IPackageUpdater
 
         if (updates == 0)
         {
-            this._logger.LogInformation("All installed packages are up-to-date");
+            this._logger.AllInstalledPackagesAreUpToDate();
 
             return Array.Empty<PackageVersion>();
         }
@@ -84,7 +85,7 @@ public sealed class PackageUpdater : IPackageUpdater
     {
         foreach (IProject project in projects.Where(project => project.Changed))
         {
-            this._logger.LogInformation($"Saving {project.FileName}");
+            this._logger.SavingProject(project.FileName);
             project.Save();
         }
     }
