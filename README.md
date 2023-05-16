@@ -84,3 +84,14 @@ dotnet updatepackages --folder D:\Source --package-id Credfeto.Extensions:prefix
 ```shell
 dotnet updatepackages --folder D:\Source --package-id Credfeto.Extensions:prefix --source https://nuget.example.org/api/v3/index.json
 ```
+
+## Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
