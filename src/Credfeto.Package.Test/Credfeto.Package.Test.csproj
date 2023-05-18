@@ -21,7 +21,10 @@
     <TieredPGO>true</TieredPGO>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <UseSystemResourceKeys>true</UseSystemResourceKeys>
-    <WarningsAsErrors />
+    <WarningsAsErrors/>
+    <EnableMicrosoftExtensionsConfigurationBinderSourceGenerator>true</EnableMicrosoftExtensionsConfigurationBinderSourceGenerator>
+    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+    <OptimizationPreference>speed</OptimizationPreference>
   </PropertyGroup>
   <PropertyGroup>
     <AnalysisLevel>latest</AnalysisLevel>
