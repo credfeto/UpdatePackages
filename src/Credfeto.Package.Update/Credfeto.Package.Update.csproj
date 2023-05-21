@@ -2,6 +2,7 @@
   <PropertyGroup>
     <DebuggerSupport>true</DebuggerSupport>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+    <EnableMicrosoftExtensionsConfigurationBinderSourceGenerator>true</EnableMicrosoftExtensionsConfigurationBinderSourceGenerator>
     <EnablePackageValidation>true</EnablePackageValidation>
     <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
     <Features>strict;flow-analysis</Features>
@@ -14,8 +15,10 @@
     <IsPackable>true</IsPackable>
     <IsPublishable>true</IsPublishable>
     <IsTrimmable>false</IsTrimmable>
+    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <OptimizationPreference>speed</OptimizationPreference>
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>
     <RunAOTCompilation>false</RunAOTCompilation>
@@ -30,9 +33,6 @@
     <UseSystemResourceKeys>true</UseSystemResourceKeys>
     <ValidateExecutableReferencesMatchSelfContained>true</ValidateExecutableReferencesMatchSelfContained>
     <WarningsAsErrors />
-    <EnableMicrosoftExtensionsConfigurationBinderSourceGenerator>true</EnableMicrosoftExtensionsConfigurationBinderSourceGenerator>
-    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
-    <OptimizationPreference>speed</OptimizationPreference>
   </PropertyGroup>
   <PropertyGroup>
     <AnalysisLevel>latest</AnalysisLevel>
