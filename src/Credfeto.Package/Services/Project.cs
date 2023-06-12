@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using Credfeto.Package.Extensions;
+using Credfeto.Extensions.Linq;
 using NuGet.Versioning;
 
 namespace Credfeto.Package.Services;

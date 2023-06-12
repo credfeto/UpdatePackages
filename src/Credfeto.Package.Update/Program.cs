@@ -51,7 +51,7 @@ internal static class Program
         {
             Console.WriteLine($"ERROR: {exception.Message}");
 
-            if (exception.StackTrace != null)
+            if (exception.StackTrace is not null)
             {
                 Console.WriteLine(exception.StackTrace);
             }

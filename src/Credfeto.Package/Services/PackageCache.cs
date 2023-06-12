@@ -39,7 +39,7 @@ public sealed class PackageCache : IPackageCache
 
         CacheItems? packages = JsonSerializer.Deserialize(json: content, jsonTypeInfo: this._typeInfo);
 
-        if (packages != null)
+        if (packages is not null)
         {
             foreach ((string packageId, string version) in packages.Cache.OrderBy(keySelector: x => x.Key, comparer: StringComparer.OrdinalIgnoreCase))
             {
