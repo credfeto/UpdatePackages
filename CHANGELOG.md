@@ -24,6 +24,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated SecurityCodeScan.VS2019 to Tool 'powershell' (version '7.3.4') was restored. Available commands: pwsh Tool 'funfair.buildcheck' (version '474.0.3.39') was restored. Available commands: buildcheck Tool 'funfair.buildversion' (version '6.2.2.41') was restored. Available commands: buildversion Tool 'credfeto.changelog.cmd' (version '1.10.10.57') was restored. Available commands: changelog Tool 'credfeto.package.update' (version '1.10.25.54') was restored. Available commands: updatepackages Tool 'jetbrains.resharper.globaltools' (version '2023.1.2') was restored. Available commands: jb  Restore was successful. 
 - Dependencies - Updated SmartAnalyzers.CSharpExtensions.Annotations to Tool 'powershell' (version '7.3.4') was restored. Available commands: pwsh Tool 'funfair.buildcheck' (version '474.0.3.39') was restored. Available commands: buildcheck Tool 'funfair.buildversion' (version '6.2.2.41') was restored. Available commands: buildversion Tool 'credfeto.changelog.cmd' (version '1.10.10.57') was restored. Available commands: changelog Tool 'credfeto.package.update' (version '1.10.25.54') was restored. Available commands: updatepackages Tool 'jetbrains.resharper.globaltools' (version '2023.1.2') was restored. Available commands: jb  Restore was successful. 
 - Dependencies - Updated Meziantou.Analyzer to 2.0.62
+- Dependencies - Updated Microsoft.NET.Test.Sdk to 17.6.3
 ### Removed
 ### Deployment Changes
 
