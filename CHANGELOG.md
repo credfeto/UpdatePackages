@@ -9,6 +9,14 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Added
 ### Fixed
 ### Changed
+### Removed
+### Deployment Changes
+
+<!--
+Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
+-->
+## [1.10.26] - 2023-06-27
+### Changed
 - Dependencies - Updated SonarAnalyzer.CSharp to 9.4.0.72892
 - Dependencies - Updated AsyncFixer to Tool 'powershell' (version '7.3.4') was restored. Available commands: pwsh Tool 'funfair.buildcheck' (version '474.0.3.39') was restored. Available commands: buildcheck Tool 'funfair.buildversion' (version '6.2.2.41') was restored. Available commands: buildversion Tool 'credfeto.changelog.cmd' (version '1.10.10.57') was restored. Available commands: changelog Tool 'credfeto.package.update' (version '1.10.25.54') was restored. Available commands: updatepackages Tool 'jetbrains.resharper.globaltools' (version '2023.1.2') was restored. Available commands: jb  Restore was successful. 
 - Dependencies - Updated codecracker.CSharp to Tool 'powershell' (version '7.3.4') was restored. Available commands: pwsh Tool 'funfair.buildcheck' (version '474.0.3.39') was restored. Available commands: buildcheck Tool 'funfair.buildversion' (version '6.2.2.41') was restored. Available commands: buildversion Tool 'credfeto.changelog.cmd' (version '1.10.10.57') was restored. Available commands: changelog Tool 'credfeto.package.update' (version '1.10.25.54') was restored. Available commands: updatepackages Tool 'jetbrains.resharper.globaltools' (version '2023.1.2') was restored. Available commands: jb  Restore was successful. 
@@ -25,12 +33,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated SmartAnalyzers.CSharpExtensions.Annotations to Tool 'powershell' (version '7.3.4') was restored. Available commands: pwsh Tool 'funfair.buildcheck' (version '474.0.3.39') was restored. Available commands: buildcheck Tool 'funfair.buildversion' (version '6.2.2.41') was restored. Available commands: buildversion Tool 'credfeto.changelog.cmd' (version '1.10.10.57') was restored. Available commands: changelog Tool 'credfeto.package.update' (version '1.10.25.54') was restored. Available commands: updatepackages Tool 'jetbrains.resharper.globaltools' (version '2023.1.2') was restored. Available commands: jb  Restore was successful. 
 - Dependencies - Updated Meziantou.Analyzer to 2.0.62
 - Dependencies - Updated Microsoft.NET.Test.Sdk to 17.6.3
-### Removed
-### Deployment Changes
 
-<!--
-Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
--->
 ## [1.10.25] - 2023-06-15
 ### Changed
 - SDK - Updated DotNet SDK to 8.0.100-preview.5.23303.2
