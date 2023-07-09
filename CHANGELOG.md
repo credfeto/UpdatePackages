@@ -9,18 +9,21 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Added
 ### Fixed
 ### Changed
-- Dependencies - Updated Meziantou.Analyzer to 2.0.63
-- Dependencies - Updated xunit.analyzers to 1.2.0
-- Dependencies - Updated xunit to 2.5.0
-- Dependencies - Updated xunit.runner.visualstudio to 2.5.0
-- Dependencies - Updated SonarAnalyzer.CSharp to 9.5.0.73987
-- Dependencies - Updated NonBlocking to 2.1.2
 ### Removed
 ### Deployment Changes
 
 <!--
 Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
 -->
+## [1.10.27] - 2023-07-09
+### Changed
+- Dependencies - Updated Meziantou.Analyzer to 2.0.63
+- Dependencies - Updated xunit.analyzers to 1.2.0
+- Dependencies - Updated xunit to 2.5.0
+- Dependencies - Updated xunit.runner.visualstudio to 2.5.0
+- Dependencies - Updated SonarAnalyzer.CSharp to 9.5.0.73987
+- Dependencies - Updated NonBlocking to 2.1.2
+
 ## [1.10.26] - 2023-06-27
 ### Changed
 - Dependencies - Updated SonarAnalyzer.CSharp to 9.4.0.72892
