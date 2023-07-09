@@ -60,7 +60,7 @@
     <PackageReference Include="Credfeto.Extensions.Linq" Version="1.0.11.43" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
-    <PackageReference Include="NonBlocking" Version="2.1.1" />
+    <PackageReference Include="NonBlocking" Version="2.1.2" />
     <PackageReference Include="NuGet.Protocol" Version="6.6.1" />
   </ItemGroup>
   <ItemGroup>
