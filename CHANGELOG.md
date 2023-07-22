@@ -10,7 +10,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Fixed
 ### Changed
 - Dependencies - Updated FunFair.Test.Common to 6.1.3.87
-- Dependencies - Updated Meziantou.Analyzer to 2.0.68
+- Dependencies - Updated Meziantou.Analyzer to 2.0.70
 ### Removed
 ### Deployment Changes
 
