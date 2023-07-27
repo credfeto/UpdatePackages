@@ -9,16 +9,19 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Added
 ### Fixed
 ### Changed
-- Dependencies - Updated FunFair.Test.Common to 6.1.3.87
-- Dependencies - Updated Meziantou.Analyzer to 2.0.71
-- Dependencies - Updated SonarAnalyzer.CSharp to 9.6.0.74858
-- Always pick the latest version of the package no matter which feed it is in - don't bail out on the first
 ### Removed
 ### Deployment Changes
 
 <!--
 Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
 -->
+## [1.10.28] - 2023-07-27
+### Changed
+- Dependencies - Updated FunFair.Test.Common to 6.1.3.87
+- Dependencies - Updated Meziantou.Analyzer to 2.0.71
+- Dependencies - Updated SonarAnalyzer.CSharp to 9.6.0.74858
+- Always pick the latest version of the package no matter which feed it is in - don't bail out on the first
+
 ## [1.10.27] - 2023-07-09
 ### Changed
 - Dependencies - Updated Meziantou.Analyzer to 2.0.63
