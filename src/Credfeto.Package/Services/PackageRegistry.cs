@@ -56,10 +56,7 @@ public sealed class PackageRegistry : IPackageRegistry
         return new(name: $"Custom{sourceId}", source: source, isEnabled: true, isPersistable: true, isOfficial: true);
     }
 
-    private async Task LoadPackagesFromSourceAsync(PackageSource packageSource,
-                                                   string packageId,
-                                                   ConcurrentDictionary<string, NuGetVersion> found,
-                                                   CancellationToken cancellationToken)
+    private async Task LoadPackagesFromSourceAsync(PackageSource packageSource, string packageId, ConcurrentDictionary<string, NuGetVersion> found, CancellationToken cancellationToken)
     {
         SourceRepository sourceRepository = new(source: packageSource, new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3()));
 
@@ -74,10 +71,22 @@ public sealed class PackageRegistry : IPackageRegistry
         foreach (PackageVersion packageVersion in result.Select(entry => entry.Identity)
                                                         .Select(identity => new PackageVersion(packageId: identity.Id, version: identity.Version)))
         {
-            if (StringComparer.InvariantCultureIgnoreCase.Equals(x: packageId, y: packageVersion.PackageId) && !IsBannedPackage(packageVersion) &&
-                found.TryAdd(key: packageVersion.PackageId, value: packageVersion.Version))
+            if (StringComparer.InvariantCultureIgnoreCase.Equals(x: packageId, y: packageVersion.PackageId) && !IsBannedPackage(packageVersion))
             {
-                this._logger.FoundPackageInSource(packageId: packageVersion.PackageId, version: packageVersion.Version, source: packageSource.Source);
+                bool existing = found.TryGetValue(key: packageVersion.PackageId, out NuGetVersion? existingVersion);
+
+                if (existing)
+                {
+                    // pick the latest feed always
+                    if (existingVersion < packageVersion.Version && found.TryUpdate(key: packageVersion.PackageId, newValue: packageVersion.Version, comparisonValue: existingVersion))
+                    {
+                        this._logger.FoundPackageInSource(packageId: packageVersion.PackageId, version: packageVersion.Version, source: packageSource.Source);
+                    }
+                }
+                else if (found.TryAdd(key: packageVersion.PackageId, value: packageVersion.Version))
+                {
+                    this._logger.FoundPackageInSource(packageId: packageVersion.PackageId, version: packageVersion.Version, source: packageSource.Source);
+                }
             }
         }
     }
@@ -88,17 +97,13 @@ public sealed class PackageRegistry : IPackageRegistry
                              .Contains(value: '+', comparisonType: StringComparison.Ordinal);
     }
 
-    private async Task FindPackageInSourcesAsync(IReadOnlyList<PackageSource> sources,
-                                                 string packageId,
-                                                 ConcurrentDictionary<string, NuGetVersion> packages,
-                                                 CancellationToken cancellationToken)
+    private async Task FindPackageInSourcesAsync(IReadOnlyList<PackageSource> sources, string packageId, ConcurrentDictionary<string, NuGetVersion> packages, CancellationToken cancellationToken)
     {
         this._logger.EnumeratingPackageVersions(packageId);
 
         ConcurrentDictionary<string, NuGetVersion> found = new(StringComparer.Ordinal);
 
-        await Task.WhenAll(
-            sources.Select(selector: source => this.LoadPackagesFromSourceAsync(packageSource: source, packageId: packageId, found: found, cancellationToken: cancellationToken)));
+        await Task.WhenAll(sources.Select(selector: source => this.LoadPackagesFromSourceAsync(packageSource: source, packageId: packageId, found: found, cancellationToken: cancellationToken)));
 
         foreach ((string key, NuGetVersion value) in found)
         {
