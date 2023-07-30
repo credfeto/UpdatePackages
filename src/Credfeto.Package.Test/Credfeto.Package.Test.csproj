@@ -34,6 +34,7 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
+    <NuGetAudit>true</NuGetAudit>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Credfeto.Package\Credfeto.Package.csproj" />
