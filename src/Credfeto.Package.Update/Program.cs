@@ -131,7 +131,7 @@ internal static class Program
     {
         foreach (PackageVersion package in updated)
         {
-            Console.WriteLine($"echo ::set-env name={package.PackageId}::{package.Version}");
+            Console.WriteLine($"::set-env name={package.PackageId}::{package.Version}");
         }
     }
 
