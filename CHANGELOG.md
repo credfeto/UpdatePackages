@@ -9,14 +9,17 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Added
 ### Fixed
 ### Changed
-- Dependencies - Updated Meziantou.Analyzer to 2.0.79
-- Removed echo from ::set-env output
 ### Removed
 ### Deployment Changes
 
 <!--
 Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
 -->
+## [1.10.30] - 2023-08-01
+### Changed
+- Dependencies - Updated Meziantou.Analyzer to 2.0.79
+- Removed echo from ::set-env output
+
 ## [1.10.29] - 2023-07-30
 ### Fixed
 - Explicitly excluded pre-release packages
