@@ -104,14 +104,14 @@ internal static class Program
                 await packageCache.SaveAsync(fileName: options.Cache, cancellationToken: CancellationToken.None);
             }
 
-            if (updatesMade.Count != 0)
+            if (updatesMade.Count == 0)
             {
-                OutputPackageUpdateTags(updatesMade);
-
-                return;
+                throw new NoPackagesUpdatedException();
             }
 
-            throw new NoPackagesUpdatedException();
+            OutputPackageUpdateTags(updatesMade);
+
+            return;
         }
 
         throw new InvalidOptionsException();
