@@ -9,17 +9,20 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Added
 ### Fixed
 ### Changed
-- Dependencies - Updated Microsoft.VisualStudio.Threading.Analyzers to 17.7.30
-- Dependencies - Updated Meziantou.Analyzer to 2.0.82
-- Dependencies - Updated Microsoft.NET.Test.Sdk to 17.7.1
-- Dependencies - Updated FunFair.Test.Common to 6.1.6.127
-- Dependencies - Updated NuGet to 6.7.0
 ### Removed
 ### Deployment Changes
 
 <!--
 Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
 -->
+## [1.10.32] - 2023-08-18
+### Changed
+- Dependencies - Updated Microsoft.VisualStudio.Threading.Analyzers to 17.7.30
+- Dependencies - Updated Meziantou.Analyzer to 2.0.82
+- Dependencies - Updated Microsoft.NET.Test.Sdk to 17.7.1
+- Dependencies - Updated FunFair.Test.Common to 6.1.6.127
+- Dependencies - Updated NuGet to 6.7.0
+
 ## [1.10.31] - 2023-08-09
 ### Changed
 - SDK - Updated DotNet SDK to 8.0.100-preview.7.23376.3
