@@ -9,18 +9,21 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Added
 ### Fixed
 ### Changed
-- Dependencies - Updated FunFair.Test.Common to 6.1.7.129
-- Dependencies - Updated SonarAnalyzer.CSharp to 9.8.0.76515
-- Dependencies - Updated TeamCity.VSTest.TestAdapter to 1.0.37
-- Dependencies - Updated Roslynator.Analyzers to 4.5.0
-- Dependencies - Updated FunFair.CodeAnalysis to 7.0.2.121
-- Dependencies - Updated Microsoft.NET.Test.Sdk to 17.7.2
 ### Removed
 ### Deployment Changes
 
 <!--
 Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
 -->
+## [1.10.33] - 2023-08-29
+### Changed
+- Dependencies - Updated FunFair.Test.Common to 6.1.7.129
+- Dependencies - Updated SonarAnalyzer.CSharp to 9.8.0.76515
+- Dependencies - Updated TeamCity.VSTest.TestAdapter to 1.0.37
+- Dependencies - Updated Roslynator.Analyzers to 4.5.0
+- Dependencies - Updated FunFair.CodeAnalysis to 7.0.2.121
+- Dependencies - Updated Microsoft.NET.Test.Sdk to 17.7.2
+
 ## [1.10.32] - 2023-08-18
 ### Changed
 - Dependencies - Updated Microsoft.VisualStudio.Threading.Analyzers to 17.7.30
