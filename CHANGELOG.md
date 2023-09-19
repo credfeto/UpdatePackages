@@ -9,7 +9,6 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Added
 ### Fixed
 ### Changed
-- Dependencies - Updated Meziantou.Analyzer to 2.0.84
 - Dependencies - Updated NSubstitute to 5.1.0
 - SDK - Updated DotNet SDK to 8.0.100-rc.1.23455.8
 - Dependencies - Updated Credfeto.Enumeration.Source.Generation to 1.1.0.138
@@ -20,6 +19,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated FunFair.Test.Common to 6.1.10.156
 - Dependencies - Updated xunit to 2.5.1
 - Dependencies - Updated xunit.runner.visualstudio to 2.5.1
+- Dependencies - Updated Meziantou.Analyzer to 2.0.85
 ### Removed
 ### Deployment Changes
 
