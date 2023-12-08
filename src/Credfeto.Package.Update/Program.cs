@@ -23,9 +23,7 @@ internal static class Program
 
         try
         {
-            ParserResult<Options> parser = await Parser.Default.ParseArguments<Options>(args)
-                                                       .WithNotParsed(NotParsed)
-                                                       .WithParsedAsync(ParsedOkAsync);
+            ParserResult<Options> parser = await ParseOptionsAsync(args);
 
             return parser.Tag == ParserResultType.Parsed
                 ? SUCCESS
@@ -58,6 +56,13 @@ internal static class Program
 
             return ERROR;
         }
+    }
+
+    private static Task<ParserResult<Options>> ParseOptionsAsync(string[] args)
+    {
+        return Parser.Default.ParseArguments<Options>(args)
+                     .WithNotParsed(NotParsed)
+                     .WithParsedAsync(ParsedOkAsync);
     }
 
     private static void NotParsed(IEnumerable<Error> errors)
