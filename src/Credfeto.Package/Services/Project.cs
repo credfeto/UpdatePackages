@@ -70,9 +70,7 @@ internal sealed class Project : IProject
     private bool UpdatePackageFromReference(PackageVersion package)
     {
         int updates = 0;
-        IEnumerable<XmlElement> references = this._doc.SelectNodes("/Project/ItemGroup/PackageReference")
-                                                 ?.OfType<XmlElement>()
-                                                 .RemoveNulls() ?? Array.Empty<XmlElement>();
+        IEnumerable<XmlElement> references = this.GetPackageReferences();
 
         foreach (XmlElement node in references)
         {
@@ -153,11 +151,16 @@ internal sealed class Project : IProject
                           .ToArray();
     }
 
+    private IEnumerable<XmlElement> GetPackageReferences()
+    {
+        return this._doc.SelectNodes("/Project/ItemGroup/PackageReference")
+                   ?.OfType<XmlElement>()
+                   .RemoveNulls() ?? Array.Empty<XmlElement>();
+    }
+
     private IEnumerable<PackageVersion> GetPackagesFromReferences()
     {
-        IEnumerable<XmlElement> references = this._doc.SelectNodes("/Project/ItemGroup/PackageReference")
-                                                 ?.OfType<XmlElement>()
-                                                 .RemoveNulls() ?? Array.Empty<XmlElement>();
+        IEnumerable<XmlElement> references = this.GetPackageReferences();
 
         foreach (XmlElement node in references)
         {
