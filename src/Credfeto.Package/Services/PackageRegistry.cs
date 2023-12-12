@@ -56,7 +56,10 @@ public sealed class PackageRegistry : IPackageRegistry
         return new(name: $"Custom{sourceId}", source: source, isEnabled: true, isPersistable: true, isOfficial: true);
     }
 
-    private async Task LoadPackagesFromSourceAsync(PackageSource packageSource, string packageId, ConcurrentDictionary<string, NuGetVersion> found, CancellationToken cancellationToken)
+    private async Task LoadPackagesFromSourceAsync(PackageSource packageSource,
+                                                   string packageId,
+                                                   ConcurrentDictionary<string, NuGetVersion> found,
+                                                   CancellationToken cancellationToken)
     {
         SourceRepository sourceRepository = new(source: packageSource, new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3()));
 
@@ -75,7 +78,7 @@ public sealed class PackageRegistry : IPackageRegistry
         {
             if (found.TryGetValue(key: packageVersion.PackageId, out NuGetVersion? existingVersion))
             {
-                this.DoUpdateRegisteredFoundPackage(packageSource: packageSource, found: found, existingVersion, packageVersion: packageVersion);
+                this.DoUpdateRegisteredFoundPackage(packageSource: packageSource, found: found, existingVersion: existingVersion, packageVersion: packageVersion);
             }
             else if (found.TryAdd(key: packageVersion.PackageId, value: packageVersion.Version))
             {
@@ -84,7 +87,10 @@ public sealed class PackageRegistry : IPackageRegistry
         }
     }
 
-    private void DoUpdateRegisteredFoundPackage(PackageSource packageSource, ConcurrentDictionary<string, NuGetVersion> found, NuGetVersion existingVersion, PackageVersion packageVersion)
+    private void DoUpdateRegisteredFoundPackage(PackageSource packageSource,
+                                                ConcurrentDictionary<string, NuGetVersion> found,
+                                                NuGetVersion existingVersion,
+                                                PackageVersion packageVersion)
     {
         // pick the latest feed always
         if (existingVersion < packageVersion.Version && found.TryUpdate(key: packageVersion.PackageId, newValue: packageVersion.Version, comparisonValue: existingVersion))
@@ -99,13 +105,17 @@ public sealed class PackageRegistry : IPackageRegistry
                              .Contains(value: '+', comparisonType: StringComparison.Ordinal);
     }
 
-    private async Task FindPackageInSourcesAsync(IReadOnlyList<PackageSource> sources, string packageId, ConcurrentDictionary<string, NuGetVersion> packages, CancellationToken cancellationToken)
+    private async Task FindPackageInSourcesAsync(IReadOnlyList<PackageSource> sources,
+                                                 string packageId,
+                                                 ConcurrentDictionary<string, NuGetVersion> packages,
+                                                 CancellationToken cancellationToken)
     {
         this._logger.EnumeratingPackageVersions(packageId);
 
         ConcurrentDictionary<string, NuGetVersion> found = new(StringComparer.Ordinal);
 
-        await Task.WhenAll(sources.Select(selector: source => this.LoadPackagesFromSourceAsync(packageSource: source, packageId: packageId, found: found, cancellationToken: cancellationToken)));
+        await Task.WhenAll(
+            sources.Select(selector: source => this.LoadPackagesFromSourceAsync(packageSource: source, packageId: packageId, found: found, cancellationToken: cancellationToken)));
 
         foreach ((string key, NuGetVersion value) in found)
         {
