@@ -12,4 +12,5 @@ namespace Credfeto.Package.SerializationContext;
 [JsonSerializable(typeof(CacheItems))]
 internal sealed partial class SettingsSerializationContext : JsonSerializerContext
 {
+    // Code generated
 }
