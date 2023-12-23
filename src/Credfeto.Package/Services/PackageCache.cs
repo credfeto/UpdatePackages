@@ -65,11 +65,14 @@ public sealed class PackageCache : IPackageCache
         return File.WriteAllTextAsync(path: fileName, contents: content, cancellationToken: cancellationToken);
     }
 
+    public IReadOnlyList<PackageVersion> GetAll()
+    {
+        return BuildVersions(this._cache);
+    }
+
     public IReadOnlyList<PackageVersion> GetVersions(IReadOnlyList<string> packageIds)
     {
-        return this._cache.Where(x => packageIds.Contains(value: x.Key, comparer: StringComparer.OrdinalIgnoreCase))
-                   .Select(x => new PackageVersion(packageId: x.Key, version: x.Value))
-                   .ToArray();
+        return BuildVersions(this._cache.Where(x => packageIds.Contains(value: x.Key, comparer: StringComparer.OrdinalIgnoreCase)));
     }
 
     public void SetVersions(IReadOnlyList<PackageVersion> matching)
@@ -78,6 +81,12 @@ public sealed class PackageCache : IPackageCache
         {
             this.UpdateCache(packageVersion);
         }
+    }
+
+    private static IReadOnlyList<PackageVersion> BuildVersions(IEnumerable<KeyValuePair<string, NuGetVersion>> source)
+    {
+        return source.Select(x => new PackageVersion(packageId: x.Key, version: x.Value))
+                     .ToArray();
     }
 
     [DoesNotReturn]

@@ -10,6 +10,8 @@ public interface IPackageCache
 
     Task SaveAsync(string fileName, CancellationToken cancellationToken);
 
+    IReadOnlyList<PackageVersion> GetAll();
+
     IReadOnlyList<PackageVersion> GetVersions(IReadOnlyList<string> packageIds);
 
     void SetVersions(IReadOnlyList<PackageVersion> matching);
