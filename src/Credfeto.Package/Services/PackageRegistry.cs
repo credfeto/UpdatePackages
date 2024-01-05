@@ -38,17 +38,21 @@ public sealed class PackageRegistry : IPackageRegistry
             await this.FindPackageInSourcesAsync(sources: sources, packageId: packageId, packages: packages, cancellationToken: cancellationToken);
         }
 
-        return packages.Select(p => new PackageVersion(packageId: p.Key, version: p.Value))
-                       .ToArray();
+        return
+        [
+            ..packages.Select(p => new PackageVersion(packageId: p.Key, version: p.Value))
+        ];
     }
 
     private static IReadOnlyList<PackageSource> DefinePackageSources(IReadOnlyList<string> sources)
     {
         PackageSourceProvider packageSourceProvider = new(Settings.LoadDefaultSettings(Environment.CurrentDirectory));
 
-        return packageSourceProvider.LoadPackageSources()
-                                    .Concat(sources.Select(CreateCustomPackageSource))
-                                    .ToArray();
+        return
+        [
+            ..packageSourceProvider.LoadPackageSources()
+                                   .Concat(sources.Select(CreateCustomPackageSource))
+        ];
     }
 
     private static PackageSource CreateCustomPackageSource(string source, int sourceId)

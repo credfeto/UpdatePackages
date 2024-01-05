@@ -63,7 +63,7 @@ public sealed class PackageCache : IPackageCache
         string content = JsonSerializer.Serialize(value: toWrite, jsonTypeInfo: this._typeInfo);
 
         await File.WriteAllTextAsync(path: fileName, contents: content, cancellationToken: cancellationToken);
-        _changed = false;
+        this._changed = false;
     }
 
     public IReadOnlyList<PackageVersion> GetAll()
@@ -92,8 +92,10 @@ public sealed class PackageCache : IPackageCache
 
     private static IReadOnlyList<PackageVersion> BuildVersions(IEnumerable<KeyValuePair<string, NuGetVersion>> source)
     {
-        return source.Select(x => new PackageVersion(packageId: x.Key, version: x.Value))
-                     .ToArray();
+        return
+        [
+            ..source.Select(x => new PackageVersion(packageId: x.Key, version: x.Value))
+        ];
     }
 
     [DoesNotReturn]

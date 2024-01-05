@@ -145,10 +145,12 @@ internal sealed class Project : IProject
         IEnumerable<PackageVersion> refPackages = this.GetPackagesFromReferences();
         IEnumerable<PackageVersion> sdkPackages = this.GetPackagesFromSdk();
 
-        return refPackages.Concat(sdkPackages)
-                          .OrderBy(keySelector: x => x.PackageId, comparer: StringComparer.OrdinalIgnoreCase)
-                          .ThenBy(x => x.Version)
-                          .ToArray();
+        return
+        [
+            ..refPackages.Concat(sdkPackages)
+                         .OrderBy(keySelector: x => x.PackageId, comparer: StringComparer.OrdinalIgnoreCase)
+                         .ThenBy(x => x.Version)
+        ];
     }
 
     private IEnumerable<XmlElement> GetPackageReferences()

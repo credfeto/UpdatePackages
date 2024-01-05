@@ -44,7 +44,7 @@ public sealed class PackageUpdater : IPackageUpdater
             return Array.Empty<PackageVersion>();
         }
 
-        IReadOnlyList<string> packageIds = projectsByPackage.Keys.ToArray();
+        IReadOnlyList<string> packageIds = [..projectsByPackage.Keys];
         IReadOnlyList<PackageVersion> cachedVersions = this._packageCache.GetVersions(packageIds);
 
         IReadOnlyList<PackageVersion> matching;
@@ -80,8 +80,10 @@ public sealed class PackageUpdater : IPackageUpdater
 
         this.SaveChanges(projects);
 
-        return updated.Select(p => new PackageVersion(packageId: p.Key, version: p.Value))
-                      .ToArray();
+        return
+        [
+            ..updated.Select(p => new PackageVersion(packageId: p.Key, version: p.Value))
+        ];
     }
 
     private void SaveChanges(IReadOnlyList<IProject> projects)
@@ -154,16 +156,25 @@ public sealed class PackageUpdater : IPackageUpdater
     {
         IReadOnlyList<string> projectFileNames = FindProjects(basePath);
 
-        IReadOnlyList<IProject?> loadedProjects = await Task.WhenAll(projectFileNames.Select(fileName => this._projectLoader.LoadAsync(path: fileName, cancellationToken: cancellationToken)
-                                                                                                             .AsTask()));
+        IReadOnlyList<IProject?> loadedProjects = await Task.WhenAll(projectFileNames.Select(fileName => this.LoadOneProjectAsync(fileName: fileName, cancellationToken: cancellationToken)));
 
-        return loadedProjects.RemoveNulls()
-                             .ToArray();
+        return
+        [
+            ..loadedProjects.RemoveNulls()
+        ];
+    }
+
+    private Task<IProject?> LoadOneProjectAsync(string fileName, in CancellationToken cancellationToken)
+    {
+        return this._projectLoader.LoadAsync(path: fileName, cancellationToken: cancellationToken)
+                   .AsTask();
     }
 
     private static IReadOnlyList<string> FindProjects(string folder)
     {
-        return Directory.EnumerateFiles(path: folder, searchPattern: "*.csproj", searchOption: SearchOption.AllDirectories)
-                        .ToArray();
+        return
+        [
+            ..Directory.EnumerateFiles(path: folder, searchPattern: "*.csproj", searchOption: SearchOption.AllDirectories)
+        ];
     }
 }
