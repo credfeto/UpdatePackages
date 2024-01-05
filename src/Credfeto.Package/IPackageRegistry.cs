@@ -6,5 +6,5 @@ namespace Credfeto.Package;
 
 public interface IPackageRegistry
 {
-    Task<IReadOnlyList<PackageVersion>> FindPackagesAsync(IReadOnlyList<string> packageIds, IReadOnlyList<string> packageSources, CancellationToken cancellationToken);
+    ValueTask<IReadOnlyList<PackageVersion>> FindPackagesAsync(IReadOnlyList<string> packageIds, IReadOnlyList<string> packageSources, CancellationToken cancellationToken);
 }

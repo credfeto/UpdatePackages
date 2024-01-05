@@ -6,8 +6,5 @@ namespace Credfeto.Package;
 
 public interface IPackageUpdater
 {
-    Task<IReadOnlyList<PackageVersion>> UpdateAsync(string basePath,
-                                                    PackageUpdateConfiguration configuration,
-                                                    IReadOnlyList<string> packageSources,
-                                                    CancellationToken cancellationToken);
+    ValueTask<IReadOnlyList<PackageVersion>> UpdateAsync(string basePath, PackageUpdateConfiguration configuration, IReadOnlyList<string> packageSources, CancellationToken cancellationToken);
 }

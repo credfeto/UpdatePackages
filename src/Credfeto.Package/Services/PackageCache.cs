@@ -31,7 +31,7 @@ public sealed class PackageCache : IPackageCache
         this._changed = false;
     }
 
-    public async Task LoadAsync(string fileName, CancellationToken cancellationToken)
+    public async ValueTask LoadAsync(string fileName, CancellationToken cancellationToken)
     {
         this._logger.LoadingCache(fileName);
 
@@ -49,11 +49,11 @@ public sealed class PackageCache : IPackageCache
         }
     }
 
-    public Task SaveAsync(string fileName, CancellationToken cancellationToken)
+    public async ValueTask SaveAsync(string fileName, CancellationToken cancellationToken)
     {
         if (!this._changed)
         {
-            return Task.CompletedTask;
+            return;
         }
 
         this._logger.SavingCache(fileName);
@@ -62,7 +62,8 @@ public sealed class PackageCache : IPackageCache
 
         string content = JsonSerializer.Serialize(value: toWrite, jsonTypeInfo: this._typeInfo);
 
-        return File.WriteAllTextAsync(path: fileName, contents: content, cancellationToken: cancellationToken);
+        await File.WriteAllTextAsync(path: fileName, contents: content, cancellationToken: cancellationToken);
+        _changed = false;
     }
 
     public IReadOnlyList<PackageVersion> GetAll()
@@ -81,6 +82,12 @@ public sealed class PackageCache : IPackageCache
         {
             this.UpdateCache(packageVersion);
         }
+    }
+
+    public void Reset()
+    {
+        this._changed = true;
+        this._cache.Clear();
     }
 
     private static IReadOnlyList<PackageVersion> BuildVersions(IEnumerable<KeyValuePair<string, NuGetVersion>> source)

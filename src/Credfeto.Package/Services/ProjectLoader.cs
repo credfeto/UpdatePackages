@@ -21,7 +21,7 @@ public sealed class ProjectLoader : IProjectLoader
         this._loadedProjects = new(StringComparer.Ordinal);
     }
 
-    public async Task<IProject?> LoadAsync(string path, CancellationToken cancellationToken)
+    public async ValueTask<IProject?> LoadAsync(string path, CancellationToken cancellationToken)
     {
         if (this._loadedProjects.TryGetValue(key: path, out IProject? project))
         {

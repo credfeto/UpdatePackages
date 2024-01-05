@@ -28,10 +28,10 @@ public sealed class PackageUpdater : IPackageUpdater
         this._logger = logger;
     }
 
-    public async Task<IReadOnlyList<PackageVersion>> UpdateAsync(string basePath,
-                                                                 PackageUpdateConfiguration configuration,
-                                                                 IReadOnlyList<string> packageSources,
-                                                                 CancellationToken cancellationToken)
+    public async ValueTask<IReadOnlyList<PackageVersion>> UpdateAsync(string basePath,
+                                                                      PackageUpdateConfiguration configuration,
+                                                                      IReadOnlyList<string> packageSources,
+                                                                      CancellationToken cancellationToken)
     {
         IReadOnlyList<IProject> projects = await this.FindProjectsAsync(basePath: basePath, cancellationToken: cancellationToken);
 
@@ -114,10 +114,7 @@ public sealed class PackageUpdater : IPackageUpdater
 
                     if (!project.UpdatePackage(packageVersion))
                     {
-                        this._logger.FailedUpdatePackageInProject(packageId: packageVersion.PackageId,
-                                                                  existing: version,
-                                                                  version: packageVersion.Version,
-                                                                  fileName: project.FileName);
+                        this._logger.FailedUpdatePackageInProject(packageId: packageVersion.PackageId, existing: version, version: packageVersion.Version, fileName: project.FileName);
 
                         throw new UpdateFailedException($"Attempted update {packageVersion.PackageId} from {version} to {packageVersion.Version} in {project.FileName} failed.");
                     }
@@ -132,9 +129,7 @@ public sealed class PackageUpdater : IPackageUpdater
         return updates;
     }
 
-    private static ConcurrentDictionary<string, ConcurrentDictionary<IProject, NuGetVersion>> FindMatchingPackages(
-        PackageUpdateConfiguration configuration,
-        IReadOnlyList<IProject> projects)
+    private static ConcurrentDictionary<string, ConcurrentDictionary<IProject, NuGetVersion>> FindMatchingPackages(PackageUpdateConfiguration configuration, IReadOnlyList<IProject> projects)
     {
         ConcurrentDictionary<string, ConcurrentDictionary<IProject, NuGetVersion>> projectsByPackage = new(StringComparer.OrdinalIgnoreCase);
 
@@ -142,8 +137,7 @@ public sealed class PackageUpdater : IPackageUpdater
         {
             foreach (PackageVersion package in project.Packages.Where(package => IsMatchingPackage(configuration: configuration, package: package)))
             {
-                ConcurrentDictionary<IProject, NuGetVersion> projectPackage =
-                    projectsByPackage.GetOrAdd(package.PackageId.ToLowerInvariant(), new ConcurrentDictionary<IProject, NuGetVersion>());
+                ConcurrentDictionary<IProject, NuGetVersion> projectPackage = projectsByPackage.GetOrAdd(package.PackageId.ToLowerInvariant(), new ConcurrentDictionary<IProject, NuGetVersion>());
                 projectPackage.TryAdd(key: project, value: package.Version);
             }
         }
@@ -156,12 +150,12 @@ public sealed class PackageUpdater : IPackageUpdater
         return configuration.PackageMatch.IsMatchingPackage(package) && !configuration.ExcludedPackages.Any(x => x.IsMatchingPackage(package));
     }
 
-    private async Task<IReadOnlyList<IProject>> FindProjectsAsync(string basePath, CancellationToken cancellationToken)
+    private async ValueTask<IReadOnlyList<IProject>> FindProjectsAsync(string basePath, CancellationToken cancellationToken)
     {
         IReadOnlyList<string> projectFileNames = FindProjects(basePath);
 
-        IReadOnlyList<IProject?> loadedProjects =
-            await Task.WhenAll(projectFileNames.Select(fileName => this._projectLoader.LoadAsync(path: fileName, cancellationToken: cancellationToken)));
+        IReadOnlyList<IProject?> loadedProjects = await Task.WhenAll(projectFileNames.Select(fileName => this._projectLoader.LoadAsync(path: fileName, cancellationToken: cancellationToken)
+                                                                                                             .AsTask()));
 
         return loadedProjects.RemoveNulls()
                              .ToArray();

@@ -6,13 +6,15 @@ namespace Credfeto.Package;
 
 public interface IPackageCache
 {
-    Task LoadAsync(string fileName, CancellationToken cancellationToken);
+    ValueTask LoadAsync(string fileName, CancellationToken cancellationToken);
 
-    Task SaveAsync(string fileName, CancellationToken cancellationToken);
+    ValueTask SaveAsync(string fileName, CancellationToken cancellationToken);
 
     IReadOnlyList<PackageVersion> GetAll();
 
     IReadOnlyList<PackageVersion> GetVersions(IReadOnlyList<string> packageIds);
 
     void SetVersions(IReadOnlyList<PackageVersion> matching);
+
+    void Reset();
 }
