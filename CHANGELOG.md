@@ -9,7 +9,6 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Added
 ### Fixed
 ### Changed
-- Dependencies - Updated xunit.analyzers to 1.9.0
 - Dependencies - Updated xunit to 2.6.6
 - Dependencies - Updated Roslynator.Analyzers to 4.10.0
 - Dependencies - Updated SonarAnalyzer.CSharp to 9.19.0.84025
@@ -23,6 +22,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated NSubstitute.Analyzers.CSharp to 1.0.17
 - Dependencies - Updated NuGet to 6.9.1
 - SDK - Updated DotNet SDK to 8.0.200
+- Dependencies - Updated xunit.analyzers to 1.11.0
 ### Removed
 ### Deployment Changes
 
