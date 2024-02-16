@@ -23,6 +23,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated NuGet to 6.9.1
 - SDK - Updated DotNet SDK to 8.0.200
 - Dependencies - Updated xunit.analyzers to 1.11.0
+- Dependencies - Updated xunit.runner.visualstudio to 2.5.7
 ### Removed
 ### Deployment Changes
 
