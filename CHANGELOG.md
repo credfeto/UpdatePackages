@@ -20,10 +20,10 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated Meziantou.Analyzer to 2.0.141
 - Dependencies - Updated NSubstitute.Analyzers.CSharp to 1.0.17
 - Dependencies - Updated NuGet to 6.9.1
-- SDK - Updated DotNet SDK to 8.0.200
 - Dependencies - Updated xunit.analyzers to 1.11.0
 - Dependencies - Updated xunit.runner.visualstudio to 2.5.7
 - Dependencies - Updated xunit to 2.7.0
+- SDK - Updated DotNet SDK to 8.0.201
 ### Removed
 ### Deployment Changes
 
