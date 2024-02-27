@@ -13,7 +13,6 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated Microsoft.VisualStudio.Threading.Analyzers to 17.9.28
 - Dependencies - Updated Credfeto.Enumeration.Source.Generation to 1.1.2.267
 - Dependencies - Updated Credfeto.Extensions.Linq to 1.0.16.122
-- Dependencies - Updated FunFair.CodeAnalysis to 7.0.8.274
 - Dependencies - Updated NSubstitute.Analyzers.CSharp to 1.0.17
 - Dependencies - Updated NuGet to 6.9.1
 - Dependencies - Updated xunit.analyzers to 1.11.0
@@ -26,6 +25,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated TeamCity.VSTest.TestAdapter to 1.0.40
 - Dependencies - Updated Meziantou.Analyzer to 2.0.145
 - Dependencies - Updated FunFair.Test.Common to 6.1.42.380
+- Dependencies - Updated FunFair.CodeAnalysis to 7.0.9.296
 ### Removed
 ### Deployment Changes
 
