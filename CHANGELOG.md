@@ -18,7 +18,6 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated xunit to 2.7.0
 - Dependencies - Updated Roslynator.Analyzers to 4.11.0
 - Dependencies - Updated TeamCity.VSTest.TestAdapter to 1.0.40
-- Dependencies - Updated Meziantou.Analyzer to 2.0.145
 - Dependencies - Updated SonarAnalyzer.CSharp to 9.21.0.86780
 - Dependencies - Updated FunFair.CodeAnalysis to 7.0.10.303
 - Dependencies - Updated FunFair.Test.Common to 6.1.45.389
@@ -27,6 +26,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated Credfeto.Extensions.Linq to 1.0.17.157
 - Dependencies - Updated coverlet to 6.0.2
 - SDK - Updated DotNet SDK to 8.0.203
+- Dependencies - Updated Meziantou.Analyzer to 2.0.146
 ### Removed
 ### Deployment Changes
 
