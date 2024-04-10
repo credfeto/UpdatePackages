@@ -19,7 +19,6 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated TeamCity.VSTest.TestAdapter to 1.0.40
 - Dependencies - Updated Microsoft.Extensions to 8.0.1
 - Dependencies - Updated coverlet to 6.0.2
-- Dependencies - Updated Meziantou.Analyzer to 2.0.146
 - Dependencies - Updated Roslynator.Analyzers to 4.12.0
 - Dependencies - Updated Credfeto.Enumeration.Source.Generation to 1.1.5.315
 - Dependencies - Updated Credfeto.Extensions.Linq to 1.0.18.174
@@ -27,6 +26,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated SonarAnalyzer.CSharp to 9.23.1.88495
 - SDK - Updated DotNet SDK to 8.0.204
 - Dependencies - Updated FunFair.CodeAnalysis to 7.0.13.341
+- Dependencies - Updated Meziantou.Analyzer to 2.0.147
 ### Removed
 ### Deployment Changes
 
