@@ -157,7 +157,7 @@ internal sealed class Project : IProject
     {
         return this._doc.SelectNodes("/Project/ItemGroup/PackageReference")
                    ?.OfType<XmlElement>()
-                   .RemoveNulls() ?? Array.Empty<XmlElement>();
+                   .RemoveNulls() ?? [];
     }
 
     private IEnumerable<PackageVersion> GetPackagesFromReferences()

@@ -91,10 +91,10 @@ internal static class Program
             IDiagnosticLogger logging = services.GetRequiredService<IDiagnosticLogger>();
             IPackageUpdater packageUpdater = services.GetRequiredService<IPackageUpdater>();
 
-            PackageUpdateConfiguration config = BuildConfiguration(packageId: options.PackageId, options.Exclude?.ToArray() ?? Array.Empty<string>());
+            PackageUpdateConfiguration config = BuildConfiguration(packageId: options.PackageId, options.Exclude?.ToArray() ?? []);
             IReadOnlyList<PackageVersion> updatesMade = await packageUpdater.UpdateAsync(basePath: options.Folder,
                                                                                          configuration: config,
-                                                                                         options.Source?.ToArray() ?? Array.Empty<string>(),
+                                                                                         options.Source?.ToArray() ?? [],
                                                                                          cancellationToken: CancellationToken.None);
 
             if (logging.IsErrored)
@@ -144,21 +144,20 @@ internal static class Program
     {
         if (excludes.Count == 0)
         {
-            return Array.Empty<PackageMatch>();
+            return [];
         }
 
-        List<PackageMatch> excludedPackages = new();
+        return
+        [
+            .. excludes.Select(exclude =>
+                               {
+                                   PackageMatch packageMatch = ExtractSearchPackage(exclude);
 
-        foreach (string exclude in excludes)
-        {
-            PackageMatch packageMatch = ExtractSearchPackage(exclude);
+                                   Console.WriteLine($"Excluding {packageMatch.PackageId} (Using Prefix match: {packageMatch.Prefix})");
 
-            excludedPackages.Add(packageMatch);
-
-            Console.WriteLine($"Excluding {packageMatch.PackageId} (Using Prefix match: {packageMatch.Prefix})");
-        }
-
-        return excludedPackages;
+                                   return packageMatch;
+                               })
+        ];
     }
 
     private static PackageMatch ExtractSearchPackage(string exclude)

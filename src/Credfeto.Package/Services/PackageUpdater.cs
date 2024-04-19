@@ -41,7 +41,7 @@ public sealed class PackageUpdater : IPackageUpdater
         {
             this._logger.NoMatchingPackagesInstalled();
 
-            return Array.Empty<PackageVersion>();
+            return [];
         }
 
         IReadOnlyList<string> packageIds = [..projectsByPackage.Keys];
@@ -57,7 +57,7 @@ public sealed class PackageUpdater : IPackageUpdater
             {
                 this._logger.NoMatchingPackagesInEventSource();
 
-                return Array.Empty<PackageVersion>();
+                return [];
             }
 
             this._packageCache.SetVersions(matching);
@@ -75,7 +75,7 @@ public sealed class PackageUpdater : IPackageUpdater
         {
             this._logger.AllInstalledPackagesAreUpToDate();
 
-            return Array.Empty<PackageVersion>();
+            return [];
         }
 
         this.SaveChanges(projects);
@@ -116,10 +116,7 @@ public sealed class PackageUpdater : IPackageUpdater
 
                     if (!project.UpdatePackage(packageVersion))
                     {
-                        this._logger.FailedUpdatePackageInProject(packageId: packageVersion.PackageId,
-                                                                  existing: version,
-                                                                  version: packageVersion.Version,
-                                                                  fileName: project.FileName);
+                        this._logger.FailedUpdatePackageInProject(packageId: packageVersion.PackageId, existing: version, version: packageVersion.Version, fileName: project.FileName);
 
                         throw new UpdateFailedException($"Attempted update {packageVersion.PackageId} from {version} to {packageVersion.Version} in {project.FileName} failed.");
                     }
@@ -134,9 +131,7 @@ public sealed class PackageUpdater : IPackageUpdater
         return updates;
     }
 
-    private static ConcurrentDictionary<string, ConcurrentDictionary<IProject, NuGetVersion>> FindMatchingPackages(
-        PackageUpdateConfiguration configuration,
-        IReadOnlyList<IProject> projects)
+    private static ConcurrentDictionary<string, ConcurrentDictionary<IProject, NuGetVersion>> FindMatchingPackages(PackageUpdateConfiguration configuration, IReadOnlyList<IProject> projects)
     {
         ConcurrentDictionary<string, ConcurrentDictionary<IProject, NuGetVersion>> projectsByPackage = new(StringComparer.OrdinalIgnoreCase);
 
@@ -144,8 +139,7 @@ public sealed class PackageUpdater : IPackageUpdater
         {
             foreach (PackageVersion package in project.Packages.Where(package => IsMatchingPackage(configuration: configuration, package: package)))
             {
-                ConcurrentDictionary<IProject, NuGetVersion> projectPackage =
-                    projectsByPackage.GetOrAdd(package.PackageId.ToLowerInvariant(), new ConcurrentDictionary<IProject, NuGetVersion>());
+                ConcurrentDictionary<IProject, NuGetVersion> projectPackage = projectsByPackage.GetOrAdd(package.PackageId.ToLowerInvariant(), new ConcurrentDictionary<IProject, NuGetVersion>());
                 projectPackage.TryAdd(key: project, value: package.Version);
             }
         }
@@ -162,8 +156,7 @@ public sealed class PackageUpdater : IPackageUpdater
     {
         IReadOnlyList<string> projectFileNames = FindProjects(basePath);
 
-        IReadOnlyList<IProject?> loadedProjects =
-            await Task.WhenAll(projectFileNames.Select(fileName => this.LoadOneProjectAsync(fileName: fileName, cancellationToken: cancellationToken)));
+        IReadOnlyList<IProject?> loadedProjects = await Task.WhenAll(projectFileNames.Select(fileName => this.LoadOneProjectAsync(fileName: fileName, cancellationToken: cancellationToken)));
 
         return
         [
