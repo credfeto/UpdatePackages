@@ -53,7 +53,7 @@ public sealed class PackageUpdater : IPackageUpdater
         {
             matching = await this._packageRegistry.FindPackagesAsync(packageIds: packageIds, packageSources: packageSources, cancellationToken: cancellationToken);
 
-            if (matching.Count == 0)
+            if (matching is [])
             {
                 this._logger.NoMatchingPackagesInEventSource();
 

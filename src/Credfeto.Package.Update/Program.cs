@@ -109,7 +109,7 @@ internal static class Program
                 await packageCache.SaveAsync(fileName: options.Cache, cancellationToken: CancellationToken.None);
             }
 
-            if (updatesMade.Count == 0)
+            if (updatesMade is [])
             {
                 throw new NoPackagesUpdatedException();
             }
@@ -142,22 +142,24 @@ internal static class Program
 
     private static IReadOnlyList<PackageMatch> GetExcludedPackages(IReadOnlyList<string> excludes)
     {
-        if (excludes.Count == 0)
+        if (excludes is [])
         {
             return [];
         }
 
         return
         [
-            .. excludes.Select(exclude =>
-                               {
-                                   PackageMatch packageMatch = ExtractSearchPackage(exclude);
-
-                                   Console.WriteLine($"Excluding {packageMatch.PackageId} (Using Prefix match: {packageMatch.Prefix})");
-
-                                   return packageMatch;
-                               })
+            .. excludes.Select(GetExclusion)
         ];
+
+        static PackageMatch GetExclusion(string exclude)
+        {
+            PackageMatch packageMatch = ExtractSearchPackage(exclude);
+
+            Console.WriteLine($"Excluding {packageMatch.PackageId} (Using Prefix match: {packageMatch.Prefix})");
+
+            return packageMatch;
+        }
     }
 
     private static PackageMatch ExtractSearchPackage(string exclude)
