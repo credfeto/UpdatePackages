@@ -13,7 +13,6 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated Microsoft.VisualStudio.Threading.Analyzers to 17.9.28
 - Dependencies - Updated NSubstitute.Analyzers.CSharp to 1.0.17
 - Dependencies - Updated NuGet to 6.9.1
-- Dependencies - Updated xunit to 2.7.0
 - Dependencies - Updated TeamCity.VSTest.TestAdapter to 1.0.40
 - Dependencies - Updated Microsoft.Extensions to 8.0.1
 - Dependencies - Updated coverlet to 6.0.2
@@ -28,6 +27,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated SonarAnalyzer.CSharp to 9.23.2.88755
 - Dependencies - Updated xunit.analyzers to 1.12.0
 - Dependencies - Updated xunit.runner.visualstudio to 2.5.8
+- Dependencies - Updated xunit to 2.7.1
 ### Removed
 ### Deployment Changes
 
