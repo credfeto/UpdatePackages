@@ -10,7 +10,6 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Fixed
 ### Changed
 - Dependencies - Updated Microsoft.NET.Test.Sdk to 17.9.0
-- Dependencies - Updated Microsoft.VisualStudio.Threading.Analyzers to 17.9.28
 - Dependencies - Updated NSubstitute.Analyzers.CSharp to 1.0.17
 - Dependencies - Updated NuGet to 6.9.1
 - Dependencies - Updated TeamCity.VSTest.TestAdapter to 1.0.40
@@ -29,6 +28,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - SDK - Updated DotNet SDK to 8.0.300
 - Dependencies - Updated Credfeto.Enumeration to 1.1.7.384
 - Dependencies - Updated Meziantou.Analyzer to 2.0.150
+- Dependencies - Updated Microsoft.VisualStudio.Threading.Analyzers to 17.10.48
 ### Removed
 ### Deployment Changes
 
