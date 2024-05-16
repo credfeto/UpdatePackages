@@ -17,7 +17,6 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated coverlet to 6.0.2
 - Dependencies - Updated Credfeto.Enumeration.Source.Generation to 1.1.5.315
 - Dependencies - Updated Credfeto.Extensions.Linq to 1.0.18.174
-- Dependencies - Updated xunit to 2.7.1
 - Dependencies - Updated SmartAnalyzers.CSharpExtensions.Annotations to 4.2.11
 - Dependencies - Updated FunFair.CodeAnalysis to 7.0.14.369
 - Dependencies - Updated FunFair.Test.Common to 6.1.51.455
@@ -29,6 +28,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated SonarAnalyzer.CSharp to 9.25.0.90414
 - Dependencies - Updated xunit.analyzers to 1.13.0
 - Dependencies - Updated xunit.runner.visualstudio to 2.8.0
+- Dependencies - Updated xunit to 2.8.0
 ### Removed
 ### Deployment Changes
 
