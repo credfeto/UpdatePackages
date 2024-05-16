@@ -23,12 +23,12 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated xunit.analyzers to 1.12.0
 - Dependencies - Updated xunit.runner.visualstudio to 2.5.8
 - Dependencies - Updated xunit to 2.7.1
-- Dependencies - Updated Credfeto.Enumeration to 1.1.6.354
 - Dependencies - Updated SmartAnalyzers.CSharpExtensions.Annotations to 4.2.11
 - Dependencies - Updated FunFair.CodeAnalysis to 7.0.14.369
 - Dependencies - Updated FunFair.Test.Common to 6.1.51.455
 - Dependencies - Updated SonarAnalyzer.CSharp to 9.24.0.89429
 - SDK - Updated DotNet SDK to 8.0.300
+- Dependencies - Updated Credfeto.Enumeration to 1.1.7.384
 ### Removed
 ### Deployment Changes
 
