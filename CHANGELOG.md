@@ -17,7 +17,6 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated coverlet to 6.0.2
 - Dependencies - Updated Credfeto.Enumeration.Source.Generation to 1.1.5.315
 - Dependencies - Updated Credfeto.Extensions.Linq to 1.0.18.174
-- Dependencies - Updated Roslynator.Analyzers to 4.12.1
 - Dependencies - Updated xunit.analyzers to 1.12.0
 - Dependencies - Updated xunit.runner.visualstudio to 2.5.8
 - Dependencies - Updated xunit to 2.7.1
@@ -29,6 +28,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated Credfeto.Enumeration to 1.1.7.384
 - Dependencies - Updated Meziantou.Analyzer to 2.0.150
 - Dependencies - Updated Microsoft.VisualStudio.Threading.Analyzers to 17.10.48
+- Dependencies - Updated Roslynator.Analyzers to 4.12.3
 ### Removed
 ### Deployment Changes
 
