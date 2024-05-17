@@ -20,7 +20,6 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated SmartAnalyzers.CSharpExtensions.Annotations to 4.2.11
 - SDK - Updated DotNet SDK to 8.0.300
 - Dependencies - Updated Credfeto.Enumeration to 1.1.7.384
-- Dependencies - Updated Meziantou.Analyzer to 2.0.150
 - Dependencies - Updated Microsoft.VisualStudio.Threading.Analyzers to 17.10.48
 - Dependencies - Updated Roslynator.Analyzers to 4.12.3
 - Dependencies - Updated SonarAnalyzer.CSharp to 9.25.0.90414
@@ -29,6 +28,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated xunit to 2.8.0
 - Dependencies - Updated FunFair.Test.Common to 6.1.55.490
 - Dependencies - Updated FunFair.CodeAnalysis to 7.0.15.397
+- Dependencies - Updated Meziantou.Analyzer to 2.0.151
 ### Removed
 ### Deployment Changes
 
