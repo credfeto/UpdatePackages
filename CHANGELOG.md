@@ -27,9 +27,9 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated CSharpIsNullAnalyzer to 0.1.593
 - Dependencies - Updated xunit to 2.9.0
 - SDK - Updated DotNet SDK to 8.0.303
-- Dependencies - Updated Meziantou.Analyzer to 2.0.160
 - Dependencies - Updated FunFair.Test.Common to 6.1.62.556
 - Dependencies - Updated SonarAnalyzer.CSharp to 9.29.0.95321
+- Dependencies - Updated Meziantou.Analyzer to 2.0.161
 ### Removed
 ### Deployment Changes
 
