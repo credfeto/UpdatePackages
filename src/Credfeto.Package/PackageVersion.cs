@@ -19,7 +19,7 @@ public sealed class PackageVersion : IEquatable<PackageVersion>
 
     public bool Equals(PackageVersion? other)
     {
-        return !ReferenceEquals(objA: null, objB: other) && AreEqual(this, right: other);
+        return other is not null && AreEqual(this, right: other);
     }
 
     private static bool AreEqual(PackageVersion left, PackageVersion right)
@@ -29,7 +29,7 @@ public sealed class PackageVersion : IEquatable<PackageVersion>
 
     public override bool Equals(object? obj)
     {
-        return !ReferenceEquals(objA: null, objB: obj) && (ReferenceEquals(this, objB: obj) || obj is PackageVersion other && AreEqual(this, right: other));
+        return obj is not null && (ReferenceEquals(this, objB: obj) || obj is PackageVersion other && AreEqual(this, right: other));
     }
 
     public override int GetHashCode()
