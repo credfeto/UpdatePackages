@@ -23,7 +23,6 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated Roslynator.Analyzers to 4.12.4
 - Dependencies - Updated CSharpIsNullAnalyzer to 0.1.593
 - Dependencies - Updated xunit to 2.9.0
-- SDK - Updated DotNet SDK to 8.0.303
 - Dependencies - Updated ThisAssembly.AssemblyInfo to 1.5.0
 - Dependencies - Updated Credfeto.Extensions.Linq to 1.0.19.278
 - Dependencies - Updated FunFair.CodeAnalysis to 7.0.19.498
@@ -31,6 +30,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated FunFair.Test.Common to 6.1.64.606
 - Dependencies - Updated SonarAnalyzer.CSharp to 9.31.0.96804
 - Dependencies - Updated NuGet to 6.10.2
+- SDK - Updated DotNet SDK to 8.0.400
 ### Removed
 ### Deployment Changes
 
