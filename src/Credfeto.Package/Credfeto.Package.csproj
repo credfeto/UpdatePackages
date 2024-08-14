@@ -64,7 +64,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
     <PackageReference Include="NonBlocking" Version="2.1.2" />
-    <PackageReference Include="NuGet.Protocol" Version="6.10.2" />
+    <PackageReference Include="NuGet.Protocol" Version="6.11.0" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AsyncFixer" Version="1.6.0" PrivateAssets="All" ExcludeAssets="runtime" />
