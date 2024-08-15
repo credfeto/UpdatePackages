@@ -23,7 +23,6 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated CSharpIsNullAnalyzer to 0.1.593
 - Dependencies - Updated xunit to 2.9.0
 - Dependencies - Updated ThisAssembly.AssemblyInfo to 1.5.0
-- Dependencies - Updated Credfeto.Extensions.Linq to 1.0.19.278
 - Dependencies - Updated Meziantou.Analyzer to 2.0.163
 - SDK - Updated DotNet SDK to 8.0.400
 - Dependencies - Updated Microsoft.VisualStudio.Threading.Analyzers to 17.11.20
@@ -31,6 +30,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated NuGet to 6.11.0
 - Dependencies - Updated FunFair.CodeAnalysis to 7.0.20.512
 - Dependencies - Updated FunFair.Test.Common to 6.1.65.613
+- Dependencies - Updated Credfeto.Extensions.Linq to 1.0.20.297
 ### Removed
 ### Deployment Changes
 
