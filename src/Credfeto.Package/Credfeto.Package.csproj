@@ -60,7 +60,7 @@
     <RepositoryUrl>https://github.com/credfeto/UpdatePackages</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Credfeto.Extensions.Linq" Version="1.0.20.297" />
+    <PackageReference Include="Credfeto.Extensions.Linq" Version="1.0.21.300" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
     <PackageReference Include="NonBlocking" Version="2.1.2" />
