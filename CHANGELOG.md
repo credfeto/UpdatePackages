@@ -18,7 +18,6 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated Credfeto.Enumeration to 1.1.7.384
 - Dependencies - Updated xunit.runner.visualstudio to 2.8.1
 - Dependencies - Updated CSharpIsNullAnalyzer to 0.1.593
-- Dependencies - Updated xunit to 2.9.0
 - Dependencies - Updated ThisAssembly.AssemblyInfo to 1.5.0
 - Dependencies - Updated Microsoft.VisualStudio.Threading.Analyzers to 17.11.20
 - Dependencies - Updated SonarAnalyzer.CSharp to 9.32.0.97167
@@ -31,6 +30,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated Credfeto.Extensions.Linq to 1.0.23.319
 - Dependencies - Updated Roslynator.Analyzers to 4.12.5
 - Dependencies - Updated Meziantou.Analyzer to 2.0.168
+- Dependencies - Updated xunit to 2.9.1
 ### Removed
 ### Deployment Changes
 
