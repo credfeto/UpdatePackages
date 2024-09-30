@@ -36,10 +36,10 @@
     <Nullable>enable</Nullable>
     <OptimizationPreference>speed</OptimizationPreference>
     <OutputType>Exe</OutputType>
-    <PackAsTool>true</PackAsTool>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReleaseNotes>$(ReleaseNotes)</PackageReleaseNotes>
     <PackageTags>Nuget;update;tool;packages</PackageTags>
+    <PackAsTool>true</PackAsTool>
     <Product>Package Update Tool</Product>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/credfeto/UpdatePackages</RepositoryUrl>
