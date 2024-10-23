@@ -32,7 +32,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated FunFair.CodeAnalysis to 7.0.24.635
 - Dependencies - Updated Credfeto.Extensions.Linq to 1.0.27.401
 - Dependencies - Updated Meziantou.Analyzer to 2.0.173
-- Dependencies - Updated FunFair.Test.Common to 6.1.228.895
+- Dependencies - Updated FunFair.Test.Common to 6.1.229.911
 ### Removed
 ### Deployment Changes
 
