@@ -36,10 +36,10 @@
     <Nullable>enable</Nullable>
     <OptimizationPreference>speed</OptimizationPreference>
     <OutputType>Exe</OutputType>
+    <PackAsTool>true</PackAsTool>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReleaseNotes>$(ReleaseNotes)</PackageReleaseNotes>
     <PackageTags>Nuget;update;tool;packages</PackageTags>
-    <PackAsTool>true</PackAsTool>
     <Product>Package Update Tool</Product>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/credfeto/UpdatePackages</RepositoryUrl>
@@ -69,6 +69,7 @@
     <PackageReference Include="AsyncFixer" Version="1.6.0" PrivateAssets="All" ExcludeAssets="runtime" />
     <PackageReference Include="codecracker.CSharp" Version="1.1.0" PrivateAssets="All" ExcludeAssets="runtime" />
     <PackageReference Include="Credfeto.Enumeration.Source.Generation" Version="1.1.14.596" PrivateAssets="All" ExcludeAssets="runtime" />
+    <PackageReference Include="Credfeto.Version.Information.Generator" Version="1.0.2.16" PrivateAssets="All" ExcludeAssets="runtime" />
     <PackageReference Include="CSharpIsNullAnalyzer" Version="0.1.593" PrivateAssets="all" ExcludeAssets="runtime" />
     <PackageReference Include="FunFair.CodeAnalysis" Version="7.0.24.635" PrivateAssets="All" ExcludeAssets="runtime" />
     <PackageReference Include="Meziantou.Analyzer" Version="2.0.173" PrivateAssets="All" ExcludeAssets="runtime" />
@@ -81,7 +82,6 @@
     <PackageReference Include="SmartAnalyzers.CSharpExtensions.Annotations" Version="4.2.11" PrivateAssets="All" ExcludeAssets="runtime" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="9.32.0.97167" PrivateAssets="All" ExcludeAssets="runtime" />
     <PackageReference Include="SourceLink.Create.CommandLine" Version="2.8.3" PrivateAssets="All" ExcludeAssets="runtime" />
-    <PackageReference Include="Credfeto.Version.Information.Generator" Version="1.0.2.16" PrivateAssets="All" ExcludeAssets="runtime" />
     <PackageReference Include="ToStringWithoutOverrideAnalyzer" Version="0.6.0" PrivateAssets="All" ExcludeAssets="runtime" />
   </ItemGroup>
 </Project>
