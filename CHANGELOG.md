@@ -23,7 +23,6 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated Microsoft.NET.Test.Sdk to 17.11.1
 - SDK - Updated to Dotnet 9.0 RC1
 - SDK - Updated DotNet SDK to 9.0.100-rc.2.24474.11
-- Dependencies - Updated Roslynator.Analyzers to 4.12.8
 - Dependencies - Updated xunit to 2.9.2
 - Dependencies - Updated Microsoft.Extensions to 8.0.2
 - Dependencies - Updated NuGet to 6.11.1
@@ -33,6 +32,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated Credfeto.Enumeration to 1.1.15.626
 - Dependencies - Updated Credfeto.Extensions.Linq to 1.0.28.428
 - Dependencies - Updated Credfeto.Version.Information.Generator to 1.0.4.57
+- Dependencies - Updated Roslynator.Analyzers to 4.12.9
 ### Removed
 ### Deployment Changes
 
