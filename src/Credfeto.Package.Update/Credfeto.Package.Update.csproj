@@ -62,7 +62,7 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="Credfeto.Enumeration.Source.Generation.Attributes" Version="1.1.18.647" />
-    <PackageReference Include="Credfeto.Extensions.Linq" Version="1.0.30.442" />
+    <PackageReference Include="Credfeto.Extensions.Linq" Version="1.0.31.447" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
   </ItemGroup>
   <ItemGroup>
