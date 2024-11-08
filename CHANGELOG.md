@@ -11,6 +11,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Changed
 - Dependencies - Updated xunit.analyzers to 1.17.0
 - Dependencies - Updated Credfeto.Enumeration to 1.1.22.677
+- Dependencies - Updated Credfeto.Extensions.Linq to 1.0.34.475
 ### Removed
 ### Deployment Changes
 
