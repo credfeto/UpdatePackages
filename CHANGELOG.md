@@ -9,15 +9,18 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Added
 ### Fixed
 ### Changed
-- Dependencies - Updated xunit.analyzers to 1.17.0
-- Dependencies - Updated Credfeto.Enumeration to 1.1.22.677
-- Dependencies - Updated Credfeto.Extensions.Linq to 1.0.34.475
 ### Removed
 ### Deployment Changes
 
 <!--
 Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
 -->
+## [1.10.48] - 2024-11-11
+### Changed
+- Dependencies - Updated xunit.analyzers to 1.17.0
+- Dependencies - Updated Credfeto.Enumeration to 1.1.22.677
+- Dependencies - Updated Credfeto.Extensions.Linq to 1.0.34.475
+
 ## [1.10.47] - 2024-11-02
 ### Changed
 - Dependencies - Updated FunFair.CodeAnalysis to 7.0.31.691
