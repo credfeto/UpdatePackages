@@ -15,6 +15,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated FunFair.Test.Common to 6.1.238.970
 - Dependencies - Updated Microsoft.Extensions to 9.0.0
 - SDK - Updated DotNet SDK to 9.0.100
+- Dependencies - Updated Credfeto.Enumeration to 1.1.23.685
 ### Removed
 ### Deployment Changes
 
