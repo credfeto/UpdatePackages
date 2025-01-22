@@ -67,7 +67,7 @@
     <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-xhfc-gr8f-ffwc" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Credfeto.Extensions.Linq" Version="1.0.66.649" />
+    <PackageReference Include="Credfeto.Extensions.Linq" Version="1.0.67.651" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.1" />
     <PackageReference Include="NonBlocking" Version="2.1.2" />
