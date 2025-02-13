@@ -21,6 +21,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated Microsoft.NET.Test.Sdk to 17.13.0
 - Dependencies - Updated NuGet to 6.13.1
 - Dependencies - Updated Credfeto.Version.Information.Generator to 1.0.54.350
+- Dependencies - Updated Credfeto.Extensions.Linq to 1.0.77.730
 ### Removed
 ### Deployment Changes
 
