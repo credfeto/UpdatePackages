@@ -9,6 +9,14 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Added
 ### Fixed
 ### Changed
+### Removed
+### Deployment Changes
+
+<!--
+Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
+-->
+## [1.10.121] - 2025-02-13
+### Changed
 - Dependencies - Updated xunit.analyzers to 1.20.0
 - Dependencies - Updated xunit.runner.visualstudio to 3.0.2
 - Dependencies - Updated FunFair.Test.Common to 6.1.257.1137
@@ -22,12 +30,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 - Dependencies - Updated NuGet to 6.13.1
 - Dependencies - Updated Credfeto.Version.Information.Generator to 1.0.54.350
 - Dependencies - Updated Credfeto.Extensions.Linq to 1.0.77.730
-### Removed
-### Deployment Changes
 
-<!--
-Releases that have at least been deployed to staging, BUT NOT necessarily released to live.  Changes should be moved from [Unreleased] into here as they are merged into the appropriate release branch
--->
 ## [1.10.120] - 2025-02-05
 ### Changed
 - Dependencies - Updated FunFair.CodeAnalysis to 7.0.67.907
