@@ -9,7 +9,11 @@ namespace Credfeto.Package.SerializationContext;
 
 internal sealed class CacheItemsConverter : JsonConverter<CacheItems>
 {
-    public override CacheItems Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override CacheItems Read(
+        ref Utf8JsonReader reader,
+        Type typeToConvert,
+        JsonSerializerOptions options
+    )
     {
         if (reader.TokenType != JsonTokenType.StartObject)
         {
@@ -36,14 +40,23 @@ internal sealed class CacheItemsConverter : JsonConverter<CacheItems>
         throw new JsonException(message: "Invalid Json token");
     }
 
-    public override void Write(Utf8JsonWriter writer, CacheItems value, JsonSerializerOptions options)
+    public override void Write(
+        Utf8JsonWriter writer,
+        CacheItems value,
+        JsonSerializerOptions options
+    )
     {
         ArgumentNullException.ThrowIfNull(writer);
         ArgumentNullException.ThrowIfNull(value);
 
         writer.WriteStartObject();
 
-        foreach ((string packageId, string version) in value.Cache.OrderBy(keySelector: x => x.Key, comparer: StringComparer.OrdinalIgnoreCase))
+        foreach (
+            (string packageId, string version) in value.Cache.OrderBy(
+                keySelector: x => x.Key,
+                comparer: StringComparer.OrdinalIgnoreCase
+            )
+        )
         {
             writer.WriteString(propertyName: packageId, value: version);
         }

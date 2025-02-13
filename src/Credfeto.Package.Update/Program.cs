@@ -25,9 +25,7 @@ internal static class Program
         {
             ParserResult<Options> parser = await ParseOptionsAsync(args);
 
-            return parser.Tag == ParserResultType.Parsed
-                ? SUCCESS
-                : ERROR;
+            return parser.Tag == ParserResultType.Parsed ? SUCCESS : ERROR;
         }
         catch (NoPackagesUpdatedException)
         {
@@ -60,9 +58,10 @@ internal static class Program
 
     private static Task<ParserResult<Options>> ParseOptionsAsync(string[] args)
     {
-        return Parser.Default.ParseArguments<Options>(args)
-                     .WithNotParsed(NotParsed)
-                     .WithParsedAsync(ParsedOkAsync);
+        return Parser
+            .Default.ParseArguments<Options>(args)
+            .WithNotParsed(NotParsed)
+            .WithParsedAsync(ParsedOkAsync);
     }
 
     private static void NotParsed(IEnumerable<Error> errors)
@@ -77,7 +76,10 @@ internal static class Program
 
     private static async Task ParsedOkAsync(Options options)
     {
-        if (!string.IsNullOrWhiteSpace(options.Folder) && !string.IsNullOrWhiteSpace(options.PackageId))
+        if (
+            !string.IsNullOrWhiteSpace(options.Folder)
+            && !string.IsNullOrWhiteSpace(options.PackageId)
+        )
         {
             IServiceProvider services = ApplicationSetup.Setup(false);
 
@@ -85,17 +87,25 @@ internal static class Program
 
             if (!string.IsNullOrWhiteSpace(options.Cache) && File.Exists(options.Cache))
             {
-                await packageCache.LoadAsync(fileName: options.Cache, cancellationToken: CancellationToken.None);
+                await packageCache.LoadAsync(
+                    fileName: options.Cache,
+                    cancellationToken: CancellationToken.None
+                );
             }
 
             IDiagnosticLogger logging = services.GetRequiredService<IDiagnosticLogger>();
             IPackageUpdater packageUpdater = services.GetRequiredService<IPackageUpdater>();
 
-            PackageUpdateConfiguration config = BuildConfiguration(packageId: options.PackageId, options.Exclude?.ToArray() ?? []);
-            IReadOnlyList<PackageVersion> updatesMade = await packageUpdater.UpdateAsync(basePath: options.Folder,
-                                                                                         configuration: config,
-                                                                                         options.Source?.ToArray() ?? [],
-                                                                                         cancellationToken: CancellationToken.None);
+            PackageUpdateConfiguration config = BuildConfiguration(
+                packageId: options.PackageId,
+                options.Exclude?.ToArray() ?? []
+            );
+            IReadOnlyList<PackageVersion> updatesMade = await packageUpdater.UpdateAsync(
+                basePath: options.Folder,
+                configuration: config,
+                options.Source?.ToArray() ?? [],
+                cancellationToken: CancellationToken.None
+            );
 
             if (logging.IsErrored)
             {
@@ -106,7 +116,10 @@ internal static class Program
 
             if (!string.IsNullOrWhiteSpace(options.Cache))
             {
-                await packageCache.SaveAsync(fileName: options.Cache, cancellationToken: CancellationToken.None);
+                await packageCache.SaveAsync(
+                    fileName: options.Cache,
+                    cancellationToken: CancellationToken.None
+                );
             }
 
             if (updatesMade is [])
@@ -122,10 +135,15 @@ internal static class Program
         throw new InvalidOptionsException();
     }
 
-    private static PackageUpdateConfiguration BuildConfiguration(string packageId, IReadOnlyList<string> exclude)
+    private static PackageUpdateConfiguration BuildConfiguration(
+        string packageId,
+        IReadOnlyList<string> exclude
+    )
     {
         PackageMatch packageMatch = ExtractSearchPackage(packageId);
-        Console.WriteLine($"Including {packageMatch.PackageId} (Using Prefix match: {packageMatch.Prefix})");
+        Console.WriteLine(
+            $"Including {packageMatch.PackageId} (Using Prefix match: {packageMatch.Prefix})"
+        );
 
         IReadOnlyList<PackageMatch> excludedPackages = GetExcludedPackages(exclude);
 
@@ -147,16 +165,15 @@ internal static class Program
             return [];
         }
 
-        return
-        [
-            .. excludes.Select(GetExclusion)
-        ];
+        return [.. excludes.Select(GetExclusion)];
 
         static PackageMatch GetExclusion(string exclude)
         {
             PackageMatch packageMatch = ExtractSearchPackage(exclude);
 
-            Console.WriteLine($"Excluding {packageMatch.PackageId} (Using Prefix match: {packageMatch.Prefix})");
+            Console.WriteLine(
+                $"Excluding {packageMatch.PackageId} (Using Prefix match: {packageMatch.Prefix})"
+            );
 
             return packageMatch;
         }

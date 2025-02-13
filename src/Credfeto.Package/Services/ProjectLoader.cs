@@ -30,7 +30,11 @@ public sealed class ProjectLoader : IProjectLoader
 
         try
         {
-            string content = await File.ReadAllTextAsync(path: path, encoding: Encoding.UTF8, cancellationToken: cancellationToken);
+            string content = await File.ReadAllTextAsync(
+                path: path,
+                encoding: Encoding.UTF8,
+                cancellationToken: cancellationToken
+            );
             XmlDocument doc = new();
 
             doc.LoadXml(content);
@@ -41,7 +45,11 @@ public sealed class ProjectLoader : IProjectLoader
         }
         catch (Exception exception)
         {
-            this._logger.FailedToLoad(fileName: path, message: exception.Message, exception: exception);
+            this._logger.FailedToLoad(
+                fileName: path,
+                message: exception.Message,
+                exception: exception
+            );
 
             return null;
         }
