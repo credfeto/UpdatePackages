@@ -11,10 +11,11 @@ internal static class ApplicationSetup
     {
         DiagnosticLogger logger = new(warningsAsErrors);
 
-        return new ServiceCollection().AddSingleton<ILogger>(logger)
-                                      .AddSingleton<IDiagnosticLogger>(logger)
-                                      .AddSingleton(typeof(ILogger<>), typeof(LoggerProxy<>))
-                                      .AddPackageUpdater()
-                                      .BuildServiceProvider();
+        return new ServiceCollection()
+            .AddSingleton<ILogger>(logger)
+            .AddSingleton<IDiagnosticLogger>(logger)
+            .AddSingleton(typeof(ILogger<>), typeof(LoggerProxy<>))
+            .AddPackageUpdater()
+            .BuildServiceProvider();
     }
 }
