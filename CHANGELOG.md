@@ -11,6 +11,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Changed
 - Dependencies - Updated Credfeto.Version.Information.Generator to 1.0.64.491
 - Dependencies - Updated CSharpier.MSBuild to 1.0.0
+- Dependencies - Updated Credfeto.Extensions.Linq to 1.0.86.859
 ### Removed
 ### Deployment Changes
 
