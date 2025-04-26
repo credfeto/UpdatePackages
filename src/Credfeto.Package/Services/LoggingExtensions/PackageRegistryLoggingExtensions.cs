@@ -22,8 +22,5 @@ internal static partial class PackageRegistryLoggingExtensions
         Level = LogLevel.Information,
         Message = "Enumerating matching package versions for {packageId}..."
     )]
-    public static partial void EnumeratingPackageVersions(
-        this ILogger<PackageRegistry> logger,
-        string packageId
-    );
+    public static partial void EnumeratingPackageVersions(this ILogger<PackageRegistry> logger, string packageId);
 }
