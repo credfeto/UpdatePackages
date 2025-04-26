@@ -42,10 +42,7 @@ internal sealed class Project : IProject
     {
         if (
             this.Packages.All(p =>
-                !StringComparer.InvariantCultureIgnoreCase.Equals(
-                    x: p.PackageId,
-                    y: package.PackageId
-                )
+                !StringComparer.InvariantCultureIgnoreCase.Equals(x: p.PackageId, y: package.PackageId)
             )
         )
         {
@@ -66,12 +63,7 @@ internal sealed class Project : IProject
             return false;
         }
 
-        using (
-            XmlWriter writer = XmlWriter.Create(
-                outputFileName: this.FileName,
-                settings: WriterSettings
-            )
-        )
+        using (XmlWriter writer = XmlWriter.Create(outputFileName: this.FileName, settings: WriterSettings))
         {
             this._doc.Save(writer);
 
@@ -167,9 +159,7 @@ internal sealed class Project : IProject
 
     private IEnumerable<XmlElement> GetPackageReferences()
     {
-        return this._doc.SelectNodes("/Project/ItemGroup/PackageReference")
-                ?.OfType<XmlElement>()
-                .RemoveNulls() ?? [];
+        return this._doc.SelectNodes("/Project/ItemGroup/PackageReference")?.OfType<XmlElement>().RemoveNulls() ?? [];
     }
 
     private IEnumerable<PackageVersion> GetPackagesFromReferences()
