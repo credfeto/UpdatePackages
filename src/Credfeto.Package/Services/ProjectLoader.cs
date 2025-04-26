@@ -45,11 +45,7 @@ public sealed class ProjectLoader : IProjectLoader
         }
         catch (Exception exception)
         {
-            this._logger.FailedToLoad(
-                fileName: path,
-                message: exception.Message,
-                exception: exception
-            );
+            this._logger.FailedToLoad(fileName: path, message: exception.Message, exception: exception);
 
             return null;
         }
