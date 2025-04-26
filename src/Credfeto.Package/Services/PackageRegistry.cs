@@ -58,27 +58,14 @@ public sealed class PackageRegistry : IPackageRegistry
 
     private static IReadOnlyList<PackageSource> DefinePackageSources(IReadOnlyList<string> sources)
     {
-        PackageSourceProvider packageSourceProvider = new(
-            Settings.LoadDefaultSettings(Environment.CurrentDirectory)
-        );
+        PackageSourceProvider packageSourceProvider = new(Settings.LoadDefaultSettings(Environment.CurrentDirectory));
 
-        return
-        [
-            .. packageSourceProvider
-                .LoadPackageSources()
-                .Concat(sources.Select(CreateCustomPackageSource)),
-        ];
+        return [.. packageSourceProvider.LoadPackageSources().Concat(sources.Select(CreateCustomPackageSource))];
     }
 
     private static PackageSource CreateCustomPackageSource(string source, int sourceId)
     {
-        return new(
-            source: source,
-            $"Custom{sourceId}",
-            isEnabled: true,
-            isOfficial: true,
-            isPersistable: true
-        );
+        return new(source: source, $"Custom{sourceId}", isEnabled: true, isOfficial: true, isPersistable: true);
     }
 
     private async Task LoadPackagesFromSourceAsync(
@@ -93,8 +80,9 @@ public sealed class PackageRegistry : IPackageRegistry
             new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3())
         );
 
-        PackageSearchResource searcher =
-            await sourceRepository.GetResourceAsync<PackageSearchResource>(cancellationToken);
+        PackageSearchResource searcher = await sourceRepository.GetResourceAsync<PackageSearchResource>(
+            cancellationToken
+        );
         IEnumerable<IPackageSearchMetadata> result = await searcher.SearchAsync(
             searchTerm: packageId,
             filters: SearchFilter,
@@ -107,13 +95,8 @@ public sealed class PackageRegistry : IPackageRegistry
         foreach (
             PackageVersion packageVersion in result
                 .Select(entry => entry.Identity)
-                .Where(identity =>
-                    StringComparer.InvariantCultureIgnoreCase.Equals(x: packageId, y: identity.Id)
-                )
-                .Select(identity => new PackageVersion(
-                    packageId: identity.Id,
-                    version: identity.Version
-                ))
+                .Where(identity => StringComparer.InvariantCultureIgnoreCase.Equals(x: packageId, y: identity.Id))
+                .Select(identity => new PackageVersion(packageId: identity.Id, version: identity.Version))
                 .Where(p => !p.Version.IsPrerelease && !IsBannedPackage(p))
         )
         {
@@ -164,9 +147,7 @@ public sealed class PackageRegistry : IPackageRegistry
 
     private static bool IsBannedPackage(PackageVersion packageVersion)
     {
-        return packageVersion
-            .Version.ToString()
-            .Contains(value: '+', comparisonType: StringComparison.Ordinal);
+        return packageVersion.Version.ToString().Contains(value: '+', comparisonType: StringComparison.Ordinal);
     }
 
     private async ValueTask FindPackageInSourcesAsync(
