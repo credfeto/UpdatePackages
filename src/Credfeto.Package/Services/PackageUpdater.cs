@@ -51,13 +51,8 @@ public sealed class PackageUpdater : IPackageUpdater
             cancellationToken: cancellationToken
         );
 
-        ConcurrentDictionary<
-            string,
-            ConcurrentDictionary<IProject, NuGetVersion>
-        > projectsByPackage = FindMatchingPackages(
-            configuration: configuration,
-            projects: projects
-        );
+        ConcurrentDictionary<string, ConcurrentDictionary<IProject, NuGetVersion>> projectsByPackage =
+            FindMatchingPackages(configuration: configuration, projects: projects);
 
         if (projectsByPackage.Count == 0)
         {
@@ -95,11 +90,7 @@ public sealed class PackageUpdater : IPackageUpdater
 
         ConcurrentDictionary<string, NuGetVersion> updated = new(StringComparer.OrdinalIgnoreCase);
 
-        int updates = this.UpdateProjects(
-            matching: matching,
-            projectsByPackage: projectsByPackage,
-            updated: updated
-        );
+        int updates = this.UpdateProjects(matching: matching, projectsByPackage: projectsByPackage, updated: updated);
 
         if (updates == 0)
         {
@@ -124,10 +115,7 @@ public sealed class PackageUpdater : IPackageUpdater
 
     private int UpdateProjects(
         IReadOnlyList<PackageVersion> matching,
-        ConcurrentDictionary<
-            string,
-            ConcurrentDictionary<IProject, NuGetVersion>
-        > projectsByPackage,
+        ConcurrentDictionary<string, ConcurrentDictionary<IProject, NuGetVersion>> projectsByPackage,
         ConcurrentDictionary<string, NuGetVersion> updated
     )
     {
@@ -180,18 +168,14 @@ public sealed class PackageUpdater : IPackageUpdater
         return updates;
     }
 
-    private static ConcurrentDictionary<
-        string,
-        ConcurrentDictionary<IProject, NuGetVersion>
-    > FindMatchingPackages(
+    private static ConcurrentDictionary<string, ConcurrentDictionary<IProject, NuGetVersion>> FindMatchingPackages(
         PackageUpdateConfiguration configuration,
         IReadOnlyList<IProject> projects
     )
     {
-        ConcurrentDictionary<
-            string,
-            ConcurrentDictionary<IProject, NuGetVersion>
-        > projectsByPackage = new(StringComparer.OrdinalIgnoreCase);
+        ConcurrentDictionary<string, ConcurrentDictionary<IProject, NuGetVersion>> projectsByPackage = new(
+            StringComparer.OrdinalIgnoreCase
+        );
 
         foreach (IProject project in projects)
         {
@@ -201,11 +185,10 @@ public sealed class PackageUpdater : IPackageUpdater
                 )
             )
             {
-                ConcurrentDictionary<IProject, NuGetVersion> projectPackage =
-                    projectsByPackage.GetOrAdd(
-                        package.PackageId.ToLowerInvariant(),
-                        new ConcurrentDictionary<IProject, NuGetVersion>()
-                    );
+                ConcurrentDictionary<IProject, NuGetVersion> projectPackage = projectsByPackage.GetOrAdd(
+                    package.PackageId.ToLowerInvariant(),
+                    new ConcurrentDictionary<IProject, NuGetVersion>()
+                );
                 projectPackage.TryAdd(key: project, value: package.Version);
             }
         }
@@ -213,10 +196,7 @@ public sealed class PackageUpdater : IPackageUpdater
         return projectsByPackage;
     }
 
-    private static bool IsMatchingPackage(
-        PackageUpdateConfiguration configuration,
-        PackageVersion package
-    )
+    private static bool IsMatchingPackage(PackageUpdateConfiguration configuration, PackageVersion package)
     {
         return configuration.PackageMatch.IsMatchingPackage(package)
             && !configuration.ExcludedPackages.Any(x => x.IsMatchingPackage(package));
@@ -238,14 +218,9 @@ public sealed class PackageUpdater : IPackageUpdater
         return [.. loadedProjects.RemoveNulls()];
     }
 
-    private Task<IProject?> LoadOneProjectAsync(
-        string fileName,
-        in CancellationToken cancellationToken
-    )
+    private Task<IProject?> LoadOneProjectAsync(string fileName, in CancellationToken cancellationToken)
     {
-        return this
-            ._projectLoader.LoadAsync(path: fileName, cancellationToken: cancellationToken)
-            .AsTask();
+        return this._projectLoader.LoadAsync(path: fileName, cancellationToken: cancellationToken).AsTask();
     }
 
     private static IReadOnlyList<string> FindProjects(string folder)
