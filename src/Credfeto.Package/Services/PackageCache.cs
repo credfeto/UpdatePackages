@@ -28,8 +28,7 @@ public sealed class PackageCache : IPackageCache
         this._cache = new(StringComparer.OrdinalIgnoreCase);
 
         this._typeInfo =
-            SettingsSerializationContext.Default.GetTypeInfo(typeof(CacheItems))
-                as JsonTypeInfo<CacheItems>
+            SettingsSerializationContext.Default.GetTypeInfo(typeof(CacheItems)) as JsonTypeInfo<CacheItems>
             ?? MissingConverter();
         this._changed = false;
     }
@@ -38,15 +37,9 @@ public sealed class PackageCache : IPackageCache
     {
         this._logger.LoadingCache(fileName);
 
-        string content = await File.ReadAllTextAsync(
-            path: fileName,
-            cancellationToken: cancellationToken
-        );
+        string content = await File.ReadAllTextAsync(path: fileName, cancellationToken: cancellationToken);
 
-        CacheItems? packages = JsonSerializer.Deserialize(
-            json: content,
-            jsonTypeInfo: this._typeInfo
-        );
+        CacheItems? packages = JsonSerializer.Deserialize(json: content, jsonTypeInfo: this._typeInfo);
 
         if (packages is not null)
         {
@@ -82,11 +75,7 @@ public sealed class PackageCache : IPackageCache
 
         string content = JsonSerializer.Serialize(value: toWrite, jsonTypeInfo: this._typeInfo);
 
-        await File.WriteAllTextAsync(
-            path: fileName,
-            contents: content,
-            cancellationToken: cancellationToken
-        );
+        await File.WriteAllTextAsync(path: fileName, contents: content, cancellationToken: cancellationToken);
         this._changed = false;
     }
 
@@ -98,9 +87,7 @@ public sealed class PackageCache : IPackageCache
     public IReadOnlyList<PackageVersion> GetVersions(IReadOnlyList<string> packageIds)
     {
         return BuildVersions(
-            this._cache.Where(x =>
-                packageIds.Contains(value: x.Key, comparer: StringComparer.OrdinalIgnoreCase)
-            )
+            this._cache.Where(x => packageIds.Contains(value: x.Key, comparer: StringComparer.OrdinalIgnoreCase))
         );
     }
 
@@ -118,9 +105,7 @@ public sealed class PackageCache : IPackageCache
         this._cache.Clear();
     }
 
-    private static IReadOnlyList<PackageVersion> BuildVersions(
-        IEnumerable<KeyValuePair<string, NuGetVersion>> source
-    )
+    private static IReadOnlyList<PackageVersion> BuildVersions(IEnumerable<KeyValuePair<string, NuGetVersion>> source)
     {
         return [.. source.Select(x => new PackageVersion(packageId: x.Key, version: x.Value))];
     }
@@ -158,10 +143,7 @@ public sealed class PackageCache : IPackageCache
         {
             if (this._cache.TryAdd(key: packageVersion.PackageId, value: packageVersion.Version))
             {
-                this._logger.AddingPackageToCache(
-                    packageId: packageVersion.PackageId,
-                    version: packageVersion.Version
-                );
+                this._logger.AddingPackageToCache(packageId: packageVersion.PackageId, version: packageVersion.Version);
                 this._changed = true;
             }
         }
