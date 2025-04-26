@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using NuGet.Versioning;
 
@@ -25,19 +25,13 @@ public sealed class PackageVersion : IEquatable<PackageVersion>
     private static bool AreEqual(PackageVersion left, PackageVersion right)
     {
         return ReferenceEquals(objA: left, objB: right)
-            || StringComparer.InvariantCultureIgnoreCase.Equals(
-                x: left.PackageId,
-                y: right.PackageId
-            );
+            || StringComparer.InvariantCultureIgnoreCase.Equals(x: left.PackageId, y: right.PackageId);
     }
 
     public override bool Equals(object? obj)
     {
         return obj is not null
-            && (
-                ReferenceEquals(this, objB: obj)
-                || obj is PackageVersion other && AreEqual(this, right: other)
-            );
+            && (ReferenceEquals(this, objB: obj) || obj is PackageVersion other && AreEqual(this, right: other));
     }
 
     public override int GetHashCode()
