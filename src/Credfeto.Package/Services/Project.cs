@@ -11,17 +11,17 @@ namespace Credfeto.Package.Services;
 internal sealed class Project : IProject
 {
     private static readonly XmlWriterSettings WriterSettings = new()
-    {
-        Async = true,
-        Indent = true,
-        IndentChars = "  ",
-        OmitXmlDeclaration = true,
-        Encoding = Encoding.UTF8,
-        NewLineHandling = NewLineHandling.None,
-        NewLineOnAttributes = false,
-        NamespaceHandling = NamespaceHandling.OmitDuplicates,
-        CloseOutput = true,
-    };
+                                                               {
+                                                                   Async = true,
+                                                                   Indent = true,
+                                                                   IndentChars = "  ",
+                                                                   OmitXmlDeclaration = true,
+                                                                   Encoding = Encoding.UTF8,
+                                                                   NewLineHandling = NewLineHandling.None,
+                                                                   NewLineOnAttributes = false,
+                                                                   NamespaceHandling = NamespaceHandling.OmitDuplicates,
+                                                                   CloseOutput = true
+                                                               };
 
     private readonly XmlDocument _doc;
 
@@ -40,11 +40,7 @@ internal sealed class Project : IProject
 
     public bool UpdatePackage(PackageVersion package)
     {
-        if (
-            this.Packages.All(p =>
-                !StringComparer.InvariantCultureIgnoreCase.Equals(x: p.PackageId, y: package.PackageId)
-            )
-        )
+        if (this.Packages.All(p => !StringComparer.OrdinalIgnoreCase.Equals(x: p.PackageId, y: package.PackageId)))
         {
             return false;
         }
@@ -105,7 +101,8 @@ internal sealed class Project : IProject
             return false;
         }
 
-        IReadOnlyList<string> sdk = project.GetAttribute("Sdk").Split("/");
+        IReadOnlyList<string> sdk = project.GetAttribute("Sdk")
+                                           .Split("/");
 
         if (sdk.Count != 2)
         {
@@ -125,7 +122,7 @@ internal sealed class Project : IProject
 
     private static bool ShouldUpdate(PackageVersion package, string packageId, string version)
     {
-        if (!StringComparer.InvariantCultureIgnoreCase.Equals(x: packageId, y: package.PackageId))
+        if (!StringComparer.OrdinalIgnoreCase.Equals(x: packageId, y: package.PackageId))
         {
             return false;
         }
@@ -150,16 +147,17 @@ internal sealed class Project : IProject
 
         return
         [
-            .. refPackages
-                .Concat(sdkPackages)
-                .OrderBy(keySelector: x => x.PackageId, comparer: StringComparer.OrdinalIgnoreCase)
-                .ThenBy(x => x.Version),
+            .. refPackages.Concat(sdkPackages)
+                          .OrderBy(keySelector: x => x.PackageId, comparer: StringComparer.OrdinalIgnoreCase)
+                          .ThenBy(x => x.Version)
         ];
     }
 
     private IEnumerable<XmlElement> GetPackageReferences()
     {
-        return this._doc.SelectNodes("/Project/ItemGroup/PackageReference")?.OfType<XmlElement>().RemoveNulls() ?? [];
+        return this._doc.SelectNodes("/Project/ItemGroup/PackageReference")
+                   ?.OfType<XmlElement>()
+                   .RemoveNulls() ?? [];
     }
 
     private IEnumerable<PackageVersion> GetPackagesFromReferences()
@@ -187,7 +185,8 @@ internal sealed class Project : IProject
             yield break;
         }
 
-        IReadOnlyList<string> sdk = project.GetAttribute("Sdk").Split("/");
+        IReadOnlyList<string> sdk = project.GetAttribute("Sdk")
+                                           .Split("/");
 
         if (sdk.Count == 2)
         {

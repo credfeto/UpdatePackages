@@ -25,7 +25,9 @@ internal static class Program
         {
             ParserResult<Options> parser = await ParseOptionsAsync(args);
 
-            return parser.Tag == ParserResultType.Parsed ? SUCCESS : ERROR;
+            return parser.Tag == ParserResultType.Parsed
+                ? SUCCESS
+                : ERROR;
         }
         catch (NoPackagesUpdatedException)
         {
@@ -58,7 +60,9 @@ internal static class Program
 
     private static Task<ParserResult<Options>> ParseOptionsAsync(string[] args)
     {
-        return Parser.Default.ParseArguments<Options>(args).WithNotParsed(NotParsed).WithParsedAsync(ParsedOkAsync);
+        return Parser.Default.ParseArguments<Options>(args)
+                     .WithNotParsed(NotParsed)
+                     .WithParsedAsync(ParsedOkAsync);
     }
 
     private static void NotParsed(IEnumerable<Error> errors)
@@ -87,16 +91,12 @@ internal static class Program
             IDiagnosticLogger logging = services.GetRequiredService<IDiagnosticLogger>();
             IPackageUpdater packageUpdater = services.GetRequiredService<IPackageUpdater>();
 
-            PackageUpdateConfiguration config = BuildConfiguration(
-                packageId: options.PackageId,
-                options.Exclude?.ToArray() ?? []
-            );
+            PackageUpdateConfiguration config = BuildConfiguration(packageId: options.PackageId, options.Exclude?.ToArray() ?? []);
             IReadOnlyList<PackageVersion> updatesMade = await packageUpdater.UpdateAsync(
                 basePath: options.Folder,
                 configuration: config,
                 options.Source?.ToArray() ?? [],
-                cancellationToken: CancellationToken.None
-            );
+                cancellationToken: CancellationToken.None);
 
             if (logging.IsErrored)
             {
@@ -165,7 +165,7 @@ internal static class Program
         string[] parts = exclude.Split(separator: ':');
 
         return parts.Length == 2
-            ? new(parts[0], StringComparer.InvariantCultureIgnoreCase.Equals(parts[1], y: "prefix"))
+            ? new(parts[0], StringComparer.OrdinalIgnoreCase.Equals(parts[1], y: "prefix"))
             : new(parts[0], Prefix: false);
     }
 }
