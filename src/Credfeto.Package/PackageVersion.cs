@@ -24,14 +24,12 @@ public sealed class PackageVersion : IEquatable<PackageVersion>
 
     private static bool AreEqual(PackageVersion left, PackageVersion right)
     {
-        return ReferenceEquals(objA: left, objB: right)
-            || StringComparer.InvariantCultureIgnoreCase.Equals(x: left.PackageId, y: right.PackageId);
+        return ReferenceEquals(objA: left, objB: right) || StringComparer.OrdinalIgnoreCase.Equals(x: left.PackageId, y: right.PackageId);
     }
 
     public override bool Equals(object? obj)
     {
-        return obj is not null
-            && (ReferenceEquals(this, objB: obj) || obj is PackageVersion other && AreEqual(this, right: other));
+        return obj is not null && (ReferenceEquals(this, objB: obj) || obj is PackageVersion other && AreEqual(this, right: other));
     }
 
     public override int GetHashCode()
