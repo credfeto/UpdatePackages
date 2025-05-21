@@ -65,13 +65,16 @@
     <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-x5qj-9vmx-7g6g" />
     <!-- error NU1903: Warning As Error: Package 'System.Private.Uri' 4.3.0 has a known high severity vulnerability -->
     <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-xhfc-gr8f-ffwc" />
+    <!-- Error NU1903 : Warning As Error: Package 'System.Formats.Asn1' 6.0.0 has a known high severity vulnerability -->
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-447r-wph3-92pm" />
+
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Credfeto.Extensions.Linq" Version="1.0.97.938" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.5" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.5" />
     <PackageReference Include="NonBlocking" Version="2.1.2" />
-    <PackageReference Include="NuGet.Protocol" Version="6.13.2" />
+    <PackageReference Include="NuGet.Protocol" Version="6.14.0" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AsyncFixer" Version="1.6.0" PrivateAssets="All" ExcludeAssets="runtime" />
