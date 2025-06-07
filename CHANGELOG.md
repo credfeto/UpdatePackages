@@ -11,6 +11,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Changed
 - Dependencies - Updated Credfeto.Extensions.Linq to 1.0.114.992
 - Dependencies - Updated Credfeto.Version.Information.Generator to 1.0.93.624
+- Dependencies - Updated xunit.analyzers to 1.22.0
 ### Removed
 ### Deployment Changes
 
