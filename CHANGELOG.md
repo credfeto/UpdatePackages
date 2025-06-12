@@ -11,6 +11,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Changed
 - Dependencies - Updated Credfeto.Extensions.Linq to 1.0.120.1016
 - Dependencies - Updated Credfeto.Version.Information.Generator to 1.0.99.647
+- SDK - Updated DotNet SDK to 9.0.301
 ### Removed
 ### Deployment Changes
 
