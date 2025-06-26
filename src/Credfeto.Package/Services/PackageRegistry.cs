@@ -75,10 +75,7 @@ public sealed class PackageRegistry : IPackageRegistry
         CancellationToken cancellationToken
     )
     {
-        SourceRepository sourceRepository = new(
-            source: packageSource,
-            [.. Repository.Provider.GetCoreV3()]
-        );
+        SourceRepository sourceRepository = new(source: packageSource, [.. Repository.Provider.GetCoreV3()]);
 
         PackageSearchResource searcher = await sourceRepository.GetResourceAsync<PackageSearchResource>(
             cancellationToken
