@@ -77,7 +77,7 @@ public sealed class PackageRegistry : IPackageRegistry
     {
         SourceRepository sourceRepository = new(
             source: packageSource,
-            new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3())
+            [.. Repository.Provider.GetCoreV3()]
         );
 
         PackageSearchResource searcher = await sourceRepository.GetResourceAsync<PackageSearchResource>(
