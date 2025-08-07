@@ -11,6 +11,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Changed
 - Dependencies - Updated Credfeto.Enumeration to 1.2.122.1340
 - Dependencies - Updated Credfeto.Extensions.Linq to 1.0.131.1129
+- Dependencies - Updated Meziantou.Analyzer to 2.0.211
 ### Removed
 ### Deployment Changes
 
