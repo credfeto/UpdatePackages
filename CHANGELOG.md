@@ -10,6 +10,7 @@ Please ADD ALL Changes to the UNRELEASED SECTION and not a specific release
 ### Fixed
 ### Changed
 - Dependencies - Updated Credfeto.Version.Information.Generator to 1.0.114.790
+- Dependencies - Updated Philips.CodeAnalysis.MaintainabilityAnalyzers to 1.8.0
 ### Removed
 ### Deployment Changes
 
