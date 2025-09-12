@@ -64,7 +64,7 @@
     <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-447r-wph3-92pm" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Credfeto.Extensions.Linq" Version="1.0.136.1160" />
+    <PackageReference Include="Credfeto.Extensions.Linq" Version="1.0.137.1207" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" />
     <PackageReference Include="NonBlocking" Version="2.1.2" />
     <PackageReference Include="NuGet.Protocol" Version="6.14.0" />
