@@ -42,7 +42,7 @@
     <PackageTags>Nuget;update;tool;packages</PackageTags>
     <Product>Package Update Tool</Product>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/credfeto/UpdatePackages</RepositoryUrl>
+    <RepositoryUrl>https://github.com/credfeto/credfeto-dotnet-package-update</RepositoryUrl>
     <RunAOTCompilation>false</RunAOTCompilation>
     <RuntimeIdentifiers>win-x64;win-arm64;osx-x64;osx-arm64;linux-x64;linux-arm64</RuntimeIdentifiers>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
